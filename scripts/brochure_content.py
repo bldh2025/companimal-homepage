@@ -6,13 +6,13 @@ repository. Product pack sizes follow the supplied 2026 Chinese brochure.
 """
 
 LANGUAGES = {
-    "ko": {"label": "한국어", "locale": "ko-KR", "dir": "ltr", "font": "ko"},
-    "en": {"label": "English", "locale": "en-US", "dir": "ltr", "font": "en"},
-    "zh-hans": {"label": "简体中文", "locale": "zh-CN", "dir": "ltr", "font": "cjk"},
-    "zh-hant": {"label": "繁體中文", "locale": "zh-TW", "dir": "ltr", "font": "cjk"},
-    "ja": {"label": "日本語", "locale": "ja-JP", "dir": "ltr", "font": "cjk"},
-    "th": {"label": "ไทย", "locale": "th-TH", "dir": "ltr", "font": "th"},
-    "ar": {"label": "العربية", "locale": "ar", "dir": "rtl", "font": "ar"},
+    "ko": {"label": "한국어", "label_ko": "한국어", "locale": "ko-KR", "dir": "ltr", "font": "ko"},
+    "en": {"label": "English", "label_ko": "English (영어)", "locale": "en-US", "dir": "ltr", "font": "en"},
+    "zh-hans": {"label": "简体中文", "label_ko": "简体中文 (중국어 간체)", "locale": "zh-CN", "dir": "ltr", "font": "cjk"},
+    "zh-hant": {"label": "繁體中文", "label_ko": "繁體中文 (중국어 번체)", "locale": "zh-TW", "dir": "ltr", "font": "cjk"},
+    "ja": {"label": "日本語", "label_ko": "日本語 (일본어)", "locale": "ja-JP", "dir": "ltr", "font": "cjk"},
+    "th": {"label": "ไทย", "label_ko": "ไทย (태국어)", "locale": "th-TH", "dir": "ltr", "font": "th"},
+    "ar": {"label": "العربية", "label_ko": "العربية (아랍어)", "locale": "ar", "dir": "rtl", "font": "ar"},
 }
 
 

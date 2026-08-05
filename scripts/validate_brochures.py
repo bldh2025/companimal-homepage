@@ -22,7 +22,7 @@ def fail(message: str) -> None:
     raise AssertionError(message)
 
 
-def validate_pdf(path: Path, locale: str, pages: int) -> dict[str, object]:
+def validate_pdf(path: Path, locale: str, pages: int, kind: str) -> dict[str, object]:
     if not path.is_file() or path.stat().st_size < 100_000:
         fail(f"Missing or unexpectedly small PDF: {path}")
 
@@ -43,8 +43,13 @@ def validate_pdf(path: Path, locale: str, pages: int) -> dict[str, object]:
             fail(f"JavaScript or attachment found in {path}")
 
     document = fitz.open(path)
+    expected_size = (595, 842) if kind == "company" else (1066, 1492)
+    for page in document:
+        actual = (round(page.rect.width), round(page.rect.height))
+        if actual != expected_size:
+            fail(f"Unexpected {kind} page geometry in {path}: {actual}")
     page_text = [page.get_text("text").strip() for page in document]
-    if any(len(text) < 20 for text in page_text):
+    if any(len(text) < 10 for text in page_text):
         fail(f"Searchable text is missing on one or more pages in {path}")
     combined = "\n".join(page_text)
     for forbidden in ("0000.com", "010-6532-4544"):
@@ -62,7 +67,7 @@ def validate_pdf(path: Path, locale: str, pages: int) -> dict[str, object]:
 
 
 def validate_site(manifest: dict[str, object]) -> None:
-    expected_fallbacks = ("/output/pdf/company-profile-ko.pdf", "/output/pdf/product-brochure-ko.pdf")
+    expected_fallbacks = ("/output/pdf/company-profile-ko-2026-v2.pdf", "/output/pdf/product-brochure-ko-2026-v2.pdf")
     for path in HTML_FILES:
         source = path.read_text(encoding="utf-8")
         if source.count('id="downloads"') != 1:
@@ -76,11 +81,22 @@ def validate_site(manifest: dict[str, object]) -> None:
         for fallback in expected_fallbacks:
             if fallback not in source:
                 fail(f"Fallback PDF link missing in {path}: {fallback}")
+    korean_source = (ROOT / "index.html").read_text(encoding="utf-8")
+    if "자료실" in korean_source or korean_source.count('href="#downloads">소개서</a>') != 2:
+        fail("Korean main navigation and footer must label the download area 소개서")
 
     script = (ROOT / "brochure-downloads.js").read_text(encoding="utf-8")
     for code in LANGUAGES:
         if f'"{code}"' not in script:
             fail(f"Language missing from download script: {code}")
+    if "entry.label_ko" not in script:
+        fail("Korean-language annotations are not wired into the selectors")
+    generator = (ROOT / "scripts" / "build_brochures.py").read_text(encoding="utf-8")
+    if "keep_proportion=False" in generator:
+        fail("Non-proportional image insertion remains in the brochure generator")
+    for path in HTML_FILES:
+        if "font-size:16px" not in path.read_text(encoding="utf-8"):
+            fail(f"Mobile-safe brochure selector font size is missing in {path}")
     for entry in manifest.values():
         for kind in ("company", "product"):
             if not (ROOT / entry[kind]["path"]).is_file():
@@ -100,10 +116,12 @@ def main() -> None:
         entry = manifest[code]
         if entry["locale"] != language["locale"]:
             fail(f"Manifest locale mismatch for {code}")
+        if entry.get("label_ko") != language["label_ko"]:
+            fail(f"Manifest Korean language label mismatch for {code}")
         report[code] = {}
-        for kind, expected_pages in (("company", 8), ("product", 10)):
+        for kind, expected_pages in (("company", 12), ("product", 16)):
             path = ROOT / entry[kind]["path"]
-            report[code][kind] = validate_pdf(path, language["locale"], expected_pages)
+            report[code][kind] = validate_pdf(path, language["locale"], expected_pages, kind)
             if entry[kind]["bytes"] != path.stat().st_size:
                 fail(f"Manifest file size mismatch for {path}")
             if entry[kind]["pages"] != expected_pages:

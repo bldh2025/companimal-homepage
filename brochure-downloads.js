@@ -36,7 +36,7 @@
       if (!entry || !entry[kind]) return;
       var option = document.createElement("option");
       option.value = code;
-      option.textContent = entry.label;
+      option.textContent = pageLanguage() === "ko" && entry.label_ko ? entry.label_ko : entry.label;
       option.lang = entry.locale;
       select.appendChild(option);
     });
