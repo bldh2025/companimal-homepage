@@ -1,0 +1,100 @@
+{
+  "ko": {
+    "label": "한국어",
+    "locale": "ko-KR",
+    "company": {
+      "path": "output/pdf/company-profile-ko.pdf",
+      "bytes": 11433269,
+      "pages": 8
+    },
+    "product": {
+      "path": "output/pdf/product-brochure-ko.pdf",
+      "bytes": 4499889,
+      "pages": 10
+    }
+  },
+  "en": {
+    "label": "English",
+    "locale": "en-US",
+    "company": {
+      "path": "output/pdf/company-profile-en.pdf",
+      "bytes": 11340811,
+      "pages": 8
+    },
+    "product": {
+      "path": "output/pdf/product-brochure-en.pdf",
+      "bytes": 4402901,
+      "pages": 10
+    }
+  },
+  "zh-hans": {
+    "label": "简体中文",
+    "locale": "zh-CN",
+    "company": {
+      "path": "output/pdf/company-profile-zh-hans.pdf",
+      "bytes": 32168448,
+      "pages": 8
+    },
+    "product": {
+      "path": "output/pdf/product-brochure-zh-hans.pdf",
+      "bytes": 25229132,
+      "pages": 10
+    }
+  },
+  "zh-hant": {
+    "label": "繁體中文",
+    "locale": "zh-TW",
+    "company": {
+      "path": "output/pdf/company-profile-zh-hant.pdf",
+      "bytes": 32168467,
+      "pages": 8
+    },
+    "product": {
+      "path": "output/pdf/product-brochure-zh-hant.pdf",
+      "bytes": 25229225,
+      "pages": 10
+    }
+  },
+  "ja": {
+    "label": "日本語",
+    "locale": "ja-JP",
+    "company": {
+      "path": "output/pdf/company-profile-ja.pdf",
+      "bytes": 32169093,
+      "pages": 8
+    },
+    "product": {
+      "path": "output/pdf/product-brochure-ja.pdf",
+      "bytes": 25229851,
+      "pages": 10
+    }
+  },
+  "th": {
+    "label": "ไทย",
+    "locale": "th-TH",
+    "company": {
+      "path": "output/pdf/company-profile-th.pdf",
+      "bytes": 11319950,
+      "pages": 8
+    },
+    "product": {
+      "path": "output/pdf/product-brochure-th.pdf",
+      "bytes": 4379504,
+      "pages": 10
+    }
+  },
+  "ar": {
+    "label": "العربية",
+    "locale": "ar",
+    "company": {
+      "path": "output/pdf/company-profile-ar.pdf",
+      "bytes": 11360489,
+      "pages": 8
+    },
+    "product": {
+      "path": "output/pdf/product-brochure-ar.pdf",
+      "bytes": 4422522,
+      "pages": 10
+    }
+  }
+}

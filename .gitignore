@@ -1,0 +1,6 @@
+.DS_Store
+.codex-harness/
+.orca/
+tmp/
+__pycache__/
+*.pyc

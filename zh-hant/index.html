@@ -97,7 +97,7 @@
   *{margin:0;padding:0;box-sizing:border-box}
   html{scroll-behavior:smooth}
   /* 메뉴 앵커 이동 시 제목이 헤더에 가리지 않도록 */
-  .hero,.sec,.channels,.company{scroll-margin-top:76px}
+  .hero,.sec,.channels,.downloads,.company{scroll-margin-top:76px}
   body{
     font-family:'Pretendard','PingFang TC','Microsoft JhengHei','Noto Sans TC',system-ui,-apple-system,sans-serif;
     color:var(--ink);
@@ -555,6 +555,23 @@
     .lang-switch::after{right:0;width:6px;height:6px}
   }
 
+  /* ---------- Brochure downloads ---------- */
+  .downloads{padding:96px 0;background:var(--cream-2)}
+  .download-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;margin-top:42px}
+  .download-card{background:var(--cream);border:1px solid rgba(22,36,26,.12);border-radius:var(--radius-lg);padding:34px;box-shadow:0 14px 34px rgba(22,36,26,.07)}
+  .download-type{display:inline-flex;color:var(--gold-dark);font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:14px}
+  .download-card h3{font-size:28px;line-height:1.25;margin-bottom:10px}
+  .download-card>p{color:var(--muted);min-height:52px}
+  .download-controls{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;margin-top:28px}
+  .download-select{width:100%;border:1px solid rgba(22,36,26,.22);border-radius:999px;background:#fff;color:var(--ink);font:inherit;font-weight:700;padding:13px 42px 13px 18px}
+  .download-meta{display:block;color:var(--muted);font-size:12px;margin-top:12px}
+  @media (max-width:720px){
+    .downloads{padding:64px 0}
+    .download-grid{grid-template-columns:1fr}
+    .download-controls{grid-template-columns:1fr}
+    .download-controls .btn{justify-content:center}
+  }
+
   /* hero 뱃지: 골드 언더라인, 본문과 동일 서체(Pretendard) */
   .hero-eyebrow{
     background:none;border:0;border-bottom:2px solid var(--gold);border-radius:0;
@@ -580,6 +597,7 @@
       <a class="link" href="#history">歷程</a>
       <a class="link" href="#donation">公益活動</a>
       <a class="link" href="#partner">合作</a>
+      <a class="link" href="#downloads">資料下載</a>
       <a class="link" href="#company">公司</a>
       <a class="btn btn-lime" href="#contact">B2B 洽詢</a>
     </nav>
@@ -958,6 +976,39 @@
     </div>
   </section>
 
+  <!-- BROCHURE DOWNLOADS -->
+  <section class="downloads" id="downloads">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="sec-tag">Downloads</span>
+        <h2>快速了解公司與產品。</h2>
+        <p class="lead">選擇語言，即可下載 Companimal 公司介紹或 ZERO LABS 產品介紹 PDF。</p>
+      </div>
+      <div class="download-grid">
+        <article class="download-card" data-brochure-kind="company">
+          <span class="download-type">Company Profile</span>
+          <h3>公司介紹</h3>
+          <p>介紹 Companimal 的公司資訊、品牌原則、產品組合與合作方式。</p>
+          <div class="download-controls">
+            <label><span class="sr-only">公司介紹語言</span><select class="download-select" aria-label="公司介紹語言"><option value="ko">한국어</option></select></label>
+            <a class="btn btn-dark" data-download-link href="/output/pdf/company-profile-ko.pdf" type="application/pdf" hreflang="ko-KR" download="company-profile-ko.pdf">下載 PDF</a>
+          </div>
+          <span class="download-meta" data-file-size>PDF · 8頁</span>
+        </article>
+        <article class="download-card" data-brochure-kind="product">
+          <span class="download-type">Product Brochure</span>
+          <h3>產品介紹</h3>
+          <p>查看 ZERO LABS 的 8 個產品系列、包裝規格與官方洽詢管道。</p>
+          <div class="download-controls">
+            <label><span class="sr-only">產品介紹語言</span><select class="download-select" aria-label="產品介紹語言"><option value="ko">한국어</option></select></label>
+            <a class="btn btn-dark" data-download-link href="/output/pdf/product-brochure-ko.pdf" type="application/pdf" hreflang="ko-KR" download="product-brochure-ko.pdf">下載 PDF</a>
+          </div>
+          <span class="download-meta" data-file-size>PDF · 10頁</span>
+        </article>
+      </div>
+    </div>
+  </section>
+
   <!-- COMPANY -->
   <section class="company" id="company">
     <div class="wrap">
@@ -1019,6 +1070,7 @@
         <a href="#history">歷程</a>
         <a href="#donation">公益活動</a>
         <a href="#partner">合作</a>
+        <a href="#downloads">資料下載</a>
         <a href="#company">公司</a>
         <a href="https://zerolabs.co.kr/" target="_blank" rel="noopener">官方商城</a>
         <a href="https://www.coupang.com/np/search?component=&q=%EC%A0%9C%EB%A1%9C%EB%9E%A9%EC%8A%A4&traceId=mr3oy0ab&channel=user" target="_blank" rel="noopener">Coupang</a>
@@ -1040,6 +1092,7 @@
   <span class="kf-label">郵件洽詢</span>
 </a>
 
+<script src="/brochure-downloads.js" defer></script>
 <script>
   (function(){
     var btn = document.getElementById('hamburger');
