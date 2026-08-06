@@ -345,7 +345,7 @@ def company_brochure(lang: str) -> fitz.Document:
     detail = COMPANY_DETAIL[lang]
     labels = COMPANY_PAGE_LABELS[lang]
     doc = fitz.open()
-    total = 12
+    total = 14
 
     # 1. Cover
     p = new_page(doc, FOREST)
@@ -460,18 +460,49 @@ def company_brochure(lang: str) -> fitz.Document:
         add_html(p, fitz.Rect(x + 20, y + 25, x + 220, y + 168), f'<p class="kicker">0{i + 1}</p><p class="card-title white" style="font-size:14pt;margin-top:12pt">{html.escape(label)}</p><p class="card-body soft" style="font-size:9.3pt;margin-top:12pt">{html.escape(copy)}</p>', lang, scale_low=0.58)
     add_footer(p, 9, total, lang, light=True)
 
-    # 10. Brand milestones
-    p = new_page(doc, FOREST)
-    title_block(p, lang, c["history_kicker"], c["history_title"], c["history_subtitle"], light=True)
-    p.draw_line(fitz.Point(92, 210), fitz.Point(92, 690), color=GOLD, width=2)
-    for i, (year, body) in enumerate(c["history"]):
-        y = 208 + i * 125
-        p.draw_circle(fitz.Point(92, y + 16), 6, color=GOLD, fill=GOLD)
-        add_html(p, fitz.Rect(122, y, 530, y + 98), f'<p class="metric" style="font-size:19pt">{html.escape(year)}</p><p class="body soft" style="margin-top:5pt">{html.escape(body)}</p>', lang)
-    add_html(p, fitz.Rect(122, 715, 530, 770), f'<p class="small soft">{html.escape(labels["history_note"])}</p>', lang, scale_low=0.65)
-    add_footer(p, 10, total, lang, light=True)
+    # 10-12. Brand milestones — every homepage item, two years per page.
+    history_spreads = [c["history"][0:2], c["history"][2:4], c["history"][4:6]]
+    for spread_index, spread in enumerate(history_spreads):
+        p = new_page(doc, FOREST)
+        year_range = f"{spread[0][0]}–{spread[-1][0]}"
+        history_heading = f'{c["history_title"]} · {year_range}'
+        if LANGUAGES[lang]["dir"] == "rtl":
+            history_heading = f'{c["history_title"]} | \u200e{year_range}\u200e'
+        title_block(
+            p,
+            lang,
+            c["history_kicker"],
+            history_heading,
+            c["history_subtitle"],
+            light=True,
+        )
+        for col, (year, items) in enumerate(spread):
+            x = 42 + col * 265
+            p.draw_rect(fitz.Rect(x, 190, x + 246, 758), radius=0.06, color=None, fill=GREEN)
+            list_items = []
+            for item_index, item in enumerate(items):
+                item_text = html.escape(item)
+                if item_index == 0:
+                    item_text = f'<b style="color:#ffffff">{item_text}</b>'
+                list_items.append(
+                    f'<li style="font-size:10pt;line-height:1.45;margin-bottom:7pt">{item_text}</li>'
+                )
+            markup = (
+                f'<p class="metric" style="font-size:24pt">{html.escape(year)}</p>'
+                f'<ul style="color:#dce2dc;margin-top:18pt;padding-inline-start:16pt">'
+                f'{"".join(list_items)}</ul>'
+            )
+            add_html(p, fitz.Rect(x + 20, 216, x + 226, 735), markup, lang, scale_low=0.78)
+        add_html(
+            p,
+            fitz.Rect(42, 771, 553, 799),
+            f'<p class="small soft" style="font-size:7.4pt;text-align:center">{html.escape(labels["history_note"])}</p>',
+            lang,
+            scale_low=0.62,
+        )
+        add_footer(p, 10 + spread_index, total, lang, light=True)
 
-    # 11. Partnership process
+    # 13. Partnership process
     p = new_page(doc)
     title_block(p, lang, c["partner_kicker"], c["partner_title"], c["partner_body"])
     add_image_cover(p, fitz.Rect(42, 205, 235, 475), ASSETS / "team_walk.webp")
@@ -480,9 +511,9 @@ def company_brochure(lang: str) -> fitz.Document:
         x = 42 + i * 171
         p.draw_rect(fitz.Rect(x, 500, x + 154, 720), radius=0.06, color=None, fill=WHITE)
         add_html(p, fitz.Rect(x + 16, 526, x + 138, 700), f'<p class="kicker">0{i + 1}</p><p class="card-title" style="font-size:13pt;margin-top:9pt">{html.escape(label)}</p><p class="card-body" style="font-size:8.7pt;margin-top:11pt">{html.escape(body)}</p>', lang, scale_low=0.52)
-    add_footer(p, 11, total, lang)
+    add_footer(p, 13, total, lang)
 
-    # 12. Contact
+    # 14. Contact
     p = new_page(doc, FOREST)
     add_logo(p, "company", fitz.Rect(42, 44, 126, 126))
     title_block(p, lang, c["contact_kicker"], c["contact_title"], c["contact_subtitle"], y=152, light=True)
@@ -503,7 +534,7 @@ def company_brochure(lang: str) -> fitz.Document:
     add_image_fit(p, fitz.Rect(48, 644, 131, 727), q1)
     add_image_fit(p, fitz.Rect(160, 644, 243, 727), q2)
     add_html(p, fitz.Rect(278, 650, 553, 730), f'<p class="small soft">{html.escape(c["disclosure"])}</p>', lang)
-    add_footer(p, 12, total, lang, light=True)
+    add_footer(p, 14, total, lang, light=True)
 
     doc.set_metadata({"title": c["title"], "author": "Companimal Co., Ltd.", "subject": "Company profile", "keywords": f"Companimal, ZERO LABS, {LANGUAGES[lang]['locale']}"})
     doc.subset_fonts()
@@ -742,7 +773,7 @@ def build(languages: list[str]) -> dict[str, dict[str, object]]:
                 stale.unlink()
     results: dict[str, dict[str, object]] = {}
     for lang in languages:
-        company_path = OUTPUT / f"company-profile-{lang}-2026-v2.pdf"
+        company_path = OUTPUT / f"company-profile-{lang}-2026-v3.pdf"
         product_path = OUTPUT / f"product-brochure-{lang}-2026-v2.pdf"
         save_with_language(company_brochure(lang), company_path, LANGUAGES[lang]["locale"])
         save_with_language(product_brochure(lang), product_path, LANGUAGES[lang]["locale"])

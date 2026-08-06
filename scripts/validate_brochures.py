@@ -3,13 +3,16 @@
 
 from __future__ import annotations
 
+import html
 import json
+import re
 from pathlib import Path
 
 import fitz
 from pypdf import PdfReader
 
-from brochure_content import LANGUAGES
+from brochure_content import COMPANY_CONTENT, LANGUAGES
+from history_content import BRAND_HISTORY, EXPECTED_HISTORY_ITEM_COUNTS, EXPECTED_HISTORY_YEARS
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -22,7 +25,12 @@ def fail(message: str) -> None:
     raise AssertionError(message)
 
 
-def validate_pdf(path: Path, locale: str, pages: int, kind: str) -> dict[str, object]:
+def compact(value: str) -> str:
+    normalized = value.replace("・", "·").replace("―", "—").replace("\u00ad", "-")
+    return "".join(normalized.split())
+
+
+def validate_pdf(path: Path, code: str, locale: str, pages: int, kind: str) -> dict[str, object]:
     if not path.is_file() or path.stat().st_size < 100_000:
         fail(f"Missing or unexpectedly small PDF: {path}")
 
@@ -55,6 +63,17 @@ def validate_pdf(path: Path, locale: str, pages: int, kind: str) -> dict[str, ob
     for forbidden in ("0000.com", "010-6532-4544"):
         if forbidden in combined:
             fail(f"Legacy placeholder contact found in {path}: {forbidden}")
+    # MuPDF's Thai and Arabic ToUnicode extraction is not stable with the
+    # system TTC fonts, so those locales are verified from source structure
+    # plus rendered pages below instead of exact extracted glyph order.
+    if kind == "company" and code not in {"th", "ar"}:
+        searchable = compact(combined)
+        for year, items in BRAND_HISTORY[code]:
+            if year not in combined:
+                fail(f"Company history year {year} missing from {path}")
+            for item in items:
+                if compact(item) not in searchable:
+                    fail(f"Company history item missing from {path}: {year} / {item}")
     font_xrefs = {font[0] for page in document for font in page.get_fonts(full=True)}
     if not font_xrefs:
         fail(f"No fonts found in {path}")
@@ -66,8 +85,53 @@ def validate_pdf(path: Path, locale: str, pages: int, kind: str) -> dict[str, ob
     return {"pages": pages, "bytes": path.stat().st_size, "text_chars": sum(map(len, page_text)), "fonts": len(font_xrefs)}
 
 
+def extract_homepage_history(path: Path) -> list[tuple[str, list[str]]]:
+    source = path.read_text(encoding="utf-8")
+    section = re.search(r'<section class="sec history".*?</section>', source, re.S)
+    if not section:
+        fail(f"Homepage history section missing in {path}")
+    result = []
+    for year, block in re.findall(r'<div class="yr">(.*?)</div>\s*<ul>(.*?)</ul>', section.group(0), re.S):
+        items = []
+        for raw_item in re.findall(r'<li>(.*?)</li>', block, re.S):
+            text = re.sub(r"<[^>]+>", "", raw_item)
+            items.append(" ".join(html.unescape(text).split()))
+        result.append((year.strip(), items))
+    return result
+
+
+def extract_homepage_history_intro(path: Path) -> str:
+    source = path.read_text(encoding="utf-8")
+    section = re.search(r'<section class="sec history".*?</section>', source, re.S)
+    if not section:
+        fail(f"Homepage history section missing in {path}")
+    lead = re.search(r'<p class="lead">(.*?)</p>', section.group(0), re.S)
+    if not lead:
+        fail(f"Homepage history introduction missing in {path}")
+    return " ".join(html.unescape(re.sub(r"<[^>]+>", "", lead.group(1))).split())
+
+
+def validate_history_source() -> None:
+    homepage_sources = {
+        "ko": ROOT / "index.html",
+        "en": ROOT / "en" / "index.html",
+        "zh-hans": ROOT / "zh" / "index.html",
+        "zh-hant": ROOT / "zh-hant" / "index.html",
+    }
+    for code, path in homepage_sources.items():
+        if extract_homepage_history(path) != BRAND_HISTORY[code]:
+            fail(f"Brochure history differs from homepage history in {path}")
+        if extract_homepage_history_intro(path) != COMPANY_CONTENT[code]["history_subtitle"]:
+            fail(f"Brochure history introduction differs from homepage in {path}")
+    for code, history in BRAND_HISTORY.items():
+        if [year for year, _ in history] != EXPECTED_HISTORY_YEARS:
+            fail(f"Unexpected company history years for {code}")
+        if [len(items) for _, items in history] != EXPECTED_HISTORY_ITEM_COUNTS:
+            fail(f"Unexpected company history item counts for {code}")
+
+
 def validate_site(manifest: dict[str, object]) -> None:
-    expected_fallbacks = ("/output/pdf/company-profile-ko-2026-v2.pdf", "/output/pdf/product-brochure-ko-2026-v2.pdf")
+    expected_fallbacks = ("/output/pdf/company-profile-ko-2026-v3.pdf", "/output/pdf/product-brochure-ko-2026-v2.pdf")
     for path in HTML_FILES:
         source = path.read_text(encoding="utf-8")
         if source.count('id="downloads"') != 1:
@@ -81,6 +145,8 @@ def validate_site(manifest: dict[str, object]) -> None:
         for fallback in expected_fallbacks:
             if fallback not in source:
                 fail(f"Fallback PDF link missing in {path}: {fallback}")
+        if "PDF · 14" not in source:
+            fail(f"Company brochure fallback page count is not 14 in {path}")
     korean_source = (ROOT / "index.html").read_text(encoding="utf-8")
     if "자료실" in korean_source or korean_source.count('href="#downloads">소개서</a>') != 2:
         fail("Korean main navigation and footer must label the download area 소개서")
@@ -104,6 +170,7 @@ def validate_site(manifest: dict[str, object]) -> None:
 
 
 def main() -> None:
+    validate_history_source()
     manifest = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
     if list(manifest) != list(LANGUAGES):
         fail(f"Manifest languages differ: {list(manifest)}")
@@ -119,9 +186,9 @@ def main() -> None:
         if entry.get("label_ko") != language["label_ko"]:
             fail(f"Manifest Korean language label mismatch for {code}")
         report[code] = {}
-        for kind, expected_pages in (("company", 12), ("product", 16)):
+        for kind, expected_pages in (("company", 14), ("product", 16)):
             path = ROOT / entry[kind]["path"]
-            report[code][kind] = validate_pdf(path, language["locale"], expected_pages, kind)
+            report[code][kind] = validate_pdf(path, code, language["locale"], expected_pages, kind)
             if entry[kind]["bytes"] != path.stat().st_size:
                 fail(f"Manifest file size mismatch for {path}")
             if entry[kind]["pages"] != expected_pages:

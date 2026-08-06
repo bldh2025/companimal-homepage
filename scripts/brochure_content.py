@@ -1,9 +1,12 @@
 """Localized copy for the ZERO LABS brochure generator.
 
-The copy intentionally avoids efficacy, certification, ranking, donation, and
-ingredient-percentage claims that are not backed by source documents in this
-repository. Product pack sizes follow the supplied 2026 Chinese brochure.
+Company-history pages mirror the company-provided milestones published on the
+localized homepage, including their stated rankings, donation, and CBD records.
+Other copy avoids unsupported efficacy or certification claims. Product pack
+sizes follow the supplied 2026 Chinese brochure.
 """
+
+from history_content import BRAND_HISTORY
 
 LANGUAGES = {
     "ko": {"label": "한국어", "label_ko": "한국어", "locale": "ko-KR", "dir": "ltr", "font": "ko"},
@@ -39,8 +42,8 @@ COMPANY_CONTENT = {
         "products": [("고기가득 져키", "1kg · 350g"), ("영양가득 져키", "1kg · 350g"), ("베리가득 져키", "1kg · 400g"), ("치카하개", "240g"), ("굽빵", "1kg · 200g"), ("미트리스", "1kg"), ("멍스", "100g"), ("프레쉬링", "100g")],
         "history_kicker": "BRAND MILESTONES",
         "history_title": "브랜드가 걸어온 길",
-        "history_subtitle": "회사 홈페이지에 공개된 주요 이정표를 간결하게 정리했습니다.",
-        "history": [("2021", "ZERO LABS 브랜드 출시 및 유통 채널 확대"), ("2023", "아시아 시장 수출과 브랜드 협업 전개"), ("2025", "주식회사 반려동행이 브랜드 운영을 이어받고 톤앤매너 리뉴얼"), ("2026", "신제품과 중간용량 제품 출시, B2B 사이트와 회사 홈페이지 개설")],
+        "history_subtitle": "국내 유통·프랜차이즈 입점부터 해외 수출, 대형 파트너 협업까지 — 제로랩스 브랜드가 만들어온 성과입니다. 2025년 10월, 주식회사 반려동행이 브랜드를 이어받아 운영하고 있습니다.",
+        "history": BRAND_HISTORY["ko"],
         "partner_kicker": "PARTNERSHIP",
         "partner_title": "오래 판매할 수 있는 브랜드를 함께 만듭니다",
         "partner_body": "파트너가 제품을 빠르게 이해하고 고객에게 설명할 수 있도록 제품군, 포장 단위, 판매 채널을 정리합니다.",
@@ -73,8 +76,8 @@ COMPANY_CONTENT = {
         "products": [("Meat Jerky", "1 kg · 350 g"), ("Nutrition Jerky", "1 kg · 350 g"), ("Berry Jerky", "1 kg · 400 g"), ("Dental Treat", "240 g"), ("Baked Treat", "1 kg · 200 g"), ("Meatless", "1 kg"), ("Mungs", "100 g"), ("Fresh Ring", "100 g")],
         "history_kicker": "BRAND MILESTONES",
         "history_title": "The path of the brand",
-        "history_subtitle": "A concise selection of milestones published on the company website.",
-        "history": [("2021", "ZERO LABS launched and expanded its distribution channels"), ("2023", "Exports in Asian markets and brand collaborations"), ("2025", "Companimal continued brand operations and renewed the visual tone"), ("2026", "New products and mid-size packs, plus B2B and company websites")],
+        "history_subtitle": "From nationwide retail and franchise listings to exports and major partnerships — the track record of the ZERO LABS brand. Since October 2025, Companimal Co., Ltd. has carried the brand forward.",
+        "history": BRAND_HISTORY["en"],
         "partner_kicker": "PARTNERSHIP",
         "partner_title": "Building a brand partners can keep selling",
         "partner_body": "We organize product categories, pack sizes, and sales channels so partners can understand the range and explain it to customers.",
@@ -107,8 +110,8 @@ COMPANY_CONTENT = {
         "products": [("满满肉", "1 kg · 350 g"), ("满满营养", "1 kg · 350 g"), ("满满莓果", "1 kg · 400 g"), ("洁齿零食", "240 g"), ("烘烤面包", "1 kg · 200 g"), ("植物素食条", "1 kg"), ("汪汪麦脆", "100 g"), ("缤纷麦圈", "100 g")],
         "history_kicker": "品牌里程碑",
         "history_title": "品牌发展历程",
-        "history_subtitle": "根据公司网站公开信息整理的主要里程碑。",
-        "history": [("2021", "ZERO LABS 品牌发布并扩展销售渠道"), ("2023", "拓展亚洲市场出口与品牌合作"), ("2025", "Companimal 延续品牌运营并更新视觉风格"), ("2026", "推出新产品与中等规格包装，开设 B2B 网站和公司官网")],
+        "history_subtitle": "从韩国零售与连锁渠道入驻，到海外出口和大型合作项目 — 这是 ZERO LABS 品牌积累的成果。自 2025 年 10 月起，品牌由 Companimal Co., Ltd. 承接运营。",
+        "history": BRAND_HISTORY["zh-hans"],
         "partner_kicker": "合作伙伴",
         "partner_title": "共同打造可持续销售的品牌",
         "partner_body": "我们整理产品类别、包装规格和销售渠道，帮助合作伙伴快速了解产品并向顾客说明。",
@@ -141,8 +144,8 @@ COMPANY_CONTENT = {
         "products": [("滿滿肉", "1 kg · 350 g"), ("滿滿營養", "1 kg · 350 g"), ("滿滿莓果", "1 kg · 400 g"), ("潔牙零食", "240 g"), ("烘烤麵包", "1 kg · 200 g"), ("植物素食條", "1 kg"), ("汪汪麥脆", "100 g"), ("繽紛麥圈", "100 g")],
         "history_kicker": "品牌里程碑",
         "history_title": "品牌發展歷程",
-        "history_subtitle": "依公司網站公開資訊整理的主要里程碑。",
-        "history": [("2021", "ZERO LABS 品牌推出並拓展銷售通路"), ("2023", "拓展亞洲市場出口與品牌合作"), ("2025", "Companimal 延續品牌營運並更新視覺風格"), ("2026", "推出新產品與中等規格包裝，開設 B2B 網站及公司官網")],
+        "history_subtitle": "從韓國零售與連鎖通路進駐，到海外出口與大型合作專案 — 這是 ZERO LABS 品牌累積的成果。自 2025 年 10 月起，品牌由 Companimal Co., Ltd. 承接營運。",
+        "history": BRAND_HISTORY["zh-hant"],
         "partner_kicker": "合作夥伴",
         "partner_title": "共同打造可持續銷售的品牌",
         "partner_body": "我們整理產品類別、包裝規格與銷售通路，協助合作夥伴快速了解產品並向顧客說明。",
@@ -175,8 +178,8 @@ COMPANY_CONTENT = {
         "products": [("ミートジャーキー", "1 kg · 350 g"), ("ニュートリションジャーキー", "1 kg · 350 g"), ("ベリージャーキー", "1 kg · 400 g"), ("デンタルトリーツ", "240 g"), ("ベイクドトリーツ", "1 kg · 200 g"), ("ミートレス", "1 kg"), ("マンス", "100 g"), ("フレッシュリング", "100 g")],
         "history_kicker": "ブランド沿革",
         "history_title": "ブランドの歩み",
-        "history_subtitle": "会社サイトで公開している主な節目を簡潔にまとめました。",
-        "history": [("2021", "ZERO LABS を立ち上げ、流通チャネルを拡大"), ("2023", "アジア市場への輸出とブランド協業を展開"), ("2025", "Companimal がブランド運営を継承し、ビジュアルを刷新"), ("2026", "新商品と中容量商品、B2B サイトと会社サイトを展開")],
+        "history_subtitle": "韓国国内の流通・フランチャイズ導入から海外輸出、大手パートナーとの協業まで、ZERO LABSが築いてきた実績です。2025年10月以降、Companimal Co., Ltd.がブランドを継承し運営しています。",
+        "history": BRAND_HISTORY["ja"],
         "partner_kicker": "パートナーシップ",
         "partner_title": "長く販売できるブランドを、ともにつくる",
         "partner_body": "商品カテゴリー、内容量、販売チャネルを整理し、パートナーが商品を理解してお客様へ説明しやすい状態をつくります。",
@@ -209,8 +212,8 @@ COMPANY_CONTENT = {
         "products": [("มีตเจอร์กี", "1 kg · 350 g"), ("นิวทริชันเจอร์กี", "1 kg · 350 g"), ("เบอร์รีเจอร์กี", "1 kg · 400 g"), ("เดนทัลทรีต", "240 g"), ("เบกด์ทรีต", "1 kg · 200 g"), ("มีตเลส", "1 kg"), ("มังส์", "100 g"), ("เฟรชริง", "100 g")],
         "history_kicker": "หมุดหมายของแบรนด์",
         "history_title": "เส้นทางของแบรนด์",
-        "history_subtitle": "สรุปหมุดหมายสำคัญที่เผยแพร่บนเว็บไซต์บริษัท",
-        "history": [("2021", "เปิดตัว ZERO LABS และขยายช่องทางจำหน่าย"), ("2023", "ส่งออกสู่ตลาดเอเชียและพัฒนาความร่วมมือกับแบรนด์"), ("2025", "Companimal รับช่วงการบริหารแบรนด์และปรับภาพลักษณ์"), ("2026", "เปิดตัวสินค้าและขนาดบรรจุใหม่ พร้อมเว็บไซต์ B2B และเว็บไซต์บริษัท")],
+        "history_subtitle": "ตั้งแต่การเข้าช่องทางค้าปลีกและแฟรนไชส์ในเกาหลี ไปจนถึงการส่งออกและความร่วมมือกับพันธมิตรรายใหญ่ นี่คือผลงานที่ ZERO LABS สั่งสมมา ตั้งแต่เดือนตุลาคม 2025 Companimal Co., Ltd. รับช่วงและบริหารแบรนด์",
+        "history": BRAND_HISTORY["th"],
         "partner_kicker": "พันธมิตร",
         "partner_title": "สร้างแบรนด์ที่พันธมิตรขายได้อย่างต่อเนื่อง",
         "partner_body": "เราจัดหมวดสินค้า ขนาดบรรจุ และช่องทางขายให้ชัดเจน เพื่อให้พันธมิตรเข้าใจและอธิบายสินค้าแก่ลูกค้าได้ง่าย",
@@ -243,8 +246,8 @@ COMPANY_CONTENT = {
         "products": [("جيركي اللحم", "1 kg · 350 g"), ("جيركي التغذية", "1 kg · 350 g"), ("جيركي التوت", "1 kg · 400 g"), ("وجبة للعناية بالأسنان", "240 g"), ("وجبة مخبوزة", "1 kg · 200 g"), ("Meatless", "1 kg"), ("Mungs", "100 g"), ("Fresh Ring", "100 g")],
         "history_kicker": "محطات العلامة",
         "history_title": "مسيرة العلامة",
-        "history_subtitle": "ملخص لمحطات رئيسية منشورة على موقع الشركة.",
-        "history": [("2021", "إطلاق ZERO LABS وتوسيع قنوات التوزيع"), ("2023", "التصدير إلى أسواق آسيوية وتعاونات مع علامات تجارية"), ("2025", "استمرار التشغيل بواسطة Companimal وتجديد الهوية البصرية"), ("2026", "منتجات وأحجام جديدة، وإطلاق موقعي B2B والشركة")],
+        "history_subtitle": "من الإدراج في قنوات التجزئة والامتياز في كوريا إلى التصدير والشراكات الكبرى، هذا هو سجل إنجازات ZERO LABS. ومنذ أكتوبر 2025، تواصل Companimal Co., Ltd. تشغيل العلامة.",
+        "history": BRAND_HISTORY["ar"],
         "partner_kicker": "الشراكة",
         "partner_title": "نبني معا علامة يمكن بيعها باستمرار",
         "partner_body": "ننظم فئات المنتجات وأحجام العبوات وقنوات البيع كي يفهم الشركاء المجموعة ويشرحوها للعملاء بسهولة.",
