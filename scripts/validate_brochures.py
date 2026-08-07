@@ -31,6 +31,38 @@ def compact(value: str) -> str:
     return "".join(normalized.split())
 
 
+def rect_touches(rect: fitz.Rect, image_rect: fitz.Rect, tolerance: float = 1.0) -> bool:
+    horizontal_overlap = rect.x0 <= image_rect.x1 + tolerance and rect.x1 >= image_rect.x0 - tolerance
+    vertical_overlap = rect.y0 <= image_rect.y1 + tolerance and rect.y1 >= image_rect.y0 - tolerance
+    return horizontal_overlap and vertical_overlap
+
+
+def is_image_boundary(drawing: dict[str, object], image_rects: list[fitz.Rect]) -> bool:
+    rect = drawing.get("rect")
+    if not isinstance(rect, fitz.Rect) or not any(rect_touches(rect, image_rect) for image_rect in image_rects):
+        return False
+    for opacity_key in ("fill_opacity", "stroke_opacity"):
+        opacity = drawing.get(opacity_key)
+        if isinstance(opacity, (float, int)) and opacity < 0.999:
+            return True
+    stroke = drawing.get("color")
+    return isinstance(stroke, (tuple, list)) and len(stroke) == 3 and max(stroke) < 0.16
+
+
+def validate_image_boundary_guard() -> None:
+    image_rect = fitz.Rect(20, 20, 80, 80)
+    if is_image_boundary({"rect": fitz.Rect(0, 0, 10, 10), "fill_opacity": 0.5}, [image_rect]):
+        fail("Boundary guard rejected unrelated transparency")
+    if not is_image_boundary({"rect": fitz.Rect(20, 60, 80, 80), "fill_opacity": 0.5}, [image_rect]):
+        fail("Boundary guard missed a translucent image overlay")
+    if not is_image_boundary({"rect": fitz.Rect(20, 20, 80, 80), "stroke_opacity": 0.5}, [image_rect]):
+        fail("Boundary guard missed a translucent image-edge stroke")
+    if not is_image_boundary({"rect": fitz.Rect(20, 20, 80, 80), "color": (0.0, 0.0, 0.0)}, [image_rect]):
+        fail("Boundary guard missed a dark image-edge stroke")
+    if is_image_boundary({"rect": fitz.Rect(20, 20, 80, 80), "color": (0.88, 0.84, 0.74)}, [image_rect]):
+        fail("Boundary guard rejected an intended light card border")
+
+
 def validate_pdf(path: Path, code: str, locale: str, pages: int, kind: str) -> dict[str, object]:
     if not path.is_file() or path.stat().st_size < 100_000:
         fail(f"Missing or unexpectedly small PDF: {path}")
@@ -57,6 +89,10 @@ def validate_pdf(path: Path, code: str, locale: str, pages: int, kind: str) -> d
         actual = (round(page.rect.width), round(page.rect.height))
         if actual != expected_size:
             fail(f"Unexpected {kind} page geometry in {path}: {actual}")
+        image_rects = [rect for image in page.get_images(full=True) for rect in page.get_image_rects(image[0])]
+        for drawing in page.get_drawings():
+            if is_image_boundary(drawing, image_rects):
+                fail(f"Dark or translucent image boundary found in {path} page {page.number + 1}")
     page_text = [page.get_text("text").strip() for page in document]
     if any(len(text) < 10 for text in page_text):
         fail(f"Searchable text is missing on one or more pages in {path}")
@@ -232,6 +268,7 @@ def validate_site(manifest: dict[str, object]) -> None:
 
 
 def main() -> None:
+    validate_image_boundary_guard()
     validate_history_source()
     validate_homepage_company_source()
     manifest = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))

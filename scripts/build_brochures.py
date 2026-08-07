@@ -529,19 +529,14 @@ def measure_html_height(markup: str, lang: str, width: float, *, max_height: flo
     return max_height - spare
 
 
-def add_image_cover(page: fitz.Page, rect: fitz.Rect, path: Path, opacity: float | None = None) -> None:
+def add_image_cover(page: fitz.Page, rect: fitz.Rect, path: Path) -> None:
     path = cover_image(path, rect)
     page.insert_image(rect, filename=str(path), keep_proportion=True)
-    if opacity is not None:
-        page.draw_rect(rect, color=None, fill=FOREST, fill_opacity=opacity, overlay=True)
 
 
-def add_image_fit(page: fitz.Page, rect: fitz.Rect, path: Path, *, radius: float = 0) -> None:
-    # PyMuPDF clipping is rectangular; the surrounding card provides the visual radius.
+def add_image_fit(page: fitz.Page, rect: fitz.Rect, path: Path) -> None:
     path = compatible_image(path)
     page.insert_image(rect, filename=str(path), keep_proportion=True)
-    if radius:
-        page.draw_rect(rect, color=(0.84, 0.82, 0.76), width=0.5, radius=radius, overlay=True)
 
 
 def add_logo(page: fitz.Page, kind: str, rect: fitz.Rect) -> None:
@@ -669,7 +664,7 @@ def company_brochure(lang: str) -> fitz.Document:
 
     # 1. Cover
     p = new_page(doc, FOREST)
-    add_image_cover(p, PAGE, ASSETS / "hero-dog-companion.webp", 0.53)
+    add_image_cover(p, PAGE, ASSETS / "hero-dog-companion.webp")
     p.draw_rect(fitz.Rect(0, 0, 16, 842), color=None, fill=GOLD)
     add_logo(p, "company", fitz.Rect(42, 46, 138, 138))
     add_html(p, fitz.Rect(42, 180, 540, 440), f'<p class="kicker gold">{html.escape(c["cover_badge"])}</p><p class="title white" style="font-size:35pt; margin-top:14pt">{html.escape(c["cover_title"]).replace(chr(10), "<br>")}</p><p class="subtitle soft" style="margin-top:18pt">{html.escape(c["cover_subtitle"])}</p>', lang)
@@ -916,7 +911,6 @@ def company_brochure_v5(lang: str) -> fitz.Document:
     # 1. Cover — a presentation cover, not a portrait report template.
     p = new_company_page(doc, FOREST)
     add_image_cover(p, fitz.Rect(390, 0, 842, 595), ASSETS / "hero-dog-companion.webp")
-    p.draw_rect(fitz.Rect(370, 0, 500, 595), color=None, fill=FOREST, fill_opacity=0.58, overlay=True)
     p.draw_rect(fitz.Rect(0, 0, 11, 595), color=None, fill=GOLD)
     add_logo(p, "company", fitz.Rect(48, 38, 112, 104))
     add_html(p, fitz.Rect(117, 58, 132, 84), '<p class="gold" style="font-size:12pt;font-weight:700;text-align:center">×</p>', lang)
@@ -1051,8 +1045,7 @@ def company_brochure_v5(lang: str) -> fitz.Document:
     kicker, title, body = detail["channels"]
     company_title(p, lang, kicker, title, body, light=True, x=48, y=34, width=746, height=100)
     add_image_cover(p, fitz.Rect(48, 154, 392, 506), ASSETS / "hero-dog-treats.webp")
-    p.draw_rect(fitz.Rect(48, 452, 392, 506), color=None, fill=FOREST, fill_opacity=0.64, overlay=True)
-    add_html(p, fitz.Rect(70, 468, 370, 495), f'<p class="small soft" style="font-size:7.5pt;text-align:center">{html.escape(COMPANY_A_UI[lang]["routes"])}</p>', lang, scale_low=1)
+    add_html(p, fitz.Rect(70, 468, 370, 495), f'<p class="small" style="font-size:7.5pt;text-align:center;color:#1f3325;font-weight:700">{html.escape(COMPANY_A_UI[lang]["routes"])}</p>', lang, scale_low=1)
     channels = list(zip(detail["channel_items"], CHANNEL_URLS))
     for i, ((label, copy), uri) in enumerate(channels):
         y = 158 + i * 87
@@ -1102,7 +1095,6 @@ def company_brochure_v5(lang: str) -> fitz.Document:
     company_title(p, lang, donation_kicker, donation_title, donation_body, x=48, y=34, width=746, height=105)
     p.draw_rect(fitz.Rect(48, 158, 360, 500), radius=0.035, color=None, fill=FOREST)
     add_image_cover(p, fitz.Rect(48, 158, 360, 330), ASSETS / "hero-dog-companion.webp")
-    p.draw_rect(fitz.Rect(48, 274, 360, 330), color=None, fill=FOREST, fill_opacity=0.55, overlay=True)
     add_html(p, fitz.Rect(72, 362, 336, 414), f'<p class="gold" style="font-size:29pt;font-weight:700">{html.escape(DONATION_AMOUNT_LABELS[lang])}</p>', lang, scale_low=0.88)
     add_html(p, fitz.Rect(72, 424, 336, 478), f'<p class="soft" style="font-size:8.7pt;line-height:1.5;font-weight:700">{html.escape(donation_caption)}</p>', lang, scale_low=0.84)
     for i, (label, body) in enumerate(donation_items):
@@ -1418,7 +1410,6 @@ def product_brochure_a(lang: str) -> fitz.Document:
     # 1. Cover
     p = new_company_page(doc, FOREST)
     add_image_cover(p, fitz.Rect(438, 0, 842, 595), ASSETS / "hero-dog-treats.webp")
-    p.draw_rect(fitz.Rect(390, 0, 515, 595), color=None, fill=FOREST, fill_opacity=0.70, overlay=True)
     add_logo(p, "zero", fitz.Rect(50, 40, 186, 102))
     product_a_heading(p, lang, c["cover_version"], c["cover_tagline"], c["greeting"][0], light=True, rect=fitz.Rect(50, 155, 400, 380), size=32)
     product_a_footer(p, 1, total, lang, light=True)
