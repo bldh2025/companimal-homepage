@@ -129,6 +129,19 @@ def validate_pdf(path: Path, code: str, locale: str, pages: int, kind: str) -> d
             fail(f"CEO photograph missing from {path}")
         if len(document[2].get_images(full=True)) < 3:
             fail(f"Team or team-tee imagery missing from {path}")
+        portfolio_images = document[5].get_image_info()
+        if len(portfolio_images) != 8:
+            fail(f"Eight-product portfolio imagery missing from {path}")
+        for image in portfolio_images:
+            bbox = image.get("bbox")
+            if bbox is None or abs(fitz.Rect(bbox).width - fitz.Rect(bbox).height) > 0.1:
+                fail(f"Product portfolio image is not square in {path}: {bbox}")
+        if document[12].get_image_info():
+            fail(f"Partnership page still contains a right-side photo in {path}")
+        for image in document[13].get_image_info():
+            bbox = image.get("bbox")
+            if bbox is not None and fitz.Rect(bbox).x0 >= 470:
+                fail(f"Contact page still contains a right-side photo in {path}: {bbox}")
         channel_links = {link.get("uri") for link in document[7].get_links() if link.get("uri")}
         if not set(CHANNEL_URLS).issubset(channel_links):
             fail(f"Homepage sales-channel links missing from {path}")

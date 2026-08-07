@@ -1014,7 +1014,9 @@ def company_brochure_v5(lang: str) -> fitz.Document:
         x = 48 + col * 187
         y = 150 + row * 188
         p.draw_rect(fitz.Rect(x, y, x + 169, y + 118), radius=0.035, color=None, fill=CREAM)
-        add_image_fit(p, fitz.Rect(x + 7, y + 5, x + 162, y + 113), image_path)
+        # Product source images are square. Keep them square inside the card so
+        # the packages and labels are never stretched into a wide strip.
+        add_image_fit(p, fitz.Rect(x + 30.5, y + 5, x + 138.5, y + 113), image_path)
         add_html(
             p,
             fitz.Rect(x, y + 130, x + 169, y + 177),
@@ -1107,10 +1109,8 @@ def company_brochure_v5(lang: str) -> fitz.Document:
 
     # 13. Partnership — the repeat-sales proposition after the team story.
     p = new_company_page(doc)
-    # Let the contact image meet the forest panel directly.  The former
-    # translucent bridge band rendered as an unintended black vertical stripe
-    # in PDF viewers, especially at the image boundary.
-    add_image_cover(p, fitz.Rect(470, 0, 842, 595), ASSETS / "hero-dog-treats.webp")
+    # Keep this page as a text-led partnership page. The former right-side
+    # photo was a cropped half-image and added no information to the proposition.
     company_title(p, lang, c["partner_kicker"], c["partner_title"], c["partner_body"], x=48, y=42, width=418, height=118, title_size=22)
     for i, (label, body) in enumerate(c["partner_points"]):
         y = 196 + i * 96
@@ -1123,7 +1123,8 @@ def company_brochure_v5(lang: str) -> fitz.Document:
 
     # 14. Contact — a clean commercial hand-off with live links.
     p = new_company_page(doc, FOREST)
-    add_image_cover(p, fitz.Rect(470, 0, 842, 595), ASSETS / "hero-dog-treats.webp")
+    # Keep the contact hand-off on the forest field; do not crop a second photo
+    # into the right half of the page.
     add_logo(p, "company", fitz.Rect(48, 34, 112, 100))
     add_html(p, fitz.Rect(117, 54, 132, 80), '<p class="gold" style="font-size:12pt;font-weight:700;text-align:center">×</p>', lang)
     add_logo(p, "zero", fitz.Rect(138, 41, 252, 94))

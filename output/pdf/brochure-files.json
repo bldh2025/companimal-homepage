@@ -5,7 +5,7 @@
     "locale": "ko-KR",
     "company": {
       "path": "output/pdf/company-profile-ko-2026-v6.pdf",
-      "bytes": 1869438,
+      "bytes": 1778528,
       "pages": 14
     },
     "product": {
@@ -20,7 +20,7 @@
     "locale": "en-US",
     "company": {
       "path": "output/pdf/company-profile-en-2026-v6.pdf",
-      "bytes": 1765688,
+      "bytes": 1674778,
       "pages": 14
     },
     "product": {
@@ -35,7 +35,7 @@
     "locale": "zh-CN",
     "company": {
       "path": "output/pdf/company-profile-zh-hans-2026-v6.pdf",
-      "bytes": 22586186,
+      "bytes": 22495276,
       "pages": 14
     },
     "product": {
@@ -50,7 +50,7 @@
     "locale": "zh-TW",
     "company": {
       "path": "output/pdf/company-profile-zh-hant-2026-v6.pdf",
-      "bytes": 22586285,
+      "bytes": 22495375,
       "pages": 14
     },
     "product": {
@@ -65,7 +65,7 @@
     "locale": "ja-JP",
     "company": {
       "path": "output/pdf/company-profile-ja-2026-v6.pdf",
-      "bytes": 22587433,
+      "bytes": 22496523,
       "pages": 14
     },
     "product": {
@@ -80,7 +80,7 @@
     "locale": "th-TH",
     "company": {
       "path": "output/pdf/company-profile-th-2026-v6.pdf",
-      "bytes": 1794421,
+      "bytes": 1703511,
       "pages": 14
     },
     "product": {
@@ -95,7 +95,7 @@
     "locale": "ar",
     "company": {
       "path": "output/pdf/company-profile-ar-2026-v6.pdf",
-      "bytes": 1870260,
+      "bytes": 1779350,
       "pages": 14
     },
     "product": {
