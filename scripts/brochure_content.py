@@ -23,7 +23,7 @@ COMPANY_CONTENT = {
     "ko": {
         "title": "주식회사 반려동행 회사소개서",
         "cover_badge": "COMPANY PROFILE · 2026",
-        "cover_title": "반려견이 매일 먹는 간식의\n기준을 다시 세웁니다.",
+        "cover_title": "반려견이 매일 먹는\n간식의\n기준을 다시 세웁니다.",
         "cover_subtitle": "주식회사 반려동행 × ZERO LABS",
         "overview_kicker": "COMPANY AT A GLANCE",
         "overview_title": "함께 걷는 회사, 반려동행",
@@ -264,7 +264,7 @@ COMPANY_CONTENT = {
 PRODUCT_CONTENT = {
     "ko": {
         "title": "ZERO LABS 제품소개서",
-        "cover_tagline": "모든 반려생활의 고민을 연구합니다",
+        "cover_tagline": "모든 반려생활의 고민을\n연구합니다",
         "cover_version": "PRODUCT BROCHURE · 2026",
         "greeting_title": "인사말",
         "greeting": ["ZERO LABS는 보호자와 파트너가 제품을 쉽게 이해하고 선택할 수 있도록 반려견 간식 라인업을 연구합니다.", "주식회사 반려동행은 ZERO LABS 브랜드를 운영하며 제품군, 포장 단위, 판매 채널을 정리해 안정적인 파트너 운영을 지원합니다.", "이 소개서는 제공된 2026년 중국어 브로슈어의 제품 구성과 포장 정보를 바탕으로 제작했습니다."],

@@ -1372,7 +1372,8 @@ def product_a_heading(page: fitz.Page, lang: str, kicker: str, title: str, body:
     body_color = "#dce2dc" if light else "#506056"
     markup = f'<p class="kicker" style="color:{"#d8b36a" if light else "#a57d30"}">{html.escape(kicker)}</p>'
     if title:
-        markup += f'<p style="font-size:{size}pt;line-height:1.15;font-weight:700;color:{title_color};margin-top:8pt">{html.escape(title)}</p>'
+        title_html = html.escape(title).replace(chr(10), "<br>")
+        markup += f'<p style="font-size:{size}pt;line-height:1.15;font-weight:700;color:{title_color};margin-top:8pt">{title_html}</p>'
     if body:
         markup += f'<p style="font-size:9pt;line-height:1.45;color:{body_color};margin-top:9pt">{html.escape(body)}</p>'
     add_html(page, rect, markup, lang, scale_low=0.82)
