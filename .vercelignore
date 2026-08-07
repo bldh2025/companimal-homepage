@@ -1,0 +1,9 @@
+node_modules/
+tmp/
+.codex-harness/
+.orca/
+output/pdf/concepts/
+output/pdf/company-profile-*-2026-v3.pdf
+output/pdf/company-profile-*-2026-v4.pdf
+output/pdf/company-profile-*-2026-v5.pdf
+output/pdf/product-brochure-*-2026-v2.pdf
