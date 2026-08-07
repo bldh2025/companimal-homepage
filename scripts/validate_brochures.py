@@ -11,7 +11,8 @@ from pathlib import Path
 import fitz
 from pypdf import PdfReader
 
-from brochure_content import COMPANY_CONTENT, LANGUAGES
+from brochure_content import COMPANY_CONTENT, LANGUAGES, PRODUCT_CONTENT
+from build_brochures import CHANNEL_URLS, CONTACT_URIS, HOMEPAGE_COMPANY
 from history_content import BRAND_HISTORY, EXPECTED_HISTORY_ITEM_COUNTS, EXPECTED_HISTORY_YEARS
 
 
@@ -51,7 +52,7 @@ def validate_pdf(path: Path, code: str, locale: str, pages: int, kind: str) -> d
             fail(f"JavaScript or attachment found in {path}")
 
     document = fitz.open(path)
-    expected_size = (595, 842) if kind == "company" else (1066, 1492)
+    expected_size = (842, 595)
     for page in document:
         actual = (round(page.rect.width), round(page.rect.height))
         if actual != expected_size:
@@ -74,6 +75,49 @@ def validate_pdf(path: Path, code: str, locale: str, pages: int, kind: str) -> d
             for item in items:
                 if compact(item) not in searchable:
                     fail(f"Company history item missing from {path}: {year} / {item}")
+        homepage_copy = HOMEPAGE_COMPANY[code]
+        required_copy = [
+            homepage_copy["ceo"][2],
+            homepage_copy["team"][1],
+            homepage_copy["team"][2],
+            homepage_copy["profile"][1],
+            homepage_copy["donation"][1],
+            homepage_copy["donation"][3],
+        ]
+        required_copy.extend(value for _, value, _ in homepage_copy["profile"][3])
+        for expected in required_copy:
+            if compact(expected) not in searchable:
+                fail(f"Homepage company content missing from {path}: {expected}")
+    if kind == "company":
+        if len(document[1].get_images(full=True)) < 1:
+            fail(f"CEO photograph missing from {path}")
+        if len(document[2].get_images(full=True)) < 3:
+            fail(f"Team or team-tee imagery missing from {path}")
+        channel_links = {link.get("uri") for link in document[7].get_links() if link.get("uri")}
+        if not set(CHANNEL_URLS).issubset(channel_links):
+            fail(f"Homepage sales-channel links missing from {path}")
+        contact_links = {link.get("uri") for link in document[13].get_links() if link.get("uri")}
+        if not {uri for uri in CONTACT_URIS if uri}.issubset(contact_links):
+            fail(f"Contact links missing from {path}")
+    if kind == "product":
+        product_content = PRODUCT_CONTENT[code]
+        if "30g" not in compact(combined):
+            fail(f"Trial-pack size missing from {path}")
+        if len(document[2].get_images(full=True)) < 8:
+            fail(f"Eight-product lineup imagery missing from {path}")
+        product_links = {link.get("uri") for link in document[15].get_links() if link.get("uri")}
+        if not {"https://companimal.kr", "https://pf.kakao.com/_xnyDcs"}.issubset(product_links):
+            fail(f"Product contact links missing from {path}")
+        if code not in {"th", "ar"}:
+            searchable = compact(combined)
+            for label in product_content["catalog"][:8]:
+                if compact(label) not in searchable:
+                    fail(f"Product lineup label missing from {path}: {label}")
+            for key, item in product_content["products"].items():
+                if compact(item[3]) not in searchable:
+                    fail(f"Product pack variant missing from {path}: {key} / {item[3]}")
+        if code != "ko" and any(leak in combined for leak in ("바이어용 비교", "제품 · 포장 · 구성", "MOQ · 공급가 · 리드타임")):
+            fail(f"Korean buyer-copy leakage found in {path}")
     font_xrefs = {font[0] for page in document for font in page.get_fonts(full=True)}
     if not font_xrefs:
         fail(f"No fonts found in {path}")
@@ -130,8 +174,26 @@ def validate_history_source() -> None:
             fail(f"Unexpected company history item counts for {code}")
 
 
+def validate_homepage_company_source() -> None:
+    source = (ROOT / "index.html").read_text(encoding="utf-8")
+    plain = " ".join(html.unescape(re.sub(r"<[^>]+>", " ", source)).split())
+    homepage_copy = HOMEPAGE_COMPANY["ko"]
+    for expected in (
+        homepage_copy["ceo"][2],
+        homepage_copy["team"][1],
+        homepage_copy["team"][2],
+        homepage_copy["donation"][1],
+        homepage_copy["donation"][3],
+    ):
+        if expected not in plain:
+            fail(f"Company brochure source differs from Korean homepage: {expected}")
+    for asset in ("ceo_jangseonghwan.webp", "team_walk.webp", "tee_black.webp", "tee_white.webp"):
+        if asset not in source:
+            fail(f"Homepage company asset is missing: {asset}")
+
+
 def validate_site(manifest: dict[str, object]) -> None:
-    expected_fallbacks = ("/output/pdf/company-profile-ko-2026-v3.pdf", "/output/pdf/product-brochure-ko-2026-v2.pdf")
+    expected_fallbacks = ("/output/pdf/company-profile-ko-2026-v6.pdf", "/output/pdf/product-brochure-ko-2026-v3.pdf")
     for path in HTML_FILES:
         source = path.read_text(encoding="utf-8")
         if source.count('id="downloads"') != 1:
@@ -171,10 +233,17 @@ def validate_site(manifest: dict[str, object]) -> None:
 
 def main() -> None:
     validate_history_source()
+    validate_homepage_company_source()
     manifest = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
     if list(manifest) != list(LANGUAGES):
         fail(f"Manifest languages differ: {list(manifest)}")
-    pdfs = sorted(OUTPUT.glob("*.pdf"))
+    pdfs = sorted(
+        {
+            ROOT / entry[kind]["path"]
+            for entry in manifest.values()
+            for kind in ("company", "product")
+        }
+    )
     if len(pdfs) != 14:
         fail(f"Expected exactly 14 PDFs, found {len(pdfs)}")
 

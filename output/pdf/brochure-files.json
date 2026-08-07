@@ -4,13 +4,13 @@
     "label_ko": "한국어",
     "locale": "ko-KR",
     "company": {
-      "path": "output/pdf/company-profile-ko-2026-v3.pdf",
-      "bytes": 1570354,
+      "path": "output/pdf/company-profile-ko-2026-v6.pdf",
+      "bytes": 1951771,
       "pages": 14
     },
     "product": {
-      "path": "output/pdf/product-brochure-ko-2026-v2.pdf",
-      "bytes": 11134488,
+      "path": "output/pdf/product-brochure-ko-2026-v3.pdf",
+      "bytes": 1132457,
       "pages": 16
     }
   },
@@ -19,13 +19,13 @@
     "label_ko": "English (영어)",
     "locale": "en-US",
     "company": {
-      "path": "output/pdf/company-profile-en-2026-v3.pdf",
-      "bytes": 1469581,
+      "path": "output/pdf/company-profile-en-2026-v6.pdf",
+      "bytes": 1848173,
       "pages": 14
     },
     "product": {
-      "path": "output/pdf/product-brochure-en-2026-v2.pdf",
-      "bytes": 11036210,
+      "path": "output/pdf/product-brochure-en-2026-v3.pdf",
+      "bytes": 1032737,
       "pages": 16
     }
   },
@@ -34,13 +34,13 @@
     "label_ko": "简体中文 (중국어 간체)",
     "locale": "zh-CN",
     "company": {
-      "path": "output/pdf/company-profile-zh-hans-2026-v3.pdf",
-      "bytes": 22291117,
+      "path": "output/pdf/company-profile-zh-hans-2026-v6.pdf",
+      "bytes": 22668667,
       "pages": 14
     },
     "product": {
-      "path": "output/pdf/product-brochure-zh-hans-2026-v2.pdf",
-      "bytes": 31865079,
+      "path": "output/pdf/product-brochure-zh-hans-2026-v3.pdf",
+      "bytes": 21858962,
       "pages": 16
     }
   },
@@ -49,13 +49,13 @@
     "label_ko": "繁體中文 (중국어 번체)",
     "locale": "zh-TW",
     "company": {
-      "path": "output/pdf/company-profile-zh-hant-2026-v3.pdf",
-      "bytes": 22291234,
+      "path": "output/pdf/company-profile-zh-hant-2026-v6.pdf",
+      "bytes": 22668765,
       "pages": 14
     },
     "product": {
-      "path": "output/pdf/product-brochure-zh-hant-2026-v2.pdf",
-      "bytes": 31865133,
+      "path": "output/pdf/product-brochure-zh-hant-2026-v3.pdf",
+      "bytes": 21859040,
       "pages": 16
     }
   },
@@ -64,13 +64,13 @@
     "label_ko": "日本語 (일본어)",
     "locale": "ja-JP",
     "company": {
-      "path": "output/pdf/company-profile-ja-2026-v3.pdf",
-      "bytes": 22292429,
+      "path": "output/pdf/company-profile-ja-2026-v6.pdf",
+      "bytes": 22669914,
       "pages": 14
     },
     "product": {
-      "path": "output/pdf/product-brochure-ja-2026-v2.pdf",
-      "bytes": 31865649,
+      "path": "output/pdf/product-brochure-ja-2026-v3.pdf",
+      "bytes": 21859911,
       "pages": 16
     }
   },
@@ -79,13 +79,13 @@
     "label_ko": "ไทย (태국어)",
     "locale": "th-TH",
     "company": {
-      "path": "output/pdf/company-profile-th-2026-v3.pdf",
-      "bytes": 1449652,
+      "path": "output/pdf/company-profile-th-2026-v6.pdf",
+      "bytes": 1876897,
       "pages": 14
     },
     "product": {
-      "path": "output/pdf/product-brochure-th-2026-v2.pdf",
-      "bytes": 11013255,
+      "path": "output/pdf/product-brochure-th-2026-v3.pdf",
+      "bytes": 1011029,
       "pages": 16
     }
   },
@@ -94,13 +94,13 @@
     "label_ko": "العربية (아랍어)",
     "locale": "ar",
     "company": {
-      "path": "output/pdf/company-profile-ar-2026-v3.pdf",
-      "bytes": 1500449,
+      "path": "output/pdf/company-profile-ar-2026-v6.pdf",
+      "bytes": 1952745,
       "pages": 14
     },
     "product": {
-      "path": "output/pdf/product-brochure-ar-2026-v2.pdf",
-      "bytes": 11055973,
+      "path": "output/pdf/product-brochure-ar-2026-v3.pdf",
+      "bytes": 1056049,
       "pages": 16
     }
   }
