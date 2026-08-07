@@ -2,5 +2,8 @@
   "version": 2,
   "framework": null,
   "buildCommand": "echo static-site",
-  "outputDirectory": "."
+  "outputDirectory": ".",
+  "builds": [
+    { "src": "**/*", "use": "@vercel/static" }
+  ]
 }
