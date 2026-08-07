@@ -368,21 +368,25 @@ FONT_FILES = {
 }
 
 PRODUCT_IMAGES = {
-    "meat": ASSETS / "products" / "gogi.webp",
-    "nutrition": ASSETS / "products" / "yeongyang.webp",
-    "berry": ASSETS / "products" / "berry.webp",
-    "baked": ASSETS / "products" / "gupbbang.webp",
-    "fresh": ASSETS / "products" / "fresh.webp",
-    "mungs": ASSETS / "products" / "mungs.webp",
-    "dental": ASSETS / "products" / "chika.webp",
-    "meatless": ASSETS / "products" / "meatless.webp",
+    "meat": ASSETS / "products" / "product-meat-1kg.png",
+    "meat-350g": ASSETS / "products" / "product-meat-350g.png",
+    "nutrition": ASSETS / "products" / "product-nutrition-1kg.png",
+    "nutrition-350g": ASSETS / "products" / "product-nutrition-350g.png",
+    "berry": ASSETS / "products" / "product-berry-1kg.png",
+    "berry-400g": ASSETS / "products" / "product-berry-400g.png",
+    "baked": ASSETS / "products" / "product-baked-1kg.png",
+    "baked-200g": ASSETS / "products" / "product-baked-200g.png",
+    "fresh": ASSETS / "products" / "product-fresh-100g.png",
+    "mungs": ASSETS / "products" / "product-mungs-100g.png",
+    "dental": ASSETS / "products" / "product-dental-240g.png",
+    "meatless": ASSETS / "products" / "product-meatless-1kg.png",
 }
 
 TRIAL_IMAGES = {
-    "meat": ASSETS / "products" / "trial-meat.png",
-    "nutrition": ASSETS / "products" / "trial-nutrition.png",
-    "berry": ASSETS / "products" / "trial-berry.png",
-    "baked": ASSETS / "products" / "trial-baked.png",
+    "meat": ASSETS / "products" / "product-trial-meat.png",
+    "nutrition": ASSETS / "products" / "product-trial-nutrition.png",
+    "berry": ASSETS / "products" / "product-trial-berry.png",
+    "baked": ASSETS / "products" / "product-trial-baked.png",
 }
 
 FONT_SOURCES = {
@@ -1333,14 +1337,14 @@ def product_brochure(lang: str) -> fitz.Document:
 
 PRODUCT_A_IMAGE_KEYS = {
     "meat_1kg": "meat",
-    "meat_350g": "meat",
+    "meat_350g": "meat-350g",
     "nutrition_1kg": "nutrition",
-    "nutrition_350g": "nutrition",
+    "nutrition_350g": "nutrition-350g",
     "berry_1kg": "berry",
-    "berry_400g": "berry",
+    "berry_400g": "berry-400g",
     "dental": "dental",
     "baked_1kg": "baked",
-    "baked_200g": "baked",
+    "baked_200g": "baked-200g",
     "meatless": "meatless",
     "fresh_ring": "fresh",
     "mungs": "mungs",
@@ -1374,7 +1378,7 @@ def product_a_heading(page: fitz.Page, lang: str, kicker: str, title: str, body:
     add_html(page, rect, markup, lang, scale_low=0.82)
 
 
-def product_a_card(page: fitz.Page, lang: str, item: tuple[str, str, list[str], str], image_key: str, rect: fitz.Rect, *, dark: bool = False) -> None:
+def product_a_card(page: fitz.Page, lang: str, item: tuple[str, str, list[str], str], image_key: str, rect: fitz.Rect, *, dark: bool = False, show_pack: bool = True) -> None:
     name, description, bullets, pack = item
     fill = GREEN if dark else WHITE
     title_color = "#ffffff" if dark else "#16241a"
@@ -1387,7 +1391,9 @@ def product_a_card(page: fitz.Page, lang: str, item: tuple[str, str, list[str], 
     text_top = image_rect.y1 + 10
     add_image_fit(page, image_rect, PRODUCT_IMAGES[image_key])
     if rect.height < 250:
-        markup = f'<p style="font-size:10pt;font-weight:700;color:{title_color}">{html.escape(name)}</p><p style="font-size:7.5pt;font-weight:700;color:{"#d8b36a" if dark else "#a57d30"};margin-top:4pt">{html.escape(pack)}</p>'
+        markup = f'<p style="font-size:10pt;font-weight:700;color:{title_color}">{html.escape(name)}</p>'
+        if show_pack:
+            markup += f'<p style="font-size:7.5pt;font-weight:700;color:{"#d8b36a" if dark else "#a57d30"};margin-top:4pt">{html.escape(pack)}</p>'
     else:
         markup = f'<p style="font-size:13pt;font-weight:700;color:{title_color}">{html.escape(name)}</p><p style="font-size:8pt;line-height:1.4;color:{body_color};margin-top:6pt">{html.escape(description)}</p><p style="font-size:8.5pt;font-weight:700;color:{"#d8b36a" if dark else "#a57d30"};margin-top:8pt">{html.escape(pack)}</p>'
     add_html(page, fitz.Rect(rect.x0 + 14, text_top, rect.x1 - 14, rect.y1 - 12), markup, lang, scale_low=0.78)
@@ -1446,13 +1452,13 @@ def product_brochure_a(lang: str) -> fitz.Document:
         visual_col = 3 - col if rtl else col
         x, y = 48 + visual_col * 187, 140 + row * 188
         item = c["products"][key]
-        product_a_card(p, lang, item, image_key, fitz.Rect(x, y, x + 169, y + 173))
+        product_a_card(p, lang, item, image_key, fitz.Rect(x, y, x + 169, y + 173), show_pack=False)
     product_a_footer(p, 3, total, lang)
 
     # 4–11. Individual product stories and pack variants.
     detail_pages = [
-        ("meat_1kg", "meat"), ("meat_350g", "meat"),
-        ("nutrition_1kg", "nutrition"), ("nutrition_350g", "nutrition"),
+        ("meat_1kg", "meat"), ("meat_350g", "meat-350g"),
+        ("nutrition_1kg", "nutrition"), ("nutrition_350g", "nutrition-350g"),
         ("berry_1kg", "berry"), ("berry_400g", "berry"),
         ("dental", "dental"), ("baked_1kg", "baked"),
     ]
@@ -1461,7 +1467,7 @@ def product_brochure_a(lang: str) -> fitz.Document:
 
     # 12. Remaining product families.
     p = new_company_page(doc, FOREST)
-    product_a_heading(p, lang, "MORE TO EXPLORE", c["catalog_title"], " · ".join(c["catalog"][4:8]), light=True, rect=fitz.Rect(48, 34, 794, 118), size=25)
+    product_a_heading(p, lang, "MORE TO EXPLORE", "", " · ".join(c["catalog"][4:8]), light=True, rect=fitz.Rect(48, 34, 794, 118), size=25)
     remaining = [("baked_200g", "baked"), ("meatless", "meatless"), ("fresh_ring", "fresh"), ("mungs", "mungs")]
     for index, (key, image_key) in enumerate(remaining):
         row, col = divmod(index, 4)
