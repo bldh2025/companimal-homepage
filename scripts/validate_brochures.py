@@ -154,7 +154,17 @@ def validate_pdf(path: Path, code: str, locale: str, pages: int, kind: str) -> d
             fail(f"Trial-pack size missing from {path}")
         if len(document[2].get_images(full=True)) < 8:
             fail(f"Eight-product lineup imagery missing from {path}")
-        product_links = {link.get("uri") for link in document[15].get_links() if link.get("uri")}
+        for page_no in range(3, 11):
+            detail_images = document[page_no].get_image_info()
+            if len(detail_images) != 1 or abs(fitz.Rect(detail_images[0]["bbox"]).width - fitz.Rect(detail_images[0]["bbox"]).height) > 0.1:
+                fail(f"Product detail image is not square in {path} page {page_no + 1}")
+        trial_images = document[12].get_image_info()
+        if len(trial_images) != 4 or any(fitz.Rect(image["bbox"]).height <= fitz.Rect(image["bbox"]).width for image in trial_images):
+            fail(f"Trial-pack source images are missing or stretched in {path}")
+        comparison_images = document[13].get_image_info()
+        if len(comparison_images) != 12 or any(abs(fitz.Rect(image["bbox"]).width - fitz.Rect(image["bbox"]).height) > 0.1 for image in comparison_images):
+            fail(f"Buyer-comparison images are missing or distorted in {path}")
+        product_links = {link.get("uri") for link in document[14].get_links() if link.get("uri")}
         if not {"https://companimal.kr", "https://pf.kakao.com/_xnyDcs"}.issubset(product_links):
             fail(f"Product contact links missing from {path}")
         if code not in {"th", "ar"}:
@@ -305,7 +315,7 @@ def main() -> None:
         if entry.get("label_ko") != language["label_ko"]:
             fail(f"Manifest Korean language label mismatch for {code}")
         report[code] = {}
-        for kind, expected_pages in (("company", 14), ("product", 16)):
+        for kind, expected_pages in (("company", 14), ("product", 15)):
             path = ROOT / entry[kind]["path"]
             report[code][kind] = validate_pdf(path, code, language["locale"], expected_pages, kind)
             if entry[kind]["bytes"] != path.stat().st_size:

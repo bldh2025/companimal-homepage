@@ -378,6 +378,13 @@ PRODUCT_IMAGES = {
     "meatless": ASSETS / "products" / "meatless.webp",
 }
 
+TRIAL_IMAGES = {
+    "meat": ASSETS / "products" / "trial-meat.png",
+    "nutrition": ASSETS / "products" / "trial-nutrition.png",
+    "berry": ASSETS / "products" / "trial-berry.png",
+    "baked": ASSETS / "products" / "trial-baked.png",
+}
+
 FONT_SOURCES = {
     "ko": (Path("/System/Library/Fonts/AppleSDGothicNeo.ttc"), (0, 6)),
     "cjk": (Path("/System/Library/Fonts/Hiragino Sans GB.ttc"), (0, 2)),
@@ -1359,7 +1366,9 @@ def product_a_footer(page: fitz.Page, page_no: int, total: int, lang: str, *, li
 def product_a_heading(page: fitz.Page, lang: str, kicker: str, title: str, body: str = "", *, light: bool = False, rect: fitz.Rect = fitz.Rect(48, 34, 794, 126), size: float = 25) -> None:
     title_color = "#ffffff" if light else "#16241a"
     body_color = "#dce2dc" if light else "#506056"
-    markup = f'<p class="kicker" style="color:{"#d8b36a" if light else "#a57d30"}">{html.escape(kicker)}</p><p style="font-size:{size}pt;line-height:1.15;font-weight:700;color:{title_color};margin-top:8pt">{html.escape(title)}</p>'
+    markup = f'<p class="kicker" style="color:{"#d8b36a" if light else "#a57d30"}">{html.escape(kicker)}</p>'
+    if title:
+        markup += f'<p style="font-size:{size}pt;line-height:1.15;font-weight:700;color:{title_color};margin-top:8pt">{html.escape(title)}</p>'
     if body:
         markup += f'<p style="font-size:9pt;line-height:1.45;color:{body_color};margin-top:9pt">{html.escape(body)}</p>'
     add_html(page, rect, markup, lang, scale_low=0.82)
@@ -1372,9 +1381,11 @@ def product_a_card(page: fitz.Page, lang: str, item: tuple[str, str, list[str], 
     body_color = "#dce2dc" if dark else "#506056"
     page.draw_rect(rect, radius=0.025, color=(0.88, 0.84, 0.74), fill=fill, width=0.5)
     compact = rect.height < 250
-    image_bottom = rect.y0 + (120 if compact else 142)
-    text_top = rect.y0 + (130 if compact else 154)
-    add_image_fit(page, fitz.Rect(rect.x0 + 10, rect.y0 + 10, rect.x1 - 10, image_bottom), PRODUCT_IMAGES[image_key])
+    image_size = min(rect.width - 20, 120 if compact else rect.width - 20)
+    image_x = rect.x0 + (rect.width - image_size) / 2
+    image_rect = fitz.Rect(image_x, rect.y0 + 10, image_x + image_size, rect.y0 + 10 + image_size)
+    text_top = image_rect.y1 + 10
+    add_image_fit(page, image_rect, PRODUCT_IMAGES[image_key])
     if rect.height < 250:
         markup = f'<p style="font-size:10pt;font-weight:700;color:{title_color}">{html.escape(name)}</p><p style="font-size:7.5pt;font-weight:700;color:{"#d8b36a" if dark else "#a57d30"};margin-top:4pt">{html.escape(pack)}</p>'
     else:
@@ -1386,7 +1397,9 @@ def product_a_detail(page: fitz.Page, lang: str, item: tuple[str, str, list[str]
     name, description, bullets, pack = item
     page.draw_rect(fitz.Rect(0, 0, 842, 595), color=None, fill=FOREST)
     image_panel = fitz.Rect(394, 34, 806, 530) if rtl else fitz.Rect(36, 34, 448, 530)
-    image_rect = fitz.Rect(image_panel.x0 + 16, 50, image_panel.x1 - 16, 500)
+    image_size = image_panel.width - 32
+    image_y = image_panel.y0 + (image_panel.height - image_size) / 2
+    image_rect = fitz.Rect(image_panel.x0 + 16, image_y, image_panel.x1 - 16, image_y + image_size)
     text_x0, text_x1 = (52, 352) if rtl else (490, 790)
     page.draw_rect(image_panel, color=None, fill=CREAM)
     add_image_fit(page, image_rect, PRODUCT_IMAGES[image_key])
@@ -1398,7 +1411,7 @@ def product_a_detail(page: fitz.Page, lang: str, item: tuple[str, str, list[str]
         add_html(page, fitz.Rect(text_x0, y + 16, text_x0 + 40, y + 46), f'<p style="font-size:8pt;color:#d8b36a;font-weight:700">0{index + 1}</p>', lang, scale_low=1)
         add_html(page, fitz.Rect(text_x0 + 54, y + 12, text_x1, y + 51), f'<p style="font-size:10pt;color:#ffffff;font-weight:700">{html.escape(bullet)}</p>', lang, scale_low=0.82)
     add_html(page, fitz.Rect(text_x0, 436, text_x1, 500), f'<p style="font-size:23pt;color:#d8b36a;font-weight:700">{html.escape(pack)}</p>', lang, scale_low=0.86)
-    product_a_footer(page, page_no, 16, lang, light=True)
+    product_a_footer(page, page_no, 15, lang, light=True)
 
 
 def product_brochure_a(lang: str) -> fitz.Document:
@@ -1406,7 +1419,7 @@ def product_brochure_a(lang: str) -> fitz.Document:
     c = PRODUCT_CONTENT[lang]
     rtl = LANGUAGES[lang]["dir"] == "rtl"
     doc = fitz.open()
-    total = 16
+    total = 15
 
     # 1. Cover
     p = new_company_page(doc, FOREST)
@@ -1427,7 +1440,7 @@ def product_brochure_a(lang: str) -> fitz.Document:
     # 3. Line-up overview
     p = new_company_page(doc)
     product_a_heading(p, lang, "PRODUCT LINEUP", c["catalog_title"], " · ".join(c["catalog"][:8]), rect=fitz.Rect(48, 34, 794, 118), size=25)
-    lineups = [("meat_1kg", "meat"), ("nutrition_1kg", "nutrition"), ("berry_1kg", "berry"), ("dental", "dental"), ("baked_1kg", "baked"), ("meatless", "meatless"), ("mungs", "mungs"), ("fresh_ring", "fresh")]
+    lineups = [("meat_1kg", "meat"), ("nutrition_1kg", "nutrition"), ("berry_1kg", "berry"), ("dental", "dental"), ("baked_200g", "baked"), ("meatless", "meatless"), ("mungs", "mungs"), ("fresh_ring", "fresh")]
     for index, (key, image_key) in enumerate(lineups):
         row, col = divmod(index, 4)
         visual_col = 3 - col if rtl else col
@@ -1436,28 +1449,17 @@ def product_brochure_a(lang: str) -> fitz.Document:
         product_a_card(p, lang, item, image_key, fitz.Rect(x, y, x + 169, y + 173))
     product_a_footer(p, 3, total, lang)
 
-    # 4. Category map
-    p = new_company_page(doc, FOREST)
-    product_a_heading(p, lang, "PRODUCT FAMILIES", c["catalog_title"], " · ".join(c["catalog"][:4]), light=True, rect=fitz.Rect(48, 34, 794, 118), size=25)
-    families = [("meat_1kg", "meat"), ("dental", "dental"), ("baked_1kg", "baked")]
-    for index, (key, image_key) in enumerate(families):
-        visual_index = 2 - index if rtl else index
-        x = 48 + visual_index * 249
-        item = c["products"][key]
-        product_a_card(p, lang, item, image_key, fitz.Rect(x, 150, x + 229, 488), dark=True)
-    product_a_footer(p, 4, total, lang, light=True)
-
-    # 5–12. Individual product stories and pack variants.
+    # 4–11. Individual product stories and pack variants.
     detail_pages = [
         ("meat_1kg", "meat"), ("meat_350g", "meat"),
         ("nutrition_1kg", "nutrition"), ("nutrition_350g", "nutrition"),
         ("berry_1kg", "berry"), ("berry_400g", "berry"),
         ("dental", "dental"), ("baked_1kg", "baked"),
     ]
-    for page_no, (key, image_key) in enumerate(detail_pages, start=5):
+    for page_no, (key, image_key) in enumerate(detail_pages, start=4):
         product_a_detail(new_company_page(doc, FOREST), lang, c["products"][key], image_key, page_no=page_no, rtl=rtl)
 
-    # 13. Remaining product families.
+    # 12. Remaining product families.
     p = new_company_page(doc, FOREST)
     product_a_heading(p, lang, "MORE TO EXPLORE", c["catalog_title"], " · ".join(c["catalog"][4:8]), light=True, rect=fitz.Rect(48, 34, 794, 118), size=25)
     remaining = [("baked_200g", "baked"), ("meatless", "meatless"), ("fresh_ring", "fresh"), ("mungs", "mungs")]
@@ -1466,9 +1468,9 @@ def product_brochure_a(lang: str) -> fitz.Document:
         visual_col = 3 - col if rtl else col
         x = 48 + visual_col * 187
         product_a_card(p, lang, c["products"][key], image_key, fitz.Rect(x, 150, x + 169, 480), dark=True)
-    product_a_footer(p, 13, total, lang, light=True)
+    product_a_footer(p, 12, total, lang, light=True)
 
-    # 14. Trial packs
+    # 13. Trial packs — use the actual 30 g pack artwork from the supplied brochure.
     p = new_company_page(doc)
     product_a_heading(p, lang, c["trial_title"], c["trial_title"], c["trial_intro"], rect=fitz.Rect(48, 34, 794, 118), size=25)
     trial = [("meat_350g", "meat"), ("nutrition_350g", "nutrition"), ("berry_400g", "berry"), ("baked_200g", "baked")]
@@ -1476,13 +1478,13 @@ def product_brochure_a(lang: str) -> fitz.Document:
         x = 48 + index * 150
         item = c["products"][key]
         p.draw_rect(fitz.Rect(x, 150, x + 132, 382), radius=0.025, color=(0.88, 0.84, 0.74), fill=WHITE, width=0.5)
-        add_image_fit(p, fitz.Rect(x + 8, 160, x + 124, 307), PRODUCT_IMAGES[image_key])
+        add_image_fit(p, fitz.Rect(x + 8, 168, x + 124, 284), TRIAL_IMAGES[image_key])
         add_html(p, fitz.Rect(x + 8, 322, x + 124, 365), f'<p style="font-size:8.5pt;font-weight:700;text-align:center">{html.escape(item[0])}</p><p style="font-size:8pt;color:#a57d30;text-align:center;margin-top:4pt">30 g</p>', lang, scale_low=0.8)
     p.draw_rect(fitz.Rect(668, 150, 794, 382), radius=0.025, color=None, fill=FOREST)
     add_html(p, fitz.Rect(684, 178, 778, 360), f'<p class="kicker" style="color:#d8b36a">B2B</p><p style="font-size:14pt;color:#ffffff;font-weight:700;margin-top:8pt">{html.escape(c["contact_title"])}</p><p style="font-size:8pt;line-height:1.5;color:#dce2dc;margin-top:14pt">{html.escape(PRODUCT_A_UI[lang]["b2b"])}</p>', lang, scale_low=0.8)
-    product_a_footer(p, 14, total, lang)
+    product_a_footer(p, 13, total, lang)
 
-    # 15. Buyer comparison
+    # 14. Buyer comparison
     p = new_company_page(doc, CREAM)
     ui = PRODUCT_A_UI[lang]
     product_a_heading(p, lang, ui["buyer"], ui["title"], ui["body"], rect=fitz.Rect(48, 34, 794, 118), size=25)
@@ -1494,14 +1496,14 @@ def product_brochure_a(lang: str) -> fitz.Document:
         y = 166 + index * 29
         item = c["products"][key]
         p.draw_line(fitz.Point(48, y), fitz.Point(794, y), color=(0.82, 0.80, 0.74), width=0.5)
-        add_image_fit(p, fitz.Rect(52, y + 3, 132, y + 25), PRODUCT_IMAGES[PRODUCT_A_IMAGE_KEYS[key]])
+        add_image_fit(p, fitz.Rect(52, y + 2, 76, y + 26), PRODUCT_IMAGES[PRODUCT_A_IMAGE_KEYS[key]])
         count = "3" if "3" in item[3] else "4" if "4" in item[3] else "1"
         values = (item[0], item[3], ui["counts"][count])
         for x, value in zip((190, 460, 665), values):
             add_html(p, fitz.Rect(x, y + 6, x + 135, y + 24), f'<p style="font-size:7.3pt;font-weight:700">{html.escape(value)}</p>', lang, scale_low=0.78)
-    product_a_footer(p, 15, total, lang)
+    product_a_footer(p, 14, total, lang)
 
-    # 16. Contact
+    # 15. Contact
     p = new_company_page(doc, FOREST)
     image_rect = fitz.Rect(0, 0, 372, 595) if rtl else fitz.Rect(470, 0, 842, 595)
     add_image_cover(p, image_rect, ASSETS / "hero-dog-treats.webp")
@@ -1525,7 +1527,7 @@ def product_brochure_a(lang: str) -> fitz.Document:
         p.insert_link({"kind": fitz.LINK_URI, "from": fitz.Rect(x, 484, x + 70, 554), "uri": uri})
     disclosure_rect = fitz.Rect(402, 488, 794, 548) if rtl else fitz.Rect(235, 488, 445, 548)
     add_html(p, disclosure_rect, f'<p class="small soft" style="font-size:7pt;line-height:1.5">{html.escape(c["contact_disclosure"])}</p>', lang, scale_low=0.82)
-    product_a_footer(p, 16, total, lang, light=True)
+    product_a_footer(p, 15, total, lang, light=True)
 
     doc.set_metadata({"title": c["title"], "author": "Companimal Co., Ltd.", "subject": "ZERO LABS product brochure — visual catalogue A", "keywords": f"ZERO LABS, dog treats, {LANGUAGES[lang]['locale']}"})
     doc.subset_fonts()

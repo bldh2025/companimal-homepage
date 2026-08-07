@@ -10,8 +10,8 @@
     },
     "product": {
       "path": "output/pdf/product-brochure-ko-2026-v3.pdf",
-      "bytes": 1139269,
-      "pages": 16
+      "bytes": 1597233,
+      "pages": 15
     }
   },
   "en": {
@@ -25,8 +25,8 @@
     },
     "product": {
       "path": "output/pdf/product-brochure-en-2026-v3.pdf",
-      "bytes": 1039549,
-      "pages": 16
+      "bytes": 1497416,
+      "pages": 15
     }
   },
   "zh-hans": {
@@ -40,8 +40,8 @@
     },
     "product": {
       "path": "output/pdf/product-brochure-zh-hans-2026-v3.pdf",
-      "bytes": 21865777,
-      "pages": 16
+      "bytes": 22323861,
+      "pages": 15
     }
   },
   "zh-hant": {
@@ -55,8 +55,8 @@
     },
     "product": {
       "path": "output/pdf/product-brochure-zh-hant-2026-v3.pdf",
-      "bytes": 21865855,
-      "pages": 16
+      "bytes": 22323926,
+      "pages": 15
     }
   },
   "ja": {
@@ -70,8 +70,8 @@
     },
     "product": {
       "path": "output/pdf/product-brochure-ja-2026-v3.pdf",
-      "bytes": 21866726,
-      "pages": 16
+      "bytes": 22324703,
+      "pages": 15
     }
   },
   "th": {
@@ -85,8 +85,8 @@
     },
     "product": {
       "path": "output/pdf/product-brochure-th-2026-v3.pdf",
-      "bytes": 1017841,
-      "pages": 16
+      "bytes": 1475739,
+      "pages": 15
     }
   },
   "ar": {
@@ -100,8 +100,8 @@
     },
     "product": {
       "path": "output/pdf/product-brochure-ar-2026-v3.pdf",
-      "bytes": 1062865,
-      "pages": 16
+      "bytes": 1519696,
+      "pages": 15
     }
   }
 }
