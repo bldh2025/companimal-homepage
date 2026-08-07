@@ -1115,8 +1115,10 @@ def company_brochure_v5(lang: str) -> fitz.Document:
 
     # 13. Partnership — the repeat-sales proposition after the team story.
     p = new_company_page(doc)
-    add_image_cover(p, fitz.Rect(506, 0, 842, 595), ASSETS / "hero-dog-treats.webp")
-    p.draw_rect(fitz.Rect(496, 0, 560, 595), color=None, fill=CREAM, fill_opacity=0.72, overlay=True)
+    # Let the contact image meet the forest panel directly.  The former
+    # translucent bridge band rendered as an unintended black vertical stripe
+    # in PDF viewers, especially at the image boundary.
+    add_image_cover(p, fitz.Rect(470, 0, 842, 595), ASSETS / "hero-dog-treats.webp")
     company_title(p, lang, c["partner_kicker"], c["partner_title"], c["partner_body"], x=48, y=42, width=418, height=118, title_size=22)
     for i, (label, body) in enumerate(c["partner_points"]):
         y = 196 + i * 96
@@ -1130,7 +1132,6 @@ def company_brochure_v5(lang: str) -> fitz.Document:
     # 14. Contact — a clean commercial hand-off with live links.
     p = new_company_page(doc, FOREST)
     add_image_cover(p, fitz.Rect(470, 0, 842, 595), ASSETS / "hero-dog-treats.webp")
-    p.draw_rect(fitz.Rect(445, 0, 545, 595), color=None, fill=FOREST, fill_opacity=0.72, overlay=True)
     add_logo(p, "company", fitz.Rect(48, 34, 112, 100))
     add_html(p, fitz.Rect(117, 54, 132, 80), '<p class="gold" style="font-size:12pt;font-weight:700;text-align:center">×</p>', lang)
     add_logo(p, "zero", fitz.Rect(138, 41, 252, 94))
@@ -1510,9 +1511,8 @@ def product_brochure_a(lang: str) -> fitz.Document:
 
     # 16. Contact
     p = new_company_page(doc, FOREST)
-    image_rect = fitz.Rect(0, 0, 342, 595) if rtl else fitz.Rect(500, 0, 842, 595)
+    image_rect = fitz.Rect(0, 0, 372, 595) if rtl else fitz.Rect(470, 0, 842, 595)
     add_image_cover(p, image_rect, ASSETS / "hero-dog-treats.webp")
-    p.draw_rect(fitz.Rect(0, 0, 90, 595) if rtl else fitz.Rect(470, 0, 560, 595), color=None, fill=FOREST, fill_opacity=0.76, overlay=True)
     add_logo(p, "zero", fitz.Rect(604, 40, 740, 102) if rtl else fitz.Rect(48, 40, 186, 102))
     text_rect = fitz.Rect(402, 142, 794, 255) if rtl else fitz.Rect(48, 142, 440, 255)
     product_a_heading(p, lang, "CONTACT", c["contact_title"], c["contact_intro"], light=True, rect=text_rect, size=27)
