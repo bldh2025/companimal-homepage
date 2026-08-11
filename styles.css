@@ -503,3 +503,37 @@
     font-weight:800;font-size:15px;
     letter-spacing:.14em;text-transform:uppercase;color:var(--gold);
   }
+
+  /* ---------- 쿠키 동의 배너 ---------- */
+  /* 측정 도구가 설정돼 있을 때만 analytics.js 가 이 배너를 그린다. */
+  .consent{
+    position:fixed;left:0;right:0;bottom:0;z-index:80;
+    display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap;
+    padding:16px 24px;
+    background:var(--green-900);color:var(--cream);
+    border-top:1px solid rgba(216,179,106,.34);
+    box-shadow:0 -8px 28px rgba(0,0,0,.26);
+    transform:translateY(100%);transition:transform .28s ease;
+  }
+  .consent.show{transform:translateY(0)}
+  .consent p{
+    margin:0;max-width:720px;font-size:14px;line-height:1.6;
+    color:rgba(245,241,232,.9);word-break:keep-all;
+  }
+  .consent-actions{display:flex;gap:10px;flex:0 0 auto}
+  .consent button{
+    font:inherit;font-weight:800;font-size:14px;line-height:1;
+    padding:11px 20px;border-radius:999px;border:1px solid transparent;
+    cursor:pointer;transition:transform .16s ease,background .16s ease;
+  }
+  .consent button:hover{transform:translateY(-1px)}
+  .consent .accept{background:var(--gold);color:var(--green-900)}
+  .consent .accept:hover{background:var(--gold-d)}
+  .consent .decline{background:transparent;color:var(--cream);border-color:rgba(245,241,232,.34)}
+  .consent .decline:hover{background:rgba(245,241,232,.1)}
+  @media (max-width:720px){
+    .consent{gap:12px;padding:14px 18px 18px}
+    .consent p{font-size:13px}
+    .consent-actions{width:100%}
+    .consent button{flex:1}
+  }
