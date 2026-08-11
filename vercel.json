@@ -1,9 +1,0 @@
-{
-  "version": 2,
-  "framework": null,
-  "buildCommand": "echo static-site",
-  "outputDirectory": ".",
-  "builds": [
-    { "src": "**/*", "use": "@vercel/static" }
-  ]
-}
