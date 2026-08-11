@@ -8,7 +8,7 @@
   "use strict";
 
   var GA4_ID = "G-0M4MWCDVLB";   // Google Analytics 4 측정 ID
-  var NAVER_ID = "";   // 예: "1a2b3c4d5e"   — 네이버 애널리틱스 인증 ID
+  var NAVER_ID = "1a58329d2dc0f50";   // 네이버 애널리틱스 인증 ID
 
   if (!GA4_ID && !NAVER_ID) return;
 
@@ -89,7 +89,7 @@
       };
     }
     if (NAVER_ID) {
-      loadScript("https://wcs.naver.net/wcslog.js", function () {
+      loadScript("https://wcs.pstatic.net/wcslog.js", function () {
         if (!window.wcs) return;
         window.wcs_add = window.wcs_add || {};
         window.wcs_add.wa = NAVER_ID;
