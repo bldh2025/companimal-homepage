@@ -12,14 +12,21 @@ concurrency:
   cancel-in-progress: true
 jobs:
   deploy:
-    # Pages 백엔드 불안정으로 인한 간헐 실패 시 실패 메일 발송 방지 (반영 여부는 라이브 콘텐츠로 검증)
-    continue-on-error: true
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # 소개서 PDF를 만드는 데만 쓰이는 원본 이미지와 검토용 로고 시안,
+      # 빌드 스크립트는 사이트가 한 번도 요청하지 않으면서 배포 용량의 대부분을 차지한다.
+      - name: Drop files the site never serves
+        run: |
+          rm -f zerolabs_homepage_assets/logo-*.png
+          rm -f zerolabs_homepage_assets/lockup_*.png
+          rm -f zerolabs_homepage_assets/products/product-*.png
+          rm -f zerolabs_homepage_assets/products/trial-*.png
+          rm -rf scripts
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
