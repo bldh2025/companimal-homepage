@@ -8,18 +8,21 @@ language variants cannot drift independently.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import html
 import io
 import json
 import os
 import re
 import shutil
+import string
 import unicodedata
 from pathlib import Path
 
 import fitz
 import qrcode
 from PIL import Image, ImageChops, ImageDraw, ImageOps
+from fontTools import subset
 from fontTools.ttLib import TTCollection
 from pypdf import PdfReader, PdfWriter
 from pypdf.generic import NameObject, TextStringObject
@@ -360,7 +363,7 @@ HOMEPAGE_COMPANY = {
 }
 
 FONT_FILES = {
-    "en": (Path("/System/Library/Fonts/Supplemental/Arial.ttf"), Path("/System/Library/Fonts/Supplemental/Arial Bold.ttf")),
+    "en": (FONT_DIR / "en-regular.ttf", FONT_DIR / "en-bold.ttf"),
     "ko": (FONT_DIR / "ko-regular.ttf", FONT_DIR / "ko-bold.ttf"),
     "cjk": (FONT_DIR / "cjk-regular.ttf", FONT_DIR / "cjk-bold.ttf"),
     "th": (FONT_DIR / "th-regular.ttf", FONT_DIR / "th-bold.ttf"),
@@ -396,23 +399,92 @@ FONT_SOURCES = {
     "ar": (Path("/System/Library/Fonts/GeezaPro.ttc"), (0, 1)),
 }
 
+# Arial ships as standalone faces rather than a collection, but still needs
+# subsetting — carried whole it adds ~2.4 MB to every brochure that sets Latin text.
+FONT_FACE_SOURCES = {
+    "en": (
+        Path("/System/Library/Fonts/Supplemental/Arial.ttf"),
+        Path("/System/Library/Fonts/Supplemental/Arial Bold.ttf"),
+    ),
+}
+
+
+def typeset_characters() -> str:
+    """Every character the generator can typeset.
+
+    The brochures are built entirely from literals in the content modules and in
+    this file, so reading those sources yields a guaranteed superset of the text
+    that reaches a page. Runtime-formatted values (page numbers, byte counts) add
+    only ASCII, which is included wholesale.
+    """
+    sources = (
+        Path(__file__),
+        Path(__file__).with_name("brochure_content.py"),
+        Path(__file__).with_name("history_content.py"),
+    )
+    characters = set(string.printable)
+    for source in sources:
+        characters.update(source.read_text(encoding="utf-8"))
+    # Shaping can call for glyphs no source spells out — Thai SARA AM is composed
+    # on the page but decomposes to nikhahit plus sara aa on the way to the font,
+    # and dropping the pieces renders it as tofu. The non-CJK scripts in play are
+    # small enough to carry whole; a face only keeps the range it actually covers.
+    for first, last in ((0x0020, 0x024F), (0x0300, 0x036F), (0x0600, 0x06FF),
+                        (0x0E00, 0x0E7F), (0x2000, 0x206F), (0xFE70, 0xFEFF)):
+        characters.update(chr(code) for code in range(first, last + 1))
+    return "".join(sorted(characters))
+
+
+def subset_font(source: Path, target: Path, characters: str) -> None:
+    """Write a copy of `source` carrying only the glyphs `characters` needs.
+
+    Hiragino Sans GB covers 29k glyphs; embedding it whole costs 11 MB per face,
+    which MuPDF's own subsetter leaves untouched for CFF collections this large.
+    """
+    options = subset.Options()
+    options.notdef_outline = True
+    options.recalc_bounds = True
+    options.drop_tables += ["DSIG"]
+    # MuPDF resolves these faces by original glyph id; renumbering them makes it
+    # drop the font outright ("Ptr List creation failed") and silently omit every
+    # non-Latin glyph, so the subset has to keep the original numbering.
+    options.retain_gids = True
+    font = subset.load_font(str(source), options)
+    subsetter = subset.Subsetter(options=options)
+    subsetter.populate(text=characters)
+    subsetter.subset(font)
+    subset.save_font(font, str(target), options)
+    font.close()
+
 
 def prepare_font_files() -> None:
     """Extract the required macOS TTC faces into the ignored build cache."""
     FONT_DIR.mkdir(parents=True, exist_ok=True)
-    for key, (collection_path, indices) in FONT_SOURCES.items():
+    characters = typeset_characters()
+    signature = hashlib.sha256(characters.encode("utf-8")).hexdigest()[:16]
+    for key in (*FONT_SOURCES, *FONT_FACE_SOURCES):
         regular, bold = FONT_FILES[key]
-        if not collection_path.exists():
-            raise FileNotFoundError(f"Required system font is unavailable: {collection_path}")
-        source_regular = FONT_DIR / f"{key}-source-regular.ttf"
-        source_bold = FONT_DIR / f"{key}-source-bold.ttf"
-        if not source_regular.exists() or not source_bold.exists():
-            collection = TTCollection(str(collection_path))
-            collection.fonts[indices[0]].save(source_regular)
-            collection.fonts[indices[1]].save(source_bold)
+        if key in FONT_SOURCES:
+            collection_path, indices = FONT_SOURCES[key]
+            if not collection_path.exists():
+                raise FileNotFoundError(f"Required system font is unavailable: {collection_path}")
+            source_regular = FONT_DIR / f"{key}-source-regular.ttf"
+            source_bold = FONT_DIR / f"{key}-source-bold.ttf"
+            if not source_regular.exists() or not source_bold.exists():
+                collection = TTCollection(str(collection_path))
+                collection.fonts[indices[0]].save(source_regular)
+                collection.fonts[indices[1]].save(source_bold)
+        else:
+            source_regular, source_bold = FONT_FACE_SOURCES[key]
+            for source_path in (source_regular, source_bold):
+                if not source_path.exists():
+                    raise FileNotFoundError(f"Required system font is unavailable: {source_path}")
+        stamp = FONT_DIR / f"{key}-subset.sha"
+        stale = not stamp.exists() or stamp.read_text(encoding="utf-8") != signature
         for source_font, target in ((source_regular, regular), (source_bold, bold)):
-            if not target.exists() or target.stat().st_size < source_font.stat().st_size * 0.9:
-                shutil.copy2(source_font, target)
+            if stale or not target.exists():
+                subset_font(source_font, target, characters)
+        stamp.write_text(signature, encoding="utf-8")
 
 
 def ensure_inputs() -> None:
@@ -546,8 +618,8 @@ def add_image_cover(page: fitz.Page, rect: fitz.Rect, path: Path) -> None:
 
 
 def add_image_fit(page: fitz.Page, rect: fitz.Rect, path: Path) -> None:
-    path = compatible_image(path)
-    page.insert_image(rect, filename=str(path), keep_proportion=True)
+    path, mask = fit_image(path, rect)
+    page.insert_image(rect, filename=str(path), mask=mask, keep_proportion=True)
 
 
 def add_logo(page: fitz.Page, kind: str, rect: fitz.Rect) -> None:
@@ -565,6 +637,49 @@ def compatible_image(path: Path) -> Path:
     if not target.exists() or target.stat().st_mtime < path.stat().st_mtime:
         Image.open(path).convert("RGB").save(target, quality=92, optimize=True, progressive=True)
     return target
+
+
+def fit_image(path: Path, rect: fitz.Rect) -> tuple[Path, bytes | None]:
+    """Downsample to twice its on-page size, the density `cover_image` also uses.
+
+    The product cut-outs ship at 1024–2048 px but land in rects as small as 24 pt,
+    and `insert_image` embeds a PNG losslessly at whatever size it is handed, so
+    without this the photography alone accounts for 98% of the file. A transparent
+    source becomes a JPEG plus a separate alpha mask, which PDF composites exactly
+    like RGBA but stores about five times smaller.
+
+    Returns the image path and the mask bytes `insert_image` expects, if any.
+    """
+    with Image.open(path) as probe:
+        source_width, source_height = probe.size
+        transparent = probe.mode in ("RGBA", "LA", "PA") or "transparency" in probe.info
+        # QR codes and other flat artwork lose more to resampling and JPEG ringing
+        # than they cost to store, so they are handed over untouched.
+        flat = probe.convert("RGB").getcolors(maxcolors=64) is not None
+    scale = min(rect.width / source_width, rect.height / source_height) * 2
+    if flat or (scale >= 1 and not transparent):
+        return compatible_image(path), None
+    width = max(1, round(source_width * min(scale, 1)))
+    height = max(1, round(source_height * min(scale, 1)))
+    cache_dir = TMP / "image-cache" / "fit"
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    stem = f"{path.parent.name}-{path.stem}-{width}x{height}"
+    target = cache_dir / f"{stem}.jpg"
+    mask_target = cache_dir / f"{stem}-mask.png"
+    if not target.exists() or target.stat().st_mtime < path.stat().st_mtime:
+        with Image.open(path) as source:
+            resized = source.convert("RGBA" if transparent else "RGB")
+            if resized.size != (width, height):
+                resized = resized.resize((width, height), Image.Resampling.LANCZOS)
+            if transparent:
+                # Copying into a fresh L image leaves the source's RGB ICC profile
+                # behind; MuPDF rejects a mask that carries one.
+                mask = Image.new("L", resized.size)
+                mask.putdata(list(resized.getchannel("A").getdata()))
+                mask.save(mask_target, optimize=True)
+                resized = resized.convert("RGB")
+            resized.save(target, quality=92, optimize=True, progressive=True)
+    return target, mask_target.read_bytes() if transparent else None
 
 
 def cover_image(path: Path, rect: fitz.Rect) -> Path:
@@ -905,6 +1020,8 @@ def company_brochure(lang: str) -> fitz.Document:
     add_footer(p, 14, total, lang, light=True)
 
     doc.set_metadata({"title": c["title"], "author": "Companimal Co., Ltd.", "subject": "Company profile", "keywords": f"Companimal, ZERO LABS, {LANGUAGES[lang]['locale']}"})
+    # MuPDF pulls in its own Droid Sans Fallback for glyphs Arial lacks;
+    # only its subsetter can trim that face, so this still earns its keep.
     doc.subset_fonts()
     return doc
 
@@ -1157,6 +1274,8 @@ def company_brochure_v5(lang: str) -> fitz.Document:
     company_footer(p, 14, total, lang, light=True)
 
     doc.set_metadata({"title": c["title"], "author": "Companimal Co., Ltd.", "subject": "Company profile v5", "keywords": f"Companimal, ZERO LABS, {LANGUAGES[lang]['locale']}"})
+    # MuPDF pulls in its own Droid Sans Fallback for glyphs Arial lacks;
+    # only its subsetter can trim that face, so this still earns its keep.
     doc.subset_fonts()
     return doc
 
@@ -1331,6 +1450,8 @@ def product_brochure(lang: str) -> fitz.Document:
     p.insert_link({"kind": fitz.LINK_URI, "from": fitz.Rect(780, 355, 990, 565), "uri": "https://pf.kakao.com/_xnyDcs"})
 
     doc.set_metadata({"title": c["title"], "author": "Companimal Co., Ltd.", "subject": "ZERO LABS product brochure — localized from the supplied 16-page master", "keywords": f"ZERO LABS, dog treats, {LANGUAGES[lang]['locale']}"})
+    # MuPDF pulls in its own Droid Sans Fallback for glyphs Arial lacks;
+    # only its subsetter can trim that face, so this still earns its keep.
     doc.subset_fonts()
     return doc
 
@@ -1537,6 +1658,8 @@ def product_brochure_a(lang: str) -> fitz.Document:
     product_a_footer(p, 15, total, lang, light=True)
 
     doc.set_metadata({"title": c["title"], "author": "Companimal Co., Ltd.", "subject": "ZERO LABS product brochure — visual catalogue A", "keywords": f"ZERO LABS, dog treats, {LANGUAGES[lang]['locale']}"})
+    # MuPDF pulls in its own Droid Sans Fallback for glyphs Arial lacks;
+    # only its subsetter can trim that face, so this still earns its keep.
     doc.subset_fonts()
     return doc
 

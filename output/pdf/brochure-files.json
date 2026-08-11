@@ -5,12 +5,12 @@
     "locale": "ko-KR",
     "company": {
       "path": "output/pdf/company-profile-ko-2026-v6.pdf",
-      "bytes": 8457942,
+      "bytes": 1562405,
       "pages": 14
     },
     "product": {
       "path": "output/pdf/product-brochure-ko-2026-v3.pdf",
-      "bytes": 26432033,
+      "bytes": 1921128,
       "pages": 15
     }
   },
@@ -20,12 +20,12 @@
     "locale": "en-US",
     "company": {
       "path": "output/pdf/company-profile-en-2026-v6.pdf",
-      "bytes": 8354191,
+      "bytes": 1166192,
       "pages": 14
     },
     "product": {
       "path": "output/pdf/product-brochure-en-2026-v3.pdf",
-      "bytes": 26323984,
+      "bytes": 1505999,
       "pages": 15
     }
   },
@@ -35,12 +35,12 @@
     "locale": "zh-CN",
     "company": {
       "path": "output/pdf/company-profile-zh-hans-2026-v6.pdf",
-      "bytes": 29174689,
+      "bytes": 1947487,
       "pages": 14
     },
     "product": {
       "path": "output/pdf/product-brochure-zh-hans-2026-v3.pdf",
-      "bytes": 47150459,
+      "bytes": 2293262,
       "pages": 15
     }
   },
@@ -50,12 +50,12 @@
     "locale": "zh-TW",
     "company": {
       "path": "output/pdf/company-profile-zh-hant-2026-v6.pdf",
-      "bytes": 29174788,
+      "bytes": 1947586,
       "pages": 14
     },
     "product": {
       "path": "output/pdf/product-brochure-zh-hant-2026-v3.pdf",
-      "bytes": 47150513,
+      "bytes": 2293316,
       "pages": 15
     }
   },
@@ -65,12 +65,12 @@
     "locale": "ja-JP",
     "company": {
       "path": "output/pdf/company-profile-ja-2026-v6.pdf",
-      "bytes": 29175936,
+      "bytes": 1948734,
       "pages": 14
     },
     "product": {
       "path": "output/pdf/product-brochure-ja-2026-v3.pdf",
-      "bytes": 47151314,
+      "bytes": 2294117,
       "pages": 15
     }
   },
@@ -80,12 +80,12 @@
     "locale": "th-TH",
     "company": {
       "path": "output/pdf/company-profile-th-2026-v6.pdf",
-      "bytes": 8382924,
+      "bytes": 1222521,
       "pages": 14
     },
     "product": {
       "path": "output/pdf/product-brochure-th-2026-v3.pdf",
-      "bytes": 26302299,
+      "bytes": 1515495,
       "pages": 15
     }
   },
@@ -95,12 +95,12 @@
     "locale": "ar",
     "company": {
       "path": "output/pdf/company-profile-ar-2026-v6.pdf",
-      "bytes": 8458763,
+      "bytes": 1280720,
       "pages": 14
     },
     "product": {
       "path": "output/pdf/product-brochure-ar-2026-v3.pdf",
-      "bytes": 26345658,
+      "bytes": 1537500,
       "pages": 15
     }
   }

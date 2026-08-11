@@ -116,7 +116,6 @@ def set_meta(doc: fitz.Document, title: str, subject: str) -> fitz.Document:
         "subject": subject,
         "keywords": "ZERO LABS, Companimal, brochure design prototype",
     })
-    doc.subset_fonts()
     return doc
 
 
