@@ -7,7 +7,7 @@
 (function () {
   "use strict";
 
-  var GA4_ID = "";     // 예: "G-XXXXXXXXXX" — Google Analytics 4 측정 ID
+  var GA4_ID = "G-0M4MWCDVLB";   // Google Analytics 4 측정 ID
   var NAVER_ID = "";   // 예: "1a2b3c4d5e"   — 네이버 애널리틱스 인증 ID
 
   if (!GA4_ID && !NAVER_ID) return;
