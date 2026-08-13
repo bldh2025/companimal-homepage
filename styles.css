@@ -51,7 +51,6 @@
   .btn:hover{transform:translateY(-2px)}
   .btn-lime{background:var(--lime);color:var(--green-900)}
   .btn-lime:hover{background:var(--lime-dark)}
-  .btn-cream{background:var(--cream);color:var(--green-800)}
   .btn-outline{background:transparent;border-color:currentColor}
   .btn-dark{background:var(--green-800);color:var(--cream)}
   .btn-dark:hover{background:var(--green-700)}
@@ -73,13 +72,6 @@
     height:76px;
   }
   .brand{display:flex;align-items:center;gap:12px;color:var(--cream)}
-  .brand .mark{
-    width:38px;height:38px;border-radius:11px;
-    background:var(--lime);color:var(--green-900);
-    display:grid;place-items:center;font-weight:900;font-size:18px;
-  }
-  .brand .name{font-weight:900;font-size:19px;letter-spacing:.02em;line-height:1.1}
-  .brand .name small{display:block;font-size:11px;font-weight:600;letter-spacing:.14em;color:var(--lime);opacity:.9}
   .brand{gap:16px;align-items:center}
   .brand img{width:auto;display:block}
   .brand .lg-corp{height:46px}
@@ -139,7 +131,6 @@
     min-height:calc(100vh - 153px);min-height:calc(100svh - 153px)}
   .hero>.wrap{width:100%}
   .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
-  .hero-logo{height:150px;width:auto;display:block;margin:0 0 28px}
   .hero-eyebrow{
     display:inline-flex;align-items:center;gap:9px;
     font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
@@ -169,14 +160,6 @@
     border:1px solid var(--line);
   }
   .hero-card img{width:100%;height:100%;object-fit:cover;aspect-ratio:4/4.4}
-  .hero-badge{
-    position:absolute;left:22px;bottom:86px;z-index:2;
-    background:var(--cream);color:var(--green-800);
-    border-radius:var(--radius-md);padding:16px 20px;
-    box-shadow:0 16px 34px rgba(0,0,0,.28);max-width:210px;
-  }
-  .hero-badge b{display:block;font-size:15px;font-weight:800;margin-bottom:3px}
-  .hero-badge span{font-size:12.5px;color:var(--muted);font-weight:500}
 
   /* ---------- Logo / trust strip ---------- */
   .trust{background:var(--lime);color:var(--green-900)}
@@ -212,11 +195,6 @@
   .principle .num{font-size:13px;font-weight:800;color:var(--lime-dark);letter-spacing:.1em}
   .principle .pmg{aspect-ratio:2.2/1;border-radius:12px;overflow:hidden;margin-bottom:20px;background:var(--cream-2)}
   .principle .pmg img{width:100%;height:100%;object-fit:cover;display:block}
-  .principle .pico{
-    width:56px;height:56px;border-radius:16px;background:var(--green-800);color:var(--lime);
-    display:grid;place-items:center;margin:14px 0 20px;
-  }
-  .principle .pico svg{width:28px;height:28px}
   .principle h3{font-size:23px;font-weight:900;margin-bottom:10px}
   .principle h3 .en{display:block;font-size:13px;font-weight:700;color:var(--lime-dark);letter-spacing:.06em;margin-top:2px}
   .principle p{color:var(--muted);font-size:15.5px}
@@ -233,7 +211,7 @@
   }
   .pcard:hover{transform:translateY(-6px);background:var(--green-600)}
   .pcard .tag{font-size:12px;font-weight:700;letter-spacing:.1em;color:var(--lime);text-transform:uppercase}
-  .pcard h4{font-size:22px;font-weight:900;margin:14px 0 6px}
+  .pcard h3{font-size:22px;font-weight:900;margin:14px 0 6px}
   .pcard .en{font-size:14px;color:rgba(245,241,232,.7);font-weight:600}
   .pcard .pdesc{clear:both;margin-top:16px;padding-top:16px;border-top:1px solid var(--line);
     font-size:14px;line-height:1.62;color:rgba(245,241,232,.74)}
@@ -252,7 +230,7 @@
   .make-card .mimg img{width:100%;height:100%;object-fit:cover;display:block}
   .make-card .kw{display:inline-block;font-size:12.5px;font-weight:800;letter-spacing:.1em;
     text-transform:uppercase;color:var(--lime-dark)}
-  .make-card h4{font-size:21px;font-weight:900;margin:12px 0 10px;color:var(--ink)}
+  .make-card h3{font-size:21px;font-weight:900;margin:12px 0 10px;color:var(--ink)}
   .make-card p{font-size:14.5px;line-height:1.62;color:var(--muted)}
   @media(max-width:920px){.make-grid{grid-template-columns:repeat(2,1fr)}}
   @media(max-width:640px){.make-grid{grid-template-columns:1fr}}
@@ -279,8 +257,6 @@
   }
   @media(max-width:920px){.tl{grid-template-columns:repeat(2,1fr)}}
   @media(max-width:640px){.tl{grid-template-columns:1fr}}
-  @media(max-width:920px){.hl-grid{grid-template-columns:repeat(2,1fr)}}
-  @media(max-width:640px){.hl-grid{grid-template-columns:1fr}}
 
   /* Donation campaign */
   .donation{background:var(--green-800);color:var(--cream)}
@@ -292,7 +268,7 @@
   .donation-metric span{display:block;margin-top:12px;color:rgba(245,241,232,.74);font-size:15px;font-weight:700}
   .donation-copy{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
   .donation-item{border:1px solid var(--line);background:var(--green-700);border-radius:var(--radius-md);padding:28px 26px}
-  .donation-item h4{font-size:19px;font-weight:900;margin-bottom:10px}
+  .donation-item h3{font-size:19px;font-weight:900;margin-bottom:10px}
   .donation-item p{font-size:14.5px;line-height:1.65;color:rgba(245,241,232,.76)}
   @media(max-width:920px){.donation-grid{grid-template-columns:1fr;gap:30px}.donation-copy{grid-template-columns:1fr 1fr}}
   @media(max-width:640px){.donation-copy{grid-template-columns:1fr}.donation-metric{padding:22px 0}}
@@ -309,7 +285,7 @@
     flex:0 0 auto;width:46px;height:46px;border-radius:13px;background:var(--lime);color:var(--green-900);
     display:grid;place-items:center;font-weight:900;
   }
-  .pl-item h4{font-size:17.5px;font-weight:800;margin-bottom:4px}
+  .pl-item h3{font-size:17.5px;font-weight:800;margin-bottom:4px}
   .pl-item p{font-size:14.5px;color:var(--muted)}
   .partner-visual{
     border-radius:var(--radius-lg);background:var(--green-800);color:var(--cream);
@@ -336,7 +312,7 @@
   }
   .ch-card:hover{transform:translateY(-6px);border-color:var(--lime)}
   .ch-card .type{font-size:12.5px;font-weight:800;letter-spacing:.12em;color:var(--lime);text-transform:uppercase}
-  .ch-card h4{font-size:22px;font-weight:900;margin-top:10px}
+  .ch-card h3{font-size:22px;font-weight:900;margin-top:10px}
   .ch-card p{font-size:14.5px;color:rgba(245,241,232,.72);margin-top:8px}
   .ch-card .go{display:inline-flex;align-items:center;gap:8px;font-weight:800;color:var(--lime);font-size:15px}
   .ch-card .go svg{width:18px;height:18px;transition:transform .2s}
@@ -425,9 +401,6 @@
   footer{background:var(--green-900);color:rgba(245,241,232,.7);padding:56px 0 40px;border-top:1px solid var(--line)}
   .foot-top{display:flex;justify-content:space-between;gap:32px;flex-wrap:wrap;align-items:flex-start}
   .foot-brand{display:flex;align-items:center;gap:12px;color:var(--cream)}
-  .foot-brand .mark{width:38px;height:38px;border-radius:11px;background:var(--lime);color:var(--green-900);display:grid;place-items:center;font-weight:900;font-size:18px}
-  .foot-brand .name{font-weight:900;font-size:18px}
-  .foot-brand .name small{display:block;font-size:11px;font-weight:600;letter-spacing:.14em;color:var(--lime)}
   .foot-brand{gap:16px;align-items:center}
   .foot-brand img{height:58px;width:auto;display:block}
   .foot-links{display:flex;gap:26px;flex-wrap:wrap}
@@ -466,7 +439,6 @@
     .trust .wrap{flex-direction:column;align-items:flex-start}
     .sec,.channels,.company{padding:60px 0}
     .hero{padding-top:44px}
-    .hero-logo{height:104px;margin-bottom:20px}
     .br-d{display:none}
     .brand{gap:10px}
     .brand .lg-corp{height:38px}
@@ -483,7 +455,7 @@
   .downloads{padding:96px 0;background:var(--cream-2)}
   .download-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;margin-top:42px}
   .download-card{background:var(--cream);border:1px solid rgba(22,36,26,.12);border-radius:var(--radius-lg);padding:34px;box-shadow:0 14px 34px rgba(22,36,26,.07)}
-  .download-type{display:inline-flex;color:var(--gold-dark);font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:14px}
+  .download-type{display:inline-flex;color:var(--gold-d);font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:14px}
   .download-card h3{font-size:28px;line-height:1.25;margin-bottom:10px}
   .download-card>p{color:var(--muted);min-height:52px}
   .download-controls{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;margin-top:28px}
