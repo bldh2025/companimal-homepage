@@ -49,7 +49,8 @@
       if (code === "ko" && entry && entry[kind + "Html"]) file = entry[kind + "Html"];
       if (!file) return;
       link.href = "/" + file.path;
-      link.download = file.path.split("/").pop();
+      if (file.format === "html") link.removeAttribute("download");
+      else link.download = file.path.split("/").pop();
       link.hreflang = entry.locale;
       link.type = file.format === "html" ? "text/html" : "application/pdf";
       if (file.format === "html" && link.dataset.downloadLabelHtml) link.textContent = link.dataset.downloadLabelHtml;
