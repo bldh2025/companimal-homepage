@@ -52,13 +52,16 @@ GOLD = (216 / 255, 179 / 255, 106 / 255)
 WHITE = (1, 1, 1)
 SAGE = (190 / 255, 203 / 255, 190 / 255)
 PALE_GREEN = (225 / 255, 232 / 255, 223 / 255)
+CONTACT_EMAIL = "ceo@companimal.kr"
+COMPANY_PAGE_COUNT = 14
+PRODUCT_PAGE_COUNT = 15
 
 CONTACT_VALUES = [
     "https://companimal.kr",
     "https://zerolabs.co.kr",
     "https://제로랩스.com",
     "https://pf.kakao.com/_xnyDcs",
-    "bldh2025@naver.com",
+    CONTACT_EMAIL,
     "Unit 215-26, 30 Namdong-seoro 236beon-gil, Namdong-gu, Incheon, Republic of Korea",
 ]
 
@@ -67,7 +70,7 @@ CONTACT_URIS = [
     "https://zerolabs.co.kr",
     "https://xn--yj2b7mx8w6tf.com/#",
     "https://pf.kakao.com/_xnyDcs",
-    "mailto:bldh2025@naver.com",
+    f"mailto:{CONTACT_EMAIL}",
     None,
 ]
 
@@ -81,7 +84,7 @@ CHANNEL_URLS = [
 PRODUCT_CONTACT_VALUES = [
     "https://companimal.kr",
     "https://pf.kakao.com/_xnyDcs",
-    "bldh2025@naver.com",
+    CONTACT_EMAIL,
     "Unit 215-26, 30 Namdong-seoro 236beon-gil, Namdong-gu, Incheon, Republic of Korea",
 ]
 
@@ -786,7 +789,7 @@ def company_brochure(lang: str) -> fitz.Document:
     detail = COMPANY_DETAIL[lang]
     labels = COMPANY_PAGE_LABELS[lang]
     doc = fitz.open()
-    total = 14
+    total = COMPANY_PAGE_COUNT
 
     # 1. Cover
     p = new_page(doc, FOREST)
@@ -1034,7 +1037,7 @@ def company_brochure_v5(lang: str) -> fitz.Document:
     home = HOMEPAGE_COMPANY[lang]
     rtl = LANGUAGES[lang]["dir"] == "rtl"
     doc = fitz.open()
-    total = 14
+    total = COMPANY_PAGE_COUNT
 
     # 1. Cover — a presentation cover, not a portrait report template.
     p = new_company_page(doc, FOREST)
@@ -1543,11 +1546,11 @@ def product_a_detail(page: fitz.Page, lang: str, item: tuple[str, str, list[str]
 
 
 def product_brochure_a(lang: str) -> fitz.Document:
-    """Build the selected green, product-first visual catalogue in 16 landscape pages."""
+    """Build the selected green, product-first visual catalogue in 15 landscape pages."""
     c = PRODUCT_CONTENT[lang]
     rtl = LANGUAGES[lang]["dir"] == "rtl"
     doc = fitz.open()
-    total = 15
+    total = PRODUCT_PAGE_COUNT
 
     # 1. Cover
     p = new_company_page(doc, FOREST)
@@ -1639,13 +1642,15 @@ def product_brochure_a(lang: str) -> fitz.Document:
     text_rect = fitz.Rect(402, 142, 794, 255) if rtl else fitz.Rect(48, 142, 440, 255)
     product_a_heading(p, lang, "CONTACT", c["contact_title"], c["contact_intro"], light=True, rect=text_rect, size=27)
     profile_items = HOMEPAGE_COMPANY[lang]["profile"][3]
-    contact_values = ["companimal.kr", "pf.kakao.com", "bldh2025@naver.com", profile_items[-1][1]]
+    contact_values = ["companimal.kr", "pf.kakao.com", CONTACT_EMAIL, profile_items[-1][1]]
     for index, (label, value) in enumerate(zip(c["contact_labels"], contact_values)):
         y = 286 + index * 50
         x0, x1 = (402, 560) if rtl else (48, 170)
         vx0, vx1 = (574, 794) if rtl else (182, 448)
         add_html(p, fitz.Rect(x0, y, x1, y + 28), f'<p class="label" style="font-size:7.5pt;color:#d8b36a">{html.escape(label)}</p>', lang, scale_low=1)
         add_html(p, fitz.Rect(vx0, y - 2, vx1, y + 30), f'<p style="font-size:9pt;color:#ffffff;font-weight:700">{html.escape(value)}</p>', lang, scale_low=0.82)
+        if value == CONTACT_EMAIL:
+            p.insert_link({"kind": fitz.LINK_URI, "from": fitz.Rect(vx0, y - 2, vx1, y + 30), "uri": f"mailto:{CONTACT_EMAIL}"})
     q1 = qr_png("https://companimal.kr", "qr-company.png")
     q2 = qr_png("https://pf.kakao.com/_xnyDcs", "qr-kakao.png")
     qr_xs = (696, 604) if rtl else (48, 140)

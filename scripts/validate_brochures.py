@@ -13,7 +13,7 @@ import fitz
 from pypdf import PdfReader
 
 from brochure_content import COMPANY_CONTENT, LANGUAGES, PRODUCT_CONTENT
-from build_brochures import CHANNEL_URLS, CONTACT_URIS, HOMEPAGE_COMPANY
+from build_brochures import CHANNEL_URLS, COMPANY_PAGE_COUNT, CONTACT_URIS, HOMEPAGE_COMPANY, PRODUCT_PAGE_COUNT
 from history_content import BRAND_HISTORY, EXPECTED_HISTORY_ITEM_COUNTS, EXPECTED_HISTORY_YEARS
 
 
@@ -21,6 +21,8 @@ ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "output" / "pdf"
 MANIFEST_PATH = OUTPUT / "brochure-files.json"
 HTML_FILES = [ROOT / "index.html", ROOT / "en" / "index.html", ROOT / "zh" / "index.html", ROOT / "zh-hant" / "index.html"]
+EXPECTED_EMAIL = "ceo@companimal.kr"
+LEGACY_EMAIL = "bldh2025@naver.com"
 
 
 def fail(message: str) -> None:
@@ -98,9 +100,11 @@ def validate_pdf(path: Path, code: str, locale: str, pages: int, kind: str) -> d
     if any(len(text) < 10 for text in page_text):
         fail(f"Searchable text is missing on one or more pages in {path}")
     combined = "\n".join(page_text)
-    for forbidden in ("0000.com", "010-6532-4544"):
+    for forbidden in ("0000.com", "010-6532-4544", LEGACY_EMAIL):
         if forbidden in combined:
             fail(f"Legacy placeholder contact found in {path}: {forbidden}")
+    if EXPECTED_EMAIL not in combined:
+        fail(f"Current contact email missing from {path}: {EXPECTED_EMAIL}")
     # MuPDF's Thai and Arabic ToUnicode extraction is not stable with the
     # system TTC fonts, so those locales are verified from source structure
     # plus rendered pages below instead of exact extracted glyph order.
@@ -170,7 +174,7 @@ def validate_pdf(path: Path, code: str, locale: str, pages: int, kind: str) -> d
         if len(comparison_images) != 12 or any(abs(fitz.Rect(image["bbox"]).width - fitz.Rect(image["bbox"]).height) > 0.1 for image in comparison_images):
             fail(f"Buyer-comparison images are missing or distorted in {path}")
         product_links = {link.get("uri") for link in document[14].get_links() if link.get("uri")}
-        if not {"https://companimal.kr", "https://pf.kakao.com/_xnyDcs"}.issubset(product_links):
+        if not {"https://companimal.kr", "https://pf.kakao.com/_xnyDcs", f"mailto:{EXPECTED_EMAIL}"}.issubset(product_links):
             fail(f"Product contact links missing from {path}")
         if code not in {"th", "ar"}:
             searchable = compact(combined)
@@ -287,6 +291,11 @@ def validate_featured_html(entry: dict[str, object]) -> None:
     for required in ("ZERO LABS", "주식회사 반려동행", "Remove", "Balance", "Supply"):
         if required not in template:
             fail(f"Featured HTML required content missing: {required}")
+    if EXPECTED_EMAIL not in template or "[ 이메일 입력 ]" in template or "[ 도매몰 주소 입력 ]" in template or LEGACY_EMAIL in template:
+        fail(f"Featured company HTML contact email is stale: {path}")
+    patch_script = (ROOT / "company-contact-patch.js").read_text(encoding="utf-8")
+    if EXPECTED_EMAIL not in patch_script or LEGACY_EMAIL in patch_script:
+        fail("Featured company HTML contact patch is stale")
 
 
 def validate_product_html(entry: dict[str, object]) -> None:
@@ -304,11 +313,15 @@ def validate_product_html(entry: dict[str, object]) -> None:
     for required in ("고기가득", "영양가득", "베리가득", "치카하개", "굽빵", "미트리스", "멍스", "프레쉬링"):
         if required not in source:
             fail(f"Featured product HTML content missing: {required}")
+    if EXPECTED_EMAIL not in source or f"mailto:{EXPECTED_EMAIL}" not in source or LEGACY_EMAIL in source:
+        fail(f"Featured product HTML contact email is stale: {path}")
 
 
 def validate_site(manifest: dict[str, object]) -> None:
     for path in HTML_FILES:
         source = path.read_text(encoding="utf-8")
+        if EXPECTED_EMAIL not in source or f"mailto:{EXPECTED_EMAIL}" not in source or LEGACY_EMAIL in source:
+            fail(f"Homepage contact email is stale: {path}")
         if source.count('id="downloads"') != 1:
             fail(f"Download section missing or duplicated in {path}")
         if source.count('data-brochure-kind="company"') != 1 or source.count('data-brochure-kind="product"') != 1:
@@ -380,7 +393,7 @@ def main() -> None:
         if entry.get("label_ko") != language["label_ko"]:
             fail(f"Manifest Korean language label mismatch for {code}")
         report[code] = {}
-        for kind, expected_pages in (("company", 14), ("product", 15)):
+        for kind, expected_pages in (("company", COMPANY_PAGE_COUNT), ("product", PRODUCT_PAGE_COUNT)):
             path = ROOT / entry[kind]["path"]
             report[code][kind] = validate_pdf(path, code, language["locale"], expected_pages, kind)
             if entry[kind]["bytes"] != path.stat().st_size:

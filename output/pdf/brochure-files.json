@@ -5,27 +5,27 @@
     "locale": "ko-KR",
     "company": {
       "path": "output/pdf/company-profile-ko-2026-v6.pdf",
-      "bytes": 1562405,
+      "bytes": 1562387,
       "pages": 14
-    },
-    "companyHtml": {
-      "path": "output/brochure/zerolabs-company-profile-ko-2026.html",
-      "bytes": 11052621,
-      "pages": 12,
-      "format": "html",
-      "sha256": "900b2a594b2a77e84451e6494885c86b01de4691557b07e31c81ed10bebbc48a"
-    },
-    "productHtml": {
-      "path": "output/brochure/zerolabs-product-profile-ko-2026-v2.html",
-      "bytes": 22424,
-      "pages": 16,
-      "format": "html",
-      "sha256": "10a21433388e975813169282efa5bf5ceda4d18a840ca4c3b76ae962d16001d5"
     },
     "product": {
       "path": "output/pdf/product-brochure-ko-2026-v3.pdf",
-      "bytes": 1921128,
+      "bytes": 1921292,
       "pages": 15
+    },
+    "companyHtml": {
+      "path": "output/brochure/zerolabs-company-profile-ko-2026.html",
+      "bytes": 11052607,
+      "pages": 12,
+      "format": "html",
+      "sha256": "cf4b81811ce6316efa63485a0e4c1f00e6743fd120b7aa98be4f449df56f244c"
+    },
+    "productHtml": {
+      "path": "output/brochure/zerolabs-product-profile-ko-2026-v2.html",
+      "bytes": 22520,
+      "pages": 16,
+      "format": "html",
+      "sha256": "1403d42443b826185fe45f96d13f27feafc31434f20d0ce653f1c0e33c92288c"
     }
   },
   "en": {
@@ -34,12 +34,12 @@
     "locale": "en-US",
     "company": {
       "path": "output/pdf/company-profile-en-2026-v6.pdf",
-      "bytes": 1166192,
+      "bytes": 1166186,
       "pages": 14
     },
     "product": {
       "path": "output/pdf/product-brochure-en-2026-v3.pdf",
-      "bytes": 1505999,
+      "bytes": 1506174,
       "pages": 15
     }
   },
@@ -49,12 +49,12 @@
     "locale": "zh-CN",
     "company": {
       "path": "output/pdf/company-profile-zh-hans-2026-v6.pdf",
-      "bytes": 1947487,
+      "bytes": 1947481,
       "pages": 14
     },
     "product": {
       "path": "output/pdf/product-brochure-zh-hans-2026-v3.pdf",
-      "bytes": 2293262,
+      "bytes": 2293438,
       "pages": 15
     }
   },
@@ -64,12 +64,12 @@
     "locale": "zh-TW",
     "company": {
       "path": "output/pdf/company-profile-zh-hant-2026-v6.pdf",
-      "bytes": 1947586,
+      "bytes": 1947580,
       "pages": 14
     },
     "product": {
       "path": "output/pdf/product-brochure-zh-hant-2026-v3.pdf",
-      "bytes": 2293316,
+      "bytes": 2293492,
       "pages": 15
     }
   },
@@ -79,12 +79,12 @@
     "locale": "ja-JP",
     "company": {
       "path": "output/pdf/company-profile-ja-2026-v6.pdf",
-      "bytes": 1948734,
+      "bytes": 1948728,
       "pages": 14
     },
     "product": {
       "path": "output/pdf/product-brochure-ja-2026-v3.pdf",
-      "bytes": 2294117,
+      "bytes": 2294293,
       "pages": 15
     }
   },
@@ -94,12 +94,12 @@
     "locale": "th-TH",
     "company": {
       "path": "output/pdf/company-profile-th-2026-v6.pdf",
-      "bytes": 1222521,
+      "bytes": 1222515,
       "pages": 14
     },
     "product": {
       "path": "output/pdf/product-brochure-th-2026-v3.pdf",
-      "bytes": 1515495,
+      "bytes": 1515672,
       "pages": 15
     }
   },
@@ -109,12 +109,12 @@
     "locale": "ar",
     "company": {
       "path": "output/pdf/company-profile-ar-2026-v6.pdf",
-      "bytes": 1280720,
+      "bytes": 1280717,
       "pages": 14
     },
     "product": {
       "path": "output/pdf/product-brochure-ar-2026-v3.pdf",
-      "bytes": 1537500,
+      "bytes": 1537580,
       "pages": 15
     }
   }

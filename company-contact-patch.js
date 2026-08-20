@@ -1,7 +1,7 @@
 (function () {
   "use strict";
   var replacements = {
-    "[ 이메일 입력 ]": "bldh2025@naver.com",
+    "[ 이메일 입력 ]": "ceo@companimal.kr",
     "[ 도매몰 주소 입력 ]": "제로랩스.com"
   };
   function replaceText() {

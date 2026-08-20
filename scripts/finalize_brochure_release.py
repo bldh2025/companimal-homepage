@@ -10,7 +10,7 @@ import shutil
 from pathlib import Path
 
 from brochure_content import LANGUAGES
-from build_brochures import render_pdf
+from build_brochures import COMPANY_PAGE_COUNT, PRODUCT_PAGE_COUNT, render_pdf
 from validate_brochures import validate_featured_html, validate_pdf
 
 
@@ -26,8 +26,8 @@ def main() -> None:
         product = OUTPUT / f"product-brochure-{code}-2026-v3.pdf"
         if not company.is_file() or not product.is_file() or company.is_symlink() or product.is_symlink():
             raise RuntimeError(f"Incomplete staged set for {code}")
-        company_report = validate_pdf(company, code, language["locale"], 14, "company")
-        product_report = validate_pdf(product, code, language["locale"], 16, "product")
+        company_report = validate_pdf(company, code, language["locale"], COMPANY_PAGE_COUNT, "company")
+        product_report = validate_pdf(product, code, language["locale"], PRODUCT_PAGE_COUNT, "product")
         results[code] = {
             "label": language["label"],
             "label_ko": language["label_ko"],

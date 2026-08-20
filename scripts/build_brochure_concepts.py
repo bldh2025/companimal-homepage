@@ -243,7 +243,7 @@ def company_option_b() -> fitz.Document:
         add_html(p, fitz.Rect(112, y + 13, 275, y + 63), f'<p style="font-size:14pt;font-weight:700">{html.escape(title)}</p>', KO)
         add_html(p, fitz.Rect(295, y + 12, 770, y + 69), f'<p style="font-size:9pt;line-height:1.5;color:#506056">{html.escape(body)}</p>', KO)
     p.draw_rect(fitz.Rect(48, 478, 794, 535), radius=0.025, color=None, fill=GOLD)
-    add_html(p, fitz.Rect(70, 492, 775, 522), '<p style="font-size:10pt;font-weight:700;color:#16241a">MOQ · 공급가 · 마진 · 리드타임은 거래 형태에 맞춰 상담합니다.  bldh2025@naver.com</p>', KO)
+    add_html(p, fitz.Rect(70, 492, 775, 522), '<p style="font-size:10pt;font-weight:700;color:#16241a">MOQ · 공급가 · 마진 · 리드타임은 거래 형태에 맞춰 상담합니다.  ceo@companimal.kr</p>', KO)
     footer(p, option, 4, total)
     return set_meta(doc, option, "Company brochure concept B")
 
@@ -354,7 +354,7 @@ def product_option_a() -> fitz.Document:
         add_image_fit(p, fitz.Rect(x + 8, 165, x + 124, 304), PRODUCT_IMAGES[key])
         add_html(p, fitz.Rect(x, 315, x + 132, 346), f'<p style="font-size:8.5pt;font-weight:700;text-align:center">{name} · 30 g</p>', KO)
     p.draw_rect(fitz.Rect(668, 155, 794, 355), radius=0.025, color=None, fill=FOREST)
-    add_html(p, fitz.Rect(686, 178, 778, 330), '<p style="font-size:8pt;color:#d8b36a;font-weight:700">B2B</p><p style="font-size:14pt;color:#ffffff;font-weight:700;margin-top:8pt">제품 문의</p><p style="font-size:7.5pt;line-height:1.5;color:#dce2dc;margin-top:14pt">공급가 · MOQ · 리드타임</p><p style="font-size:8pt;color:#d8b36a;font-weight:700;margin-top:22pt">bldh2025@naver.com</p>', KO, scale_low=0.82)
+    add_html(p, fitz.Rect(686, 178, 778, 330), '<p style="font-size:8pt;color:#d8b36a;font-weight:700">B2B</p><p style="font-size:14pt;color:#ffffff;font-weight:700;margin-top:8pt">제품 문의</p><p style="font-size:7.5pt;line-height:1.5;color:#dce2dc;margin-top:14pt">공급가 · MOQ · 리드타임</p><p style="font-size:8pt;color:#d8b36a;font-weight:700;margin-top:22pt">ceo@companimal.kr</p>', KO, scale_low=0.82)
     add_html(p, fitz.Rect(48, 410, 794, 510), '<p style="font-size:16pt;font-weight:700">제품 사진은 크게, 설명은 짧게, 문의 동선은 한 번에.</p><p style="font-size:8.8pt;line-height:1.5;color:#506056;margin-top:10pt">Cambridge Treats의 카테고리 구분과 Fromm의 제품 연결 방식을 ZERO LABS의 그린 톤으로 재해석한 안입니다.</p>', KO)
     footer(p, option, 4, total)
     return set_meta(doc, option, "Product brochure concept A")
@@ -425,7 +425,7 @@ def product_option_b() -> fitz.Document:
         p.draw_line(fitz.Point(x, 160), fitz.Point(x + 160, 160), color=GOLD, width=1.2)
         add_html(p, fitz.Rect(x, 178, x + 160, 295), f'<p style="font-size:20pt;color:#d8b36a;font-weight:700">{num}</p><p style="font-size:14pt;font-weight:700;margin-top:9pt">{title}</p><p style="font-size:8.3pt;line-height:1.45;color:#506056;margin-top:10pt">{body}</p>', KO)
     p.draw_rect(fitz.Rect(48, 370, 794, 505), radius=0.025, color=None, fill=FOREST)
-    add_html(p, fitz.Rect(75, 394, 755, 480), '<p style="font-size:17pt;color:#ffffff;font-weight:700">B2B 거래 문의</p><p style="font-size:9pt;color:#dce2dc;margin-top:10pt">제로랩스 도매몰 · bldh2025@naver.com · KakaoTalk Channel</p><p style="font-size:8pt;color:#d8b36a;font-weight:700;margin-top:13pt">제품별 상세 사양과 거래 조건은 공식 채널에서 확인합니다.</p>', KO)
+    add_html(p, fitz.Rect(75, 394, 755, 480), '<p style="font-size:17pt;color:#ffffff;font-weight:700">B2B 거래 문의</p><p style="font-size:9pt;color:#dce2dc;margin-top:10pt">제로랩스 도매몰 · ceo@companimal.kr · KakaoTalk Channel</p><p style="font-size:8pt;color:#d8b36a;font-weight:700;margin-top:13pt">제품별 상세 사양과 거래 조건은 공식 채널에서 확인합니다.</p>', KO)
     footer(p, option, 4, total)
     return set_meta(doc, option, "Product brochure concept B")
 
