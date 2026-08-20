@@ -51,7 +51,7 @@ COMPANY_CONTENT = {
         "contact_kicker": "CONTACT",
         "contact_title": "주식회사 반려동행과 연결하세요",
         "contact_subtitle": "제품 문의와 B2B 거래 상담은 이메일 또는 카카오톡 채널로 연락해 주세요.",
-        "contact_labels": ["회사 홈페이지", "ZERO LABS 공식몰", "B2B 도매몰", "카카오톡 채널", "이메일", "주소"],
+        "contact_labels": ["회사 홈페이지", "ZERO LABS 공식몰", "도매주소몰", "카카오톡 채널", "이메일", "주소"],
         "disclosure": "본 소개서는 companimal.kr에 게시된 회사 제공 정보를 기준으로 2026년에 작성했습니다.",
     },
     "en": {

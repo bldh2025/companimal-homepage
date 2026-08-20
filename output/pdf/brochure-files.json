@@ -5,7 +5,7 @@
     "locale": "ko-KR",
     "company": {
       "path": "output/pdf/company-profile-ko-2026-v6.pdf",
-      "bytes": 1562387,
+      "bytes": 1562385,
       "pages": 14
     },
     "product": {
@@ -15,10 +15,10 @@
     },
     "companyHtml": {
       "path": "output/brochure/zerolabs-company-profile-ko-2026.html",
-      "bytes": 11052607,
+      "bytes": 11052613,
       "pages": 12,
       "format": "html",
-      "sha256": "cf4b81811ce6316efa63485a0e4c1f00e6743fd120b7aa98be4f449df56f244c"
+      "sha256": "3bf6b67fe3dc6bcc56221927507116d64d42cb4b7cbdcf8926f8697bb7b4c2a7"
     },
     "productHtml": {
       "path": "output/brochure/zerolabs-product-profile-ko-2026-v2.html",
