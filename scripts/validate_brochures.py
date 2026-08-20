@@ -13,7 +13,7 @@ import fitz
 from pypdf import PdfReader
 
 from brochure_content import COMPANY_CONTENT, LANGUAGES, PRODUCT_CONTENT
-from build_brochures import CHANNEL_URLS, COMPANY_PAGE_COUNT, CONTACT_URIS, HOMEPAGE_COMPANY, PRODUCT_PAGE_COUNT
+from build_brochures import CHANNEL_URLS, COMPANY_PAGE_COUNT, CONTACT_URIS, HOMEPAGE_COMPANY, PRODUCT_PAGE_COUNT, WHOLESALE_URL
 from history_content import BRAND_HISTORY, EXPECTED_HISTORY_ITEM_COUNTS, EXPECTED_HISTORY_YEARS
 
 
@@ -174,7 +174,7 @@ def validate_pdf(path: Path, code: str, locale: str, pages: int, kind: str) -> d
         if len(comparison_images) != 12 or any(abs(fitz.Rect(image["bbox"]).width - fitz.Rect(image["bbox"]).height) > 0.1 for image in comparison_images):
             fail(f"Buyer-comparison images are missing or distorted in {path}")
         product_links = {link.get("uri") for link in document[14].get_links() if link.get("uri")}
-        if not {"https://companimal.kr", "https://pf.kakao.com/_xnyDcs", "https://xn--yj2b7mx8w6tf.com/#", f"mailto:{EXPECTED_EMAIL}"}.issubset(product_links):
+        if not {"https://companimal.kr", "https://pf.kakao.com/_xnyDcs", WHOLESALE_URL, f"mailto:{EXPECTED_EMAIL}"}.issubset(product_links):
             fail(f"Product contact links missing from {path}")
         if "제로랩스.com" not in combined:
             fail(f"Product wholesale address missing from {path}")

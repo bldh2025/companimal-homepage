@@ -53,6 +53,7 @@ WHITE = (1, 1, 1)
 SAGE = (190 / 255, 203 / 255, 190 / 255)
 PALE_GREEN = (225 / 255, 232 / 255, 223 / 255)
 CONTACT_EMAIL = "ceo@companimal.kr"
+WHOLESALE_URL = "https://제로랩스.com/"
 COMPANY_PAGE_COUNT = 14
 PRODUCT_PAGE_COUNT = 15
 
@@ -68,7 +69,7 @@ CONTACT_VALUES = [
 CONTACT_URIS = [
     "https://companimal.kr",
     "https://zerolabs.co.kr",
-    "https://xn--yj2b7mx8w6tf.com/#",
+    WHOLESALE_URL,
     "https://pf.kakao.com/_xnyDcs",
     f"mailto:{CONTACT_EMAIL}",
     None,
@@ -77,7 +78,7 @@ CONTACT_URIS = [
 CHANNEL_URLS = [
     "https://zerolabs.co.kr/",
     "https://www.coupang.com/np/search?component=&q=%EC%A0%9C%EB%A1%9C%EB%9E%A9%EC%8A%A4&traceId=mr3oy0ab&channel=user",
-    "https://xn--yj2b7mx8w6tf.com/#",
+    WHOLESALE_URL,
     "https://smartstore.naver.com/zerolabs",
 ]
 
@@ -863,7 +864,7 @@ def company_brochure(lang: str) -> fitz.Document:
     # 6. Production
     p = new_page(doc, FOREST)
     title_block(p, lang, c["production_kicker"], c["production_title"], light=True)
-    production_images = [ASSETS / "make_oem.webp", ASSETS / "make_ingredient.webp", ASSETS / "make_supply.webp"]
+    production_images = [ASSETS / "make_oem.webp", ASSETS / "hero-dog-treats.webp", ASSETS / "make_supply.webp"]
     for i, ((label, body), image_path) in enumerate(zip(c["production"], production_images)):
         y = 190 + i * 185
         p.draw_rect(fitz.Rect(42, y, 553, y + 125), radius=0.06, color=None, fill=GREEN)
@@ -1107,7 +1108,7 @@ def company_brochure_v5(lang: str) -> fitz.Document:
     # 5. Made in Korea — actual production imagery and a connected process.
     p = new_company_page(doc)
     company_title(p, lang, c["production_kicker"], c["production_title"], x=48, y=36, width=746, height=86)
-    production_images = [ASSETS / "make_oem.webp", ASSETS / "make_ingredient.webp", ASSETS / "make_supply.webp"]
+    production_images = [ASSETS / "make_oem.webp", ASSETS / "hero-dog-treats.webp", ASSETS / "make_supply.webp"]
     production_order = list(enumerate(zip(c["production"], production_images), start=1))
     if rtl:
         production_order.reverse()
@@ -1653,7 +1654,7 @@ def product_brochure_a(lang: str) -> fitz.Document:
         if value == CONTACT_EMAIL:
             p.insert_link({"kind": fitz.LINK_URI, "from": fitz.Rect(vx0, y - 2, vx1, y + 30), "uri": f"mailto:{CONTACT_EMAIL}"})
         elif value == "제로랩스.com":
-            p.insert_link({"kind": fitz.LINK_URI, "from": fitz.Rect(vx0, y - 2, vx1, y + 30), "uri": "https://xn--yj2b7mx8w6tf.com/#"})
+            p.insert_link({"kind": fitz.LINK_URI, "from": fitz.Rect(vx0, y - 2, vx1, y + 30), "uri": WHOLESALE_URL})
     q1 = qr_png("https://companimal.kr", "qr-company.png")
     q2 = qr_png("https://pf.kakao.com/_xnyDcs", "qr-kakao.png")
     qr_xs = (696, 604) if rtl else (48, 140)
