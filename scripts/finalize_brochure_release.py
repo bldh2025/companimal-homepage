@@ -46,7 +46,7 @@ def main() -> None:
             "sha256": hashlib.sha256(featured.read_bytes()).hexdigest(),
     }
     validate_featured_html(results["ko"]["companyHtml"])
-    product_featured = ROOT / "output" / "brochure" / "zerolabs-product-profile-ko-2026.html"
+    product_featured = ROOT / "output" / "brochure" / "zerolabs-product-profile-ko-2026-v2.html"
     if not product_featured.is_file() or product_featured.is_symlink():
         raise RuntimeError(f"Missing featured product HTML brochure: {product_featured}")
     results["ko"]["productHtml"] = {

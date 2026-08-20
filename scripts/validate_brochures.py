@@ -317,7 +317,7 @@ def validate_site(manifest: dict[str, object]) -> None:
             fail(f"Download script missing or duplicated in {path}")
         if 'href="#downloads"' not in source:
             fail(f"Download navigation link missing in {path}")
-        expected_fallbacks = ("/output/brochure/zerolabs-company-profile-ko-2026.html", "/output/brochure/zerolabs-product-profile-ko-2026.html") if path == ROOT / "index.html" else ("/output/pdf/company-profile-ko-2026-v6.pdf", "/output/pdf/product-brochure-ko-2026-v3.pdf")
+        expected_fallbacks = ("/output/brochure/zerolabs-company-profile-ko-2026.html", "/output/brochure/zerolabs-product-profile-ko-2026-v2.html") if path == ROOT / "index.html" else ("/output/pdf/company-profile-ko-2026-v6.pdf", "/output/pdf/product-brochure-ko-2026-v3.pdf")
         for fallback in expected_fallbacks:
             if fallback not in source:
                 fail(f"Fallback PDF link missing in {path}: {fallback}")
