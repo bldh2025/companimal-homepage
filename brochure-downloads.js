@@ -46,12 +46,15 @@
       var code = select.value;
       var entry = manifest[code];
       var file = entry && entry[kind];
+      if (code === "ko" && entry && entry[kind + "Html"]) file = entry[kind + "Html"];
       if (!file) return;
       link.href = "/" + file.path;
       link.download = file.path.split("/").pop();
       link.hreflang = entry.locale;
-      link.type = "application/pdf";
-      if (size) size.textContent = "PDF · " + formatPages(file.pages) + " · " + formatBytes(file.bytes);
+      link.type = file.format === "html" ? "text/html" : "application/pdf";
+      if (file.format === "html" && link.dataset.downloadLabelHtml) link.textContent = link.dataset.downloadLabelHtml;
+      if (file.format !== "html" && link.dataset.downloadLabelPdf) link.textContent = link.dataset.downloadLabelPdf;
+      if (size) size.textContent = (file.format === "html" ? "HTML · " : "PDF · ") + formatPages(file.pages) + " · " + formatBytes(file.bytes);
     }
 
     select.addEventListener("change", updateDownload);

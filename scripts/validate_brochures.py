@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import html
+import hashlib
 import json
 import re
 from pathlib import Path
@@ -255,22 +256,76 @@ def validate_homepage_company_source() -> None:
             fail(f"Homepage company asset is missing: {asset}")
 
 
+def validate_featured_html(entry: dict[str, object]) -> None:
+    if entry.get("format") != "html":
+        fail("Featured HTML brochure manifest format must be html")
+    if entry.get("pages") != 12:
+        fail("Featured HTML brochure manifest page count must be 12")
+    path = ROOT / str(entry["path"])
+    if not path.is_file() or path.is_symlink() or path.stat().st_size < 1_000_000:
+        fail(f"Featured HTML brochure is missing or unexpectedly small: {path}")
+    if entry.get("bytes") != path.stat().st_size:
+        fail(f"Featured HTML byte count mismatch: {path}")
+    digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    if entry.get("sha256") != digest:
+        fail(f"Featured HTML SHA-256 mismatch: {path}")
+    source = path.read_text(encoding="utf-8")
+    manifest_match = re.search(r'<script type="__bundler/manifest">(.*?)</script>', source, re.S)
+    template_match = re.search(r'<script type="__bundler/template">(.*?)</script>', source, re.S)
+    if not manifest_match or not template_match:
+        fail(f"Featured HTML bundler manifest/template missing: {path}")
+    try:
+        bundled_manifest = json.loads(manifest_match.group(1))
+        template = json.loads(template_match.group(1))
+    except json.JSONDecodeError as error:
+        fail(f"Featured HTML bundle JSON is invalid: {path}: {error}")
+    if len(re.findall(r"<section\b", template, re.I)) != 12:
+        fail(f"Featured HTML slide count is not 12: {path}")
+    references = set(re.findall(r"\b[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}\b", template, re.I))
+    if not references.issubset(bundled_manifest):
+        fail(f"Featured HTML has missing bundled asset references: {path}")
+    for required in ("ZERO LABS", "주식회사 반려동행", "Remove", "Balance", "Supply"):
+        if required not in template:
+            fail(f"Featured HTML required content missing: {required}")
+
+
+def validate_product_html(entry: dict[str, object]) -> None:
+    if entry.get("format") != "html" or entry.get("pages") != 16:
+        fail("Featured product HTML manifest metadata is invalid")
+    path = ROOT / str(entry["path"])
+    if not path.is_file() or path.is_symlink():
+        fail(f"Featured product HTML is missing: {path}")
+    data = path.read_bytes()
+    if entry.get("bytes") != len(data) or entry.get("sha256") != hashlib.sha256(data).hexdigest():
+        fail(f"Featured product HTML hash or byte count mismatch: {path}")
+    source = data.decode("utf-8")
+    if source.count('<section class="') != 16 or 'class="product-detail"' not in source:
+        fail(f"Featured product HTML section structure is invalid: {path}")
+    for required in ("고기가득", "영양가득", "베리가득", "치카하개", "굽빵", "미트리스", "멍스", "프레쉬링"):
+        if required not in source:
+            fail(f"Featured product HTML content missing: {required}")
+
+
 def validate_site(manifest: dict[str, object]) -> None:
-    expected_fallbacks = ("/output/pdf/company-profile-ko-2026-v6.pdf", "/output/pdf/product-brochure-ko-2026-v3.pdf")
     for path in HTML_FILES:
         source = path.read_text(encoding="utf-8")
         if source.count('id="downloads"') != 1:
             fail(f"Download section missing or duplicated in {path}")
         if source.count('data-brochure-kind="company"') != 1 or source.count('data-brochure-kind="product"') != 1:
             fail(f"Download cards missing or duplicated in {path}")
-        if source.count('<script src="/brochure-downloads.js" defer></script>') != 1:
+        if len(re.findall(r'<script src="/brochure-downloads\.js(?:\?[^\"]*)?" defer></script>', source)) != 1:
             fail(f"Download script missing or duplicated in {path}")
         if 'href="#downloads"' not in source:
             fail(f"Download navigation link missing in {path}")
+        expected_fallbacks = ("/output/brochure/zerolabs-company-profile-ko-2026.html", "/output/brochure/zerolabs-product-profile-ko-2026.html") if path == ROOT / "index.html" else ("/output/pdf/company-profile-ko-2026-v6.pdf", "/output/pdf/product-brochure-ko-2026-v3.pdf")
         for fallback in expected_fallbacks:
             if fallback not in source:
                 fail(f"Fallback PDF link missing in {path}: {fallback}")
-        if "PDF · 14" not in source:
+        if path == ROOT / "index.html" and ("type=\"text/html\"" not in source or "HTML · 12쪽" not in source):
+            fail(f"Korean featured HTML fallback is not wired in {path}")
+        if path == ROOT / "index.html" and source.count('type="text/html"') < 2:
+            fail(f"Korean product HTML fallback is not wired in {path}")
+        if path != ROOT / "index.html" and "PDF · 14" not in source:
             fail(f"Company brochure fallback page count is not 14 in {path}")
     korean_source = (ROOT / "index.html").read_text(encoding="utf-8")
     if "자료실" in korean_source or korean_source.count('href="#downloads">소개서</a>') != 2:
@@ -285,13 +340,19 @@ def validate_site(manifest: dict[str, object]) -> None:
     generator = (ROOT / "scripts" / "build_brochures.py").read_text(encoding="utf-8")
     if "keep_proportion=False" in generator:
         fail("Non-proportional image insertion remains in the brochure generator")
-    for path in HTML_FILES:
-        if "font-size:16px" not in path.read_text(encoding="utf-8"):
-            fail(f"Mobile-safe brochure selector font size is missing in {path}")
+    styles = (ROOT / "styles.css").read_text(encoding="utf-8")
+    if not re.search(r"\.download-select\{[^}]*font-size:16px", styles):
+        fail("Mobile-safe brochure selector font size is missing in styles.css")
     for entry in manifest.values():
         for kind in ("company", "product"):
             if not (ROOT / entry[kind]["path"]).is_file():
                 fail(f"Manifest points to a missing file: {entry[kind]['path']}")
+    if "companyHtml" not in manifest["ko"]:
+        fail("Korean featured HTML brochure is missing from the manifest")
+    validate_featured_html(manifest["ko"]["companyHtml"])
+    if "productHtml" not in manifest["ko"]:
+        fail("Korean featured product HTML brochure is missing from the manifest")
+    validate_product_html(manifest["ko"]["productHtml"])
 
 
 def main() -> None:

@@ -24,8 +24,7 @@ jobs:
         run: |
           rm -f zerolabs_homepage_assets/logo-*.png
           rm -f zerolabs_homepage_assets/lockup_*.png
-          rm -f zerolabs_homepage_assets/products/product-*.png
-          rm -f zerolabs_homepage_assets/products/trial-*.png
+          # product-*.png와 trial-*.png는 HTML 제품소개서가 직접 요청하므로 보존한다.
           rm -rf scripts
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
