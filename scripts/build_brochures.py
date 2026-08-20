@@ -59,7 +59,7 @@ PRODUCT_PAGE_COUNT = 15
 CONTACT_VALUES = [
     "https://companimal.kr",
     "https://zerolabs.co.kr",
-    "https://제로랩스.com",
+    "제로랩스.com",
     "https://pf.kakao.com/_xnyDcs",
     CONTACT_EMAIL,
     "Unit 215-26, 30 Namdong-seoro 236beon-gil, Namdong-gu, Incheon, Republic of Korea",
@@ -85,6 +85,7 @@ PRODUCT_CONTACT_VALUES = [
     "https://companimal.kr",
     "https://pf.kakao.com/_xnyDcs",
     CONTACT_EMAIL,
+    "https://제로랩스.com",
     "Unit 215-26, 30 Namdong-seoro 236beon-gil, Namdong-gu, Incheon, Republic of Korea",
 ]
 
@@ -1438,9 +1439,9 @@ def product_brochure(lang: str) -> fitz.Document:
     p = doc[15]
     add_html(p, fitz.Rect(55, 55, 660, 205), f'<p class="white" style="font-size:43pt;font-weight:700">{html.escape(c["contact_title"])}</p><p class="white" style="font-size:20pt;line-height:1.45;margin-top:10pt">{html.escape(c["contact_intro"])}</p>', lang, scale_low=0.52)
     for i, (label, value) in enumerate(zip(c["contact_labels"], PRODUCT_CONTACT_VALUES)):
-        y = 250 + i * 76
+        y = 220 + i * 60
         add_html(p, fitz.Rect(60, y, 690, y + 68), f'<p style="font-size:16pt;font-weight:700;color:#ffffff">{html.escape(label)}</p><p class="white" style="font-size:16pt;margin-top:3pt">{html.escape(value)}</p>', lang, scale_low=0.45)
-        uri = f"mailto:{value}" if "@" in value else value if value.startswith("http") else None
+        uri = f"mailto:{value}" if "@" in value else "https://xn--yj2b7mx8w6tf.com/#" if value == "제로랩스.com" else value if value.startswith("http") else None
         if uri:
             p.insert_link({"kind": fitz.LINK_URI, "from": fitz.Rect(60, y, 690, y + 68), "uri": uri})
     q1 = qr_png("https://companimal.kr", "qr-company.png")
@@ -1642,15 +1643,17 @@ def product_brochure_a(lang: str) -> fitz.Document:
     text_rect = fitz.Rect(402, 142, 794, 255) if rtl else fitz.Rect(48, 142, 440, 255)
     product_a_heading(p, lang, "CONTACT", c["contact_title"], c["contact_intro"], light=True, rect=text_rect, size=27)
     profile_items = HOMEPAGE_COMPANY[lang]["profile"][3]
-    contact_values = ["companimal.kr", "pf.kakao.com", CONTACT_EMAIL, profile_items[-1][1]]
+    contact_values = ["companimal.kr", "pf.kakao.com", CONTACT_EMAIL, "제로랩스.com", profile_items[-1][1]]
     for index, (label, value) in enumerate(zip(c["contact_labels"], contact_values)):
-        y = 286 + index * 50
+        y = 270 + index * 40
         x0, x1 = (402, 560) if rtl else (48, 170)
         vx0, vx1 = (574, 794) if rtl else (182, 448)
         add_html(p, fitz.Rect(x0, y, x1, y + 28), f'<p class="label" style="font-size:7.5pt;color:#d8b36a">{html.escape(label)}</p>', lang, scale_low=1)
         add_html(p, fitz.Rect(vx0, y - 2, vx1, y + 30), f'<p style="font-size:9pt;color:#ffffff;font-weight:700">{html.escape(value)}</p>', lang, scale_low=0.82)
         if value == CONTACT_EMAIL:
             p.insert_link({"kind": fitz.LINK_URI, "from": fitz.Rect(vx0, y - 2, vx1, y + 30), "uri": f"mailto:{CONTACT_EMAIL}"})
+        elif value == "제로랩스.com":
+            p.insert_link({"kind": fitz.LINK_URI, "from": fitz.Rect(vx0, y - 2, vx1, y + 30), "uri": "https://xn--yj2b7mx8w6tf.com/#"})
     q1 = qr_png("https://companimal.kr", "qr-company.png")
     q2 = qr_png("https://pf.kakao.com/_xnyDcs", "qr-kakao.png")
     qr_xs = (696, 604) if rtl else (48, 140)

@@ -174,8 +174,10 @@ def validate_pdf(path: Path, code: str, locale: str, pages: int, kind: str) -> d
         if len(comparison_images) != 12 or any(abs(fitz.Rect(image["bbox"]).width - fitz.Rect(image["bbox"]).height) > 0.1 for image in comparison_images):
             fail(f"Buyer-comparison images are missing or distorted in {path}")
         product_links = {link.get("uri") for link in document[14].get_links() if link.get("uri")}
-        if not {"https://companimal.kr", "https://pf.kakao.com/_xnyDcs", f"mailto:{EXPECTED_EMAIL}"}.issubset(product_links):
+        if not {"https://companimal.kr", "https://pf.kakao.com/_xnyDcs", "https://xn--yj2b7mx8w6tf.com/#", f"mailto:{EXPECTED_EMAIL}"}.issubset(product_links):
             fail(f"Product contact links missing from {path}")
+        if "제로랩스.com" not in combined:
+            fail(f"Product wholesale address missing from {path}")
         if code not in {"th", "ar"}:
             searchable = compact(combined)
             for label in product_content["catalog"][:8]:
@@ -313,7 +315,7 @@ def validate_product_html(entry: dict[str, object]) -> None:
     for required in ("고기가득", "영양가득", "베리가득", "치카하개", "굽빵", "미트리스", "멍스", "프레쉬링"):
         if required not in source:
             fail(f"Featured product HTML content missing: {required}")
-    if EXPECTED_EMAIL not in source or f"mailto:{EXPECTED_EMAIL}" not in source or LEGACY_EMAIL in source:
+    if EXPECTED_EMAIL not in source or f"mailto:{EXPECTED_EMAIL}" not in source or "제로랩스.com" not in source or LEGACY_EMAIL in source:
         fail(f"Featured product HTML contact email is stale: {path}")
 
 

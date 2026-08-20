@@ -288,7 +288,7 @@ PRODUCT_CONTENT = {
         "trial_intro": "주요 제품을 소용량 30 g 포장으로 먼저 만나볼 수 있습니다.",
         "contact_title": "제품 및 거래 문의",
         "contact_intro": "제품 상세 사양과 거래 조건은 공식 채널을 통해 확인해 주세요.",
-        "contact_labels": ["회사 홈페이지", "카카오톡 채널", "이메일", "주소"],
+        "contact_labels": ["회사 홈페이지", "카카오톡 채널", "이메일", "도매주소몰", "주소"],
         "contact_disclosure": "제품 사양과 판매 여부는 변경될 수 있습니다. 주문 전 공식 채널에서 최신 정보를 확인해 주세요.",
     },
     "en": {
@@ -317,7 +317,7 @@ PRODUCT_CONTENT = {
         "trial_intro": "Explore selected products in smaller 30 g trial packs.",
         "contact_title": "Product and Trade Inquiries",
         "contact_intro": "Please confirm detailed specifications and trade terms through our official channels.",
-        "contact_labels": ["Company website", "KakaoTalk Channel", "Email", "Address"],
+        "contact_labels": ["Company website", "KakaoTalk Channel", "Email", "B2B wholesale", "Address"],
         "contact_disclosure": "Product specifications and availability may change. Confirm current details through the official channels before ordering.",
     },
     "zh-hans": {
@@ -346,7 +346,7 @@ PRODUCT_CONTENT = {
         "trial_intro": "部分主要产品提供 30 g 小包装，方便先行了解。",
         "contact_title": "产品与合作咨询",
         "contact_intro": "详细规格与交易条件，请通过官方渠道确认。",
-        "contact_labels": ["公司官网", "KakaoTalk 频道", "电子邮件", "地址"],
+        "contact_labels": ["公司官网", "KakaoTalk 频道", "电子邮件", "B2B 批发商城", "地址"],
         "contact_disclosure": "产品规格与销售情况可能变更。订购前请通过官方渠道确认最新信息。",
     },
     "zh-hant": {
@@ -375,7 +375,7 @@ PRODUCT_CONTENT = {
         "trial_intro": "部分主要產品提供 30 g 小包裝，方便先行了解。",
         "contact_title": "產品與合作諮詢",
         "contact_intro": "詳細規格與交易條件，請透過官方管道確認。",
-        "contact_labels": ["公司官網", "KakaoTalk 頻道", "電子郵件", "地址"],
+        "contact_labels": ["公司官網", "KakaoTalk 頻道", "電子郵件", "B2B 批發商城", "地址"],
         "contact_disclosure": "產品規格與供應情況可能變更。訂購前請透過官方管道確認最新資訊。",
     },
     "ja": {
@@ -404,7 +404,7 @@ PRODUCT_CONTENT = {
         "trial_intro": "主な商品を30 gの小容量パックでお試しいただけます。",
         "contact_title": "商品 · 取引に関するお問い合わせ",
         "contact_intro": "詳しい仕様と取引条件は、公式チャネルからご確認ください。",
-        "contact_labels": ["会社サイト", "KakaoTalk チャネル", "メール", "所在地"],
+        "contact_labels": ["会社サイト", "KakaoTalk チャネル", "メール", "B2B 卸売サイト", "所在地"],
         "contact_disclosure": "商品仕様と販売状況は変更される場合があります。ご注文前に公式チャネルで最新情報をご確認ください。",
     },
     "th": {
@@ -433,7 +433,7 @@ PRODUCT_CONTENT = {
         "trial_intro": "ทดลองผลิตภัณฑ์หลักในแพ็กขนาดเล็ก 30 g",
         "contact_title": "สอบถามสินค้าและการค้า",
         "contact_intro": "โปรดตรวจสอบรายละเอียดและเงื่อนไขการค้าผ่านช่องทางทางการของเรา",
-        "contact_labels": ["เว็บไซต์บริษัท", "KakaoTalk Channel", "อีเมล", "ที่อยู่"],
+        "contact_labels": ["เว็บไซต์บริษัท", "KakaoTalk Channel", "อีเมล", "เว็บไซต์ขายส่ง B2B", "ที่อยู่"],
         "contact_disclosure": "ข้อมูลจำเพาะและการจำหน่ายอาจเปลี่ยนแปลง โปรดตรวจสอบข้อมูลล่าสุดผ่านช่องทางทางการก่อนสั่งซื้อ",
     },
     "ar": {
@@ -462,7 +462,7 @@ PRODUCT_CONTENT = {
         "trial_intro": "تتوفر منتجات مختارة في عبوات تجريبية صغيرة بحجم 30 g.",
         "contact_title": "استفسارات المنتجات والتجارة",
         "contact_intro": "يرجى تأكيد المواصفات التفصيلية وشروط التجارة عبر قنواتنا الرسمية.",
-        "contact_labels": ["موقع الشركة", "قناة KakaoTalk", "البريد الإلكتروني", "العنوان"],
+        "contact_labels": ["موقع الشركة", "قناة KakaoTalk", "البريد الإلكتروني", "موقع الجملة B2B", "العنوان"],
         "contact_disclosure": "قد تتغير مواصفات المنتجات وتوفرها. يرجى تأكيد أحدث المعلومات عبر القنوات الرسمية قبل الطلب.",
     },
 }
