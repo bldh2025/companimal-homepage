@@ -43,6 +43,7 @@ def main() -> None:
             "bytes": featured.stat().st_size,
             "pages": COMPANY_HTML_PAGE_COUNT,
             "format": "html",
+            "standalone": True,
             "sha256": hashlib.sha256(featured.read_bytes()).hexdigest(),
     }
     validate_featured_html(results["ko"]["companyHtml"])
@@ -54,6 +55,7 @@ def main() -> None:
         "bytes": product_featured.stat().st_size,
         "pages": 16,
         "format": "html",
+        "standalone": False,
         "sha256": hashlib.sha256(product_featured.read_bytes()).hexdigest(),
     }
     validate_product_html(results["ko"]["productHtml"])

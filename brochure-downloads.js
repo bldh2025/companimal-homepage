@@ -23,10 +23,11 @@
     return pages + (pages === 1 ? " page" : " pages");
   }
 
-  function brochureFile(entry, kind, code) {
+  function brochureFile(entry, kind) {
     if (!entry) return null;
-    if (code === "ko" && entry[kind + "Html"]) return entry[kind + "Html"];
-    return entry[kind] || null;
+    var file = kind === "company" ? entry.companyHtml : entry[kind];
+    if (file && file.format === "html" && file.standalone !== true) return null;
+    return file || null;
   }
 
   function enhanceCard(card, manifest) {
@@ -34,12 +35,12 @@
     var select = card.querySelector("select");
     var link = card.querySelector("a[data-download-link]");
     var size = card.querySelector("[data-file-size]");
-    if (!select || !link || !brochureFile(manifest.ko, kind, "ko")) return;
+    if (!select || !link || !brochureFile(manifest.ko, kind)) return;
 
     select.replaceChildren();
     languageOrder.forEach(function (code) {
       var entry = manifest[code];
-      if (!brochureFile(entry, kind, code)) return;
+      if (!brochureFile(entry, kind)) return;
       var option = document.createElement("option");
       option.value = code;
       option.textContent = pageLanguage() === "ko" && entry.label_ko ? entry.label_ko : entry.label;
@@ -52,11 +53,10 @@
     function updateDownload() {
       var code = select.value;
       var entry = manifest[code];
-      var file = brochureFile(entry, kind, code);
+      var file = brochureFile(entry, kind);
       if (!file) return;
       link.href = "/" + file.path;
-      if (file.format === "html") link.removeAttribute("download");
-      else link.download = file.path.split("/").pop();
+      link.download = file.path.split("/").pop();
       link.hreflang = entry.locale;
       link.type = file.format === "html" ? "text/html" : "application/pdf";
       if (file.format === "html" && link.dataset.downloadLabelHtml) link.textContent = link.dataset.downloadLabelHtml;

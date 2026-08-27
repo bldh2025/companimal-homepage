@@ -13,6 +13,7 @@
       "bytes": 12329482,
       "pages": 13,
       "format": "html",
+      "standalone": true,
       "sha256": "8f53ec5ce7856c6396cdf937f022101c2323f7ee5daca5e1da3601a3dab357ab"
     },
     "productHtml": {
@@ -20,6 +21,7 @@
       "bytes": 27791,
       "pages": 16,
       "format": "html",
+      "standalone": false,
       "sha256": "a30e2568565d03546af0db6df1dc05b7280d93a0c8934fa429b12cddf6d89454"
     }
   },

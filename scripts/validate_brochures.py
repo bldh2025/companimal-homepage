@@ -58,6 +58,7 @@ HTML_FILES = [ROOT / "index.html", ROOT / "en" / "index.html", ROOT / "zh" / "in
 EXPECTED_EMAIL = "ceo@companimal.kr"
 LEGACY_EMAIL = "bldh2025@naver.com"
 LATEST_COMPANY_HTML = "output/brochure/zerolabs-company-profile-ko-2026.html"
+BROCHURE_DOWNLOAD_SCRIPT_VERSION = "20260828a"
 LEGACY_COMPANY_PDF_PATTERN = "company-profile-*-2026-v6.pdf"
 LEGACY_COMPANY_PREVIEW = OUTPUT / "company-profile-preview-ko.png"
 LEGACY_PRODUCT_HTML = ROOT / "output" / "brochure" / "zerolabs-product-profile-ko-2026.html"
@@ -444,6 +445,8 @@ def validate_homepage_company_source() -> None:
 def validate_featured_html(entry: dict[str, object]) -> None:
     if entry.get("format") != "html":
         fail("Featured HTML brochure manifest format must be html")
+    if entry.get("standalone") is not True:
+        fail("Featured company HTML must be marked as standalone")
     if entry.get("pages") != COMPANY_HTML_PAGE_COUNT:
         fail(f"Featured HTML brochure manifest page count must be {COMPANY_HTML_PAGE_COUNT}")
     path = ROOT / str(entry["path"])
@@ -685,6 +688,8 @@ def validate_featured_html(entry: dict[str, object]) -> None:
 def validate_product_html(entry: dict[str, object]) -> None:
     if entry.get("format") != "html" or entry.get("pages") != 16:
         fail("Featured product HTML manifest metadata is invalid")
+    if entry.get("standalone") is not False:
+        fail("Featured product HTML must remain marked as non-standalone")
     path = ROOT / str(entry["path"])
     if not path.is_file() or path.is_symlink():
         fail(f"Featured product HTML is missing: {path}")
@@ -726,26 +731,56 @@ def validate_product_html(entry: dict[str, object]) -> None:
 
 
 def validate_site(manifest: dict[str, object]) -> None:
+    page_languages = {
+        ROOT / "index.html": "ko",
+        ROOT / "en" / "index.html": "en",
+        ROOT / "zh" / "index.html": "zh-hans",
+        ROOT / "zh-hant" / "index.html": "zh-hant",
+    }
     for path in HTML_FILES:
         source = path.read_text(encoding="utf-8")
+        code = page_languages[path]
         if EXPECTED_EMAIL not in source or f"mailto:{EXPECTED_EMAIL}" not in source or LEGACY_EMAIL in source:
             fail(f"Homepage contact email is stale: {path}")
         if source.count('id="downloads"') != 1:
             fail(f"Download section missing or duplicated in {path}")
         if source.count('data-brochure-kind="company"') != 1 or source.count('data-brochure-kind="product"') != 1:
             fail(f"Download cards missing or duplicated in {path}")
-        if len(re.findall(r'<script src="/brochure-downloads\.js(?:\?[^\"]*)?" defer></script>', source)) != 1:
-            fail(f"Download script missing or duplicated in {path}")
+        expected_download_script = (
+            f'<script src="/brochure-downloads.js?v={BROCHURE_DOWNLOAD_SCRIPT_VERSION}" defer></script>'
+        )
+        if source.count(expected_download_script) != 1:
+            fail(f"Download script version is stale or duplicated in {path}")
         if 'href="#downloads"' not in source:
             fail(f"Download navigation link missing in {path}")
-        expected_fallbacks = (f"/{LATEST_COMPANY_HTML}", "/output/brochure/zerolabs-product-profile-ko-2026-v2.html") if path == ROOT / "index.html" else (f"/{LATEST_COMPANY_HTML}", "/output/pdf/product-brochure-ko-2026-v3.pdf")
-        for fallback in expected_fallbacks:
-            if fallback not in source:
-                fail(f"Fallback brochure link missing in {path}: {fallback}")
+        company_name = Path(LATEST_COMPANY_HTML).name
+        company_fallback = (
+            f'href="/{LATEST_COMPANY_HTML}" type="text/html" hreflang="ko-KR" '
+            f'download="{company_name}"'
+        )
+        product_file = manifest[code]["product"]
+        product_path = str(product_file["path"])
+        product_name = Path(product_path).name
+        product_fallback = (
+            f'href="/{product_path}" type="application/pdf" '
+            f'hreflang="{manifest[code]["locale"]}" download="{product_name}"'
+        )
+        if source.count(company_fallback) != 1:
+            fail(f"Company HTML fallback is not a direct download in {path}")
+        if source.count(product_fallback) != 1:
+            fail(f"Localized product PDF fallback is not a direct download in {path}")
+        if source.count("data-download-label-pdf=") != 2 or source.count("data-download-label-html=") != 2:
+            fail(f"Download format labels are incomplete in {path}")
+        downloads_match = re.search(r'<section class="downloads".*?</section>', source, re.S)
+        if not downloads_match or any(
+            token in downloads_match.group(0)
+            for token in ("바로 열거나", "Open HTML", "打开 HTML", "開啟 HTML")
+        ):
+            fail(f"Download section still describes HTML as opening in {path}")
         if path == ROOT / "index.html" and ("type=\"text/html\"" not in source or f"HTML · {COMPANY_HTML_PAGE_COUNT}쪽" not in source):
             fail(f"Korean featured HTML fallback is not wired in {path}")
-        if path == ROOT / "index.html" and source.count('type="text/html"') < 2:
-            fail(f"Korean product HTML fallback is not wired in {path}")
+        if path == ROOT / "index.html" and "PDF · 15쪽" not in source:
+            fail(f"Korean product PDF fallback metadata is missing in {path}")
         company_fallback_meta = {
             ROOT / "en" / "index.html": f"HTML · {COMPANY_HTML_PAGE_COUNT} pages",
             ROOT / "zh" / "index.html": f"HTML · {COMPANY_HTML_PAGE_COUNT}页",
@@ -763,6 +798,13 @@ def validate_site(manifest: dict[str, object]) -> None:
             fail(f"Language missing from download script: {code}")
     if "entry.label_ko" not in script:
         fail("Korean-language annotations are not wired into the selectors")
+    if (
+        'file.format === "html" && file.standalone !== true' not in script
+        or 'link.download = file.path.split("/").pop()' not in script
+        or 'entry[kind + "Html"]' in script
+        or re.search(r'\.removeAttribute\(\s*["\']download["\']', script)
+    ):
+        fail("Homepage download script does not preserve standalone downloads")
     generator = (ROOT / "scripts" / "build_brochures.py").read_text(encoding="utf-8")
     if "keep_proportion=False" in generator:
         fail("Non-proportional image insertion remains in the brochure generator")
