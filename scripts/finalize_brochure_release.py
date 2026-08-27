@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the latest HTML company profile and v3 product PDFs, then publish."""
+"""Build and validate the latest company/product brochures, then publish."""
 
 from __future__ import annotations
 
@@ -7,12 +7,18 @@ import json
 import hashlib
 import os
 from pathlib import Path
+import subprocess
 
 from brochure_content import LANGUAGES
 from build_brochures import COMPANY_HTML_PAGE_COUNT, PRODUCT_PAGE_COUNT
 from embed_company_profile_factory_images import update_company_profile_bundle
 from embed_company_profile_runtime_assets import update_company_profile_runtime_assets
-from validate_brochures import validate_featured_html, validate_pdf, validate_product_html
+from validate_brochures import (
+    validate_company_profile_pdf,
+    validate_featured_html,
+    validate_pdf,
+    validate_product_html,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -23,6 +29,11 @@ MANIFEST = OUTPUT / "brochure-files.json"
 def main() -> None:
     update_company_profile_bundle()
     update_company_profile_runtime_assets()
+    subprocess.run(
+        ["node", str(ROOT / "scripts" / "build_company_profile_pdf.mjs")],
+        cwd=ROOT,
+        check=True,
+    )
     results: dict[str, dict[str, object]] = {}
     for code, language in LANGUAGES.items():
         product = OUTPUT / f"product-brochure-{code}-2026-v3.pdf"
@@ -47,6 +58,18 @@ def main() -> None:
             "sha256": hashlib.sha256(featured.read_bytes()).hexdigest(),
     }
     validate_featured_html(results["ko"]["companyHtml"])
+    company = OUTPUT / "zerolabs-company-profile-ko-2026.pdf"
+    if not company.is_file() or company.is_symlink():
+        raise RuntimeError(f"Missing company PDF: {company}")
+    company_report = validate_company_profile_pdf(company)
+    results["ko"]["company"] = {
+        "path": str(company.relative_to(ROOT)),
+        "bytes": company.stat().st_size,
+        "pages": company_report["pages"],
+        "format": "pdf",
+        "sha256": hashlib.sha256(company.read_bytes()).hexdigest(),
+        "sourceSha256": results["ko"]["companyHtml"]["sha256"],
+    }
     product_featured = ROOT / "output" / "brochure" / "zerolabs-product-profile-ko-2026-v2.html"
     if not product_featured.is_file() or product_featured.is_symlink():
         raise RuntimeError(f"Missing featured product HTML brochure: {product_featured}")
@@ -62,7 +85,7 @@ def main() -> None:
     staged = OUTPUT / "brochure-files.json.new"
     staged.write_text(json.dumps(results, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     os.replace(staged, MANIFEST)
-    print(json.dumps({"status": "ok", "languages": len(results), "pdfs": len(results)}, ensure_ascii=False))
+    print(json.dumps({"status": "ok", "languages": len(results), "pdfs": len(results) + 1}, ensure_ascii=False))
 
 
 if __name__ == "__main__":

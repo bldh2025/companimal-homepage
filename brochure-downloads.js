@@ -25,7 +25,7 @@
 
   function brochureFile(entry, kind) {
     if (!entry) return null;
-    var file = kind === "company" ? entry.companyHtml : entry[kind];
+    var file = entry[kind];
     if (file && file.format === "html" && file.standalone !== true) return null;
     return file || null;
   }

@@ -140,7 +140,7 @@ const pages = [
   { path: "/zh/", code: "zh-hans" },
   { path: "/zh-hant/", code: "zh-hant" },
 ].map((entry) => ({ ...entry, product: manifest[entry.code].product, locale: manifest[entry.code].locale }));
-const companyFile = manifest.ko.companyHtml;
+const companyFile = manifest.ko.company;
 const companyName = path.basename(companyFile.path);
 const productSelections = Object.entries(manifest).map(([code, entry]) => ({
   code,
@@ -235,9 +235,9 @@ try {
     await cdp.call("Page.navigate", { url: `http://127.0.0.1:${address.port}${entry.path}#downloads` });
     const { links } = await waitForEnhancedPage(entry.path);
     assert(
-      links[0].href === `/output/brochure/${companyName}`
+      links[0].href === `/${companyFile.path}`
         && links[0].download === companyName
-        && links[0].type === "text/html"
+        && links[0].type === "application/pdf"
         && links[0].hreflang === "ko-KR",
       `Company download regressed on ${entry.path}`,
     );

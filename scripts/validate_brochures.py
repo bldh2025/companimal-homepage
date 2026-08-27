@@ -58,7 +58,8 @@ HTML_FILES = [ROOT / "index.html", ROOT / "en" / "index.html", ROOT / "zh" / "in
 EXPECTED_EMAIL = "ceo@companimal.kr"
 LEGACY_EMAIL = "bldh2025@naver.com"
 LATEST_COMPANY_HTML = "output/brochure/zerolabs-company-profile-ko-2026.html"
-BROCHURE_DOWNLOAD_SCRIPT_VERSION = "20260828a"
+LATEST_COMPANY_PDF = "output/pdf/zerolabs-company-profile-ko-2026.pdf"
+BROCHURE_DOWNLOAD_SCRIPT_VERSION = "20260828b"
 LEGACY_COMPANY_PDF_PATTERN = "company-profile-*-2026-v6.pdf"
 LEGACY_COMPANY_PREVIEW = OUTPUT / "company-profile-preview-ko.png"
 LEGACY_PRODUCT_HTML = ROOT / "output" / "brochure" / "zerolabs-product-profile-ko-2026.html"
@@ -377,6 +378,103 @@ def validate_pdf(path: Path, code: str, locale: str, pages: int, kind: str) -> d
             fail(f"Unembedded font in {path}: xref {xref}")
     document.close()
     return {"pages": pages, "bytes": path.stat().st_size, "text_chars": sum(map(len, page_text)), "fonts": len(font_xrefs)}
+
+
+def validate_company_profile_pdf(path: Path) -> dict[str, object]:
+    """Validate the 13-page 16:9 PDF exported from the featured HTML deck."""
+
+    if not path.is_file() or path.is_symlink() or path.stat().st_size < 1_000_000:
+        fail(f"Company profile PDF is missing or unexpectedly small: {path}")
+
+    reader = PdfReader(str(path))
+    if reader.is_encrypted:
+        fail(f"Company profile PDF is encrypted: {path}")
+    if len(reader.pages) != COMPANY_HTML_PAGE_COUNT:
+        fail(f"Unexpected company profile PDF page count: {len(reader.pages)}")
+    root = reader.trailer["/Root"]
+    if str(root.get("/Lang")) != "ko-KR":
+        fail(f"Company profile PDF /Lang must be ko-KR: {path}")
+    if not (reader.metadata and reader.metadata.title == "주식회사 반려동행 회사소개서 2026"):
+        fail(f"Company profile PDF title metadata is incorrect: {path}")
+    expected_pdf_date = "D:20260828000000+09'00'"
+    if (
+        reader.metadata.get("/CreationDate") != expected_pdf_date
+        or reader.metadata.get("/ModDate") != expected_pdf_date
+    ):
+        fail(f"Company profile PDF deterministic dates are incorrect: {path}")
+    if "/OpenAction" in root or "/AA" in root:
+        fail(f"Active PDF action found in company profile: {path}")
+    names = root.get("/Names")
+    if names:
+        names = names.get_object()
+        if "/JavaScript" in names or "/EmbeddedFiles" in names:
+            fail(f"JavaScript or attachment found in company profile: {path}")
+
+    document = fitz.open(path)
+    page_text = []
+    for page in document:
+        actual = (round(page.rect.width), round(page.rect.height))
+        if actual != (960, 540):
+            fail(f"Unexpected company profile PDF page geometry: {actual}")
+        text = page.get_text("text").strip()
+        if len(text) < 10:
+            fail(f"Searchable text is missing from company profile PDF page {page.number + 1}")
+        page_text.append(text)
+    combined = "\n".join(page_text)
+    searchable = compact(combined)
+    expected_page_copy = (
+        "반려견이 매일 먹는 간식의 기준을 다시 세웁니다",
+        "목차",
+        "회사 개요",
+        "제로랩스가 간식을 만드는 세 가지 원칙",
+        "국내 생산, 국내산 원료로 만드는 반려견 간식",
+        "목적이 분명한 8종의 반려견 간식 라인업",
+        "전체 판매채널 누적 리뷰 32,757건",
+        "이런 아이에게, 이 제품을 제안하세요",
+        "보호자와 파트너, 각자에게 맞는 채널",
+        "바이어가 오래 판매할 수 있는 브랜드",
+        "제로랩스가 쌓아온 발자취",
+        "함께 걷는 마음을 기부로 이어갑니다",
+        "파트너 거래, 지금 문의하세요",
+    )
+    for page_number, required in enumerate(expected_page_copy, start=1):
+        if compact(required) not in compact(page_text[page_number - 1]):
+            fail(f"Company profile PDF page {page_number} is out of order or missing content: {required}")
+    for required in (
+        "반려견이 매일 먹는 간식의 기준을 다시 세웁니다",
+        "전체 판매채널 누적 리뷰 32,757건",
+        "010-6540-7787",
+        EXPECTED_EMAIL,
+    ):
+        if compact(required) not in searchable:
+            fail(f"Required company profile PDF content is missing: {required}")
+    for forbidden in (LEGACY_EMAIL, "AI 생성", "AI 참고", "참고 이미지", "촬영한 것이 아닙니다"):
+        if compact(forbidden) in searchable:
+            fail(f"Forbidden company profile PDF copy remains: {forbidden}")
+    for page_number in (4, 5):
+        if len(document[page_number - 1].get_image_info()) < 3:
+            fail(f"Company profile PDF page {page_number} is missing its three planned images")
+    if len(document[5].get_image_info()) < 8 or len(document[6].get_image_info()) < 8:
+        fail("Company profile PDF product/review imagery is incomplete")
+    font_xrefs = {font[0] for page in document for font in page.get_fonts(full=True)}
+    if not font_xrefs:
+        fail(f"No fonts found in company profile PDF: {path}")
+    for xref in font_xrefs:
+        font_object = document.xref_object(xref)
+        if "/ToUnicode" not in font_object:
+            fail(f"A company profile PDF font lacks a ToUnicode map: xref {xref}")
+        if "/Subtype /Type3" in font_object:
+            if "/CharProcs" not in font_object:
+                fail(f"A Type3 font lacks embedded glyph programs: xref {xref}")
+        elif len(document.extract_font(xref)[3]) == 0:
+            fail(f"An unembedded font was found in company profile PDF: xref {xref}")
+    document.close()
+    return {
+        "pages": COMPANY_HTML_PAGE_COUNT,
+        "bytes": path.stat().st_size,
+        "text_chars": sum(map(len, page_text)),
+        "fonts": len(font_xrefs),
+    }
 
 
 def extract_homepage_history(path: Path) -> list[tuple[str, list[str]]]:
@@ -730,7 +828,7 @@ def validate_product_html(entry: dict[str, object]) -> None:
         fail(f"Featured product HTML contact email is stale: {path}")
 
 
-def validate_site(manifest: dict[str, object]) -> None:
+def validate_site(manifest: dict[str, object]) -> dict[str, object]:
     page_languages = {
         ROOT / "index.html": "ko",
         ROOT / "en" / "index.html": "en",
@@ -753,9 +851,11 @@ def validate_site(manifest: dict[str, object]) -> None:
             fail(f"Download script version is stale or duplicated in {path}")
         if 'href="#downloads"' not in source:
             fail(f"Download navigation link missing in {path}")
-        company_name = Path(LATEST_COMPANY_HTML).name
+        company_file = manifest["ko"]["company"]
+        company_path = str(company_file["path"])
+        company_name = Path(company_path).name
         company_fallback = (
-            f'href="/{LATEST_COMPANY_HTML}" type="text/html" hreflang="ko-KR" '
+            f'href="/{company_path}" type="application/pdf" hreflang="ko-KR" '
             f'download="{company_name}"'
         )
         product_file = manifest[code]["product"]
@@ -766,7 +866,7 @@ def validate_site(manifest: dict[str, object]) -> None:
             f'hreflang="{manifest[code]["locale"]}" download="{product_name}"'
         )
         if source.count(company_fallback) != 1:
-            fail(f"Company HTML fallback is not a direct download in {path}")
+            fail(f"Company PDF fallback is not a direct download in {path}")
         if source.count(product_fallback) != 1:
             fail(f"Localized product PDF fallback is not a direct download in {path}")
         if source.count("data-download-label-pdf=") != 2 or source.count("data-download-label-html=") != 2:
@@ -777,17 +877,17 @@ def validate_site(manifest: dict[str, object]) -> None:
             for token in ("바로 열거나", "Open HTML", "打开 HTML", "開啟 HTML")
         ):
             fail(f"Download section still describes HTML as opening in {path}")
-        if path == ROOT / "index.html" and ("type=\"text/html\"" not in source or f"HTML · {COMPANY_HTML_PAGE_COUNT}쪽" not in source):
-            fail(f"Korean featured HTML fallback is not wired in {path}")
+        if path == ROOT / "index.html" and f"PDF · {COMPANY_HTML_PAGE_COUNT}쪽" not in source:
+            fail(f"Korean company PDF fallback is not wired in {path}")
         if path == ROOT / "index.html" and "PDF · 15쪽" not in source:
             fail(f"Korean product PDF fallback metadata is missing in {path}")
         company_fallback_meta = {
-            ROOT / "en" / "index.html": f"HTML · {COMPANY_HTML_PAGE_COUNT} pages",
-            ROOT / "zh" / "index.html": f"HTML · {COMPANY_HTML_PAGE_COUNT}页",
-            ROOT / "zh-hant" / "index.html": f"HTML · {COMPANY_HTML_PAGE_COUNT}頁",
+            ROOT / "en" / "index.html": f"PDF · {COMPANY_HTML_PAGE_COUNT} pages",
+            ROOT / "zh" / "index.html": f"PDF · {COMPANY_HTML_PAGE_COUNT}页",
+            ROOT / "zh-hant" / "index.html": f"PDF · {COMPANY_HTML_PAGE_COUNT}頁",
         }
         if path in company_fallback_meta and company_fallback_meta[path] not in source:
-            fail(f"Latest company HTML fallback metadata is missing in {path}")
+            fail(f"Latest company PDF fallback metadata is missing in {path}")
     korean_source = (ROOT / "index.html").read_text(encoding="utf-8")
     if "자료실" in korean_source or korean_source.count('href="#downloads">소개서</a>') != 2:
         fail("Korean main navigation and footer must label the download area 소개서")
@@ -813,18 +913,33 @@ def validate_site(manifest: dict[str, object]) -> None:
     styles = (ROOT / "styles.css").read_text(encoding="utf-8")
     if not re.search(r"\.download-select\{[^}]*font-size:16px", styles):
         fail("Mobile-safe brochure selector font size is missing in styles.css")
-    for entry in manifest.values():
-        for kind in ("companyHtml", "productHtml", "product"):
+    for code, entry in manifest.items():
+        for kind in ("company", "companyHtml", "productHtml", "product"):
             artifact = entry.get(kind)
             if artifact and not (ROOT / artifact["path"]).is_file():
                 fail(f"Manifest points to a missing file: {artifact['path']}")
-        if "company" in entry:
-            fail("Legacy company PDF remains in the live manifest")
+        if code != "ko" and "company" in entry:
+            fail(f"Company PDF must only appear in the Korean manifest entry: {code}")
+    if "company" not in manifest["ko"]:
+        fail("Korean company PDF is missing from the manifest")
+    if manifest["ko"]["company"].get("path") != LATEST_COMPANY_PDF:
+        fail("Live company PDF does not point to the latest 13-page edition")
+    if manifest["ko"]["company"].get("format") != "pdf":
+        fail("Live company brochure format must be PDF")
     if "companyHtml" not in manifest["ko"]:
         fail("Korean featured HTML brochure is missing from the manifest")
     if manifest["ko"]["companyHtml"].get("path") != LATEST_COMPANY_HTML:
         fail("Live company profile does not point to the latest HTML")
     validate_featured_html(manifest["ko"]["companyHtml"])
+    company = manifest["ko"]["company"]
+    company_path = ROOT / company["path"]
+    company_report = validate_company_profile_pdf(company_path)
+    if company.get("bytes") != company_path.stat().st_size or company.get("pages") != COMPANY_HTML_PAGE_COUNT:
+        fail("Company PDF manifest size or page count is stale")
+    if company.get("sha256") != hashlib.sha256(company_path.read_bytes()).hexdigest():
+        fail("Company PDF manifest SHA-256 is stale")
+    if company.get("sourceSha256") != manifest["ko"]["companyHtml"].get("sha256"):
+        fail("Company PDF manifest does not identify the current HTML source")
     if "productHtml" not in manifest["ko"]:
         fail("Korean featured product HTML brochure is missing from the manifest")
     validate_product_html(manifest["ko"]["productHtml"])
@@ -834,6 +949,7 @@ def validate_site(manifest: dict[str, object]) -> None:
         fail("Legacy company PDF preview remains in the live output directory")
     if LEGACY_PRODUCT_HTML.exists():
         fail("Superseded product HTML remains beside the v2 live edition")
+    return company_report
 
 
 def main() -> None:
@@ -864,8 +980,8 @@ def main() -> None:
             if entry[kind]["pages"] != expected_pages:
                 fail(f"Manifest page count mismatch for {path}")
 
-    validate_site(manifest)
-    print(json.dumps({"status": "ok", "languages": len(manifest), "pdfs": len(pdfs), "details": report}, ensure_ascii=False, indent=2))
+    report["company"] = validate_site(manifest)
+    print(json.dumps({"status": "ok", "languages": len(manifest), "pdfs": len(pdfs) + 1, "details": report}, ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":

@@ -16,6 +16,14 @@
       "standalone": true,
       "sha256": "8f53ec5ce7856c6396cdf937f022101c2323f7ee5daca5e1da3601a3dab357ab"
     },
+    "company": {
+      "path": "output/pdf/zerolabs-company-profile-ko-2026.pdf",
+      "bytes": 3460571,
+      "pages": 13,
+      "format": "pdf",
+      "sha256": "add5a8be1d708739092d7661c6bd0cda1cfbe337fbcc29bc7f1ce71df73f6328",
+      "sourceSha256": "8f53ec5ce7856c6396cdf937f022101c2323f7ee5daca5e1da3601a3dab357ab"
+    },
     "productHtml": {
       "path": "output/brochure/zerolabs-product-profile-ko-2026-v2.html",
       "bytes": 27791,
