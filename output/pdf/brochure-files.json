@@ -10,10 +10,10 @@
     },
     "companyHtml": {
       "path": "output/brochure/zerolabs-company-profile-ko-2026.html",
-      "bytes": 12330179,
+      "bytes": 12329482,
       "pages": 13,
       "format": "html",
-      "sha256": "be091e315e38a7e5e5badb6d4feffe259740830ca77dac46e21e18557d8851c1"
+      "sha256": "8f53ec5ce7856c6396cdf937f022101c2323f7ee5daca5e1da3601a3dab357ab"
     },
     "productHtml": {
       "path": "output/brochure/zerolabs-product-profile-ko-2026-v2.html",

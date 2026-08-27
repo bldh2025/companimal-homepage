@@ -208,6 +208,8 @@ try {
   assert(idempotentResult.result.value === 13, "Company profile enhancer is not idempotent");
   const changedPageLayouts = {
     page2: await readSectionLayout(cdp, 2),
+    page4: await readSectionLayout(cdp, 4),
+    page5: await readSectionLayout(cdp, 5),
     page7: await readSectionLayout(cdp, 7),
     page8: await readSectionLayout(cdp, 8),
     page9: await readSectionLayout(cdp, 9),
@@ -217,6 +219,7 @@ try {
       const sections = Array.from(document.querySelectorAll('section'));
       const page8 = sections[7];
       const contents = sections[1];
+      const contentsHeading = contents.querySelector('[data-contents-heading="top"]');
       const eyebrow = (section) => Array.from(section.querySelectorAll('span')).find((span) => /^\\d{2} — /.test(span.textContent.trim()));
       return {
         labels: sections.map((section) => section.getAttribute('data-label')),
@@ -238,15 +241,32 @@ try {
           .filter((child) => child.tagName === 'DIV')
           .map((row) => row.querySelector('span')?.textContent.trim() || ''),
         contentsText: contents.textContent,
+        contentsHeadingLayout: contentsHeading ? {
+          justifyContent: getComputedStyle(contentsHeading).justifyContent,
+          gap: getComputedStyle(contentsHeading).gap,
+          labels: Array.from(contentsHeading.children).map((element) => element.textContent.trim()),
+        } : null,
         decorativeOrdinals: [3, 5, 9].map((index) => Array.from(sections[index].querySelectorAll('span'))
           .map((span) => span.textContent.trim())
           .filter((text) => /^0[1-8]$/.test(text))),
+        audienceCopy: sections.flatMap((section) => [
+          section.textContent,
+          section.getAttribute('data-speaker-notes') || '',
+          ...Array.from(section.querySelectorAll('[alt],[title],[aria-label]')).flatMap((element) => [
+            element.getAttribute('alt') || '',
+            element.getAttribute('title') || '',
+            element.getAttribute('aria-label') || '',
+          ]),
+        ]).join('\\n'),
+        aiDisclosureMarkers: document.querySelectorAll('[data-ai-image-disclosure],[data-ai-image-label]').length,
+        contactPhoneMarkers: sections[12].querySelectorAll('[data-contact-phone="true"]').length,
         enhancerError: window.__companyProfileEnhancementError || null,
         contactText: sections[12].textContent,
       };
     })()`,
     returnByValue: true,
   });
+  assert(!result.exceptionDetails, `Company profile metrics evaluation failed: ${result.exceptionDetails?.exception?.description || result.exceptionDetails?.text || 'unknown error'}`);
   const metrics = result.result.value;
   assert(metrics.labels.length === 13, "Runtime slide count is not 13");
   assert(metrics.labels.every((label, index) => label.startsWith(String(index + 1).padStart(2, "0") + " ")), `Runtime data-label sequence is invalid: ${JSON.stringify(metrics.labels)}`);
@@ -271,8 +291,12 @@ try {
   assert(metrics.page9Text.includes("판매 채널") || metrics.page9Text.includes("채널"), "Page 9 channels content is missing");
   assert(metrics.contentsRows === 11, `Contents page has ${metrics.contentsRows} rows instead of 11`);
   assert(metrics.contentsNumbers.every((value, index) => value === String(index + 1).padStart(2, "0")), `Contents numbering regressed: ${JSON.stringify(metrics.contentsNumbers)}`);
+  assert(metrics.contentsHeadingLayout?.justifyContent === "flex-start" && metrics.contentsHeadingLayout?.gap === "18px", `Contents heading layout regressed: ${JSON.stringify(metrics.contentsHeadingLayout)}`);
+  assert(JSON.stringify(metrics.contentsHeadingLayout.labels) === JSON.stringify(["CONTENTS", "목차"]), `Contents heading order regressed: ${JSON.stringify(metrics.contentsHeadingLayout.labels)}`);
   assert(!metrics.contentsText.includes("쿠팡 채널 · 누적 리뷰"), `Contents page still lists the deleted Coupang review page: ${JSON.stringify(metrics.contentsText)}`);
   assert(metrics.decorativeOrdinals.every((values) => values.length === 0), `Decorative card ordinals remain: ${JSON.stringify(metrics.decorativeOrdinals)}`);
+  assert(!/\bAI\b|인공지능|생성형|참고\s*이미지|촬영한\s*것이\s*(?:아닙니다|아님)/.test(metrics.audienceCopy), "Company profile still exposes AI reference copy");
+  assert(metrics.aiDisclosureMarkers === 0, `Company profile still has ${metrics.aiDisclosureMarkers} AI disclosure markers`);
   assert(!metrics.page8Overflow, "Product guide page overflows at 1920×1080");
   Object.entries(changedPageLayouts).forEach(([page, layout]) => {
     assert(layout.clientWidth === 1920 && layout.clientHeight === 1080, `${page} layout is ${layout.clientWidth}×${layout.clientHeight}, expected 1920×1080`);
@@ -280,6 +304,8 @@ try {
   });
   assert(!metrics.enhancerError, `Company profile enhancer failed: ${metrics.enhancerError}`);
   assert(metrics.contactText.includes("ceo@companimal.kr"), "Company contact email regressed");
+  assert(metrics.contactPhoneMarkers === 1 && metrics.contactText.includes("문의전화") && metrics.contactText.includes("010-6540-7787"), "Company contact phone is missing or duplicated");
+  assert(metrics.contactText.indexOf("companimal.kr") < metrics.contactText.indexOf("010-6540-7787"), "Company contact phone is not below the homepage row");
 
   if (screenshotPath) {
     const screenshotUrl = url.replace(/#.*$/, `#${screenshotPage}`);

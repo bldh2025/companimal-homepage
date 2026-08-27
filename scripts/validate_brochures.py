@@ -41,15 +41,13 @@ from build_brochures import (
 )
 from history_content import BRAND_HISTORY, EXPECTED_HISTORY_ITEM_COUNTS, EXPECTED_HISTORY_YEARS
 from embed_company_profile_factory_images import (
-    CARD_DISCLOSURE,
+    CONTACT_PHONE,
     FACTORY_IMAGE_SPECS,
     MAX_REFERENCE_IMAGE_BYTES,
     PRINCIPLE_CARDS,
-    PRINCIPLE_DISCLOSURE,
     PRINCIPLE_IMAGE_SPECS,
     PROVENANCE_PATH,
     REFERENCE_IMAGE_SPECS,
-    SECTION_DISCLOSURE,
 )
 
 
@@ -63,6 +61,13 @@ LATEST_COMPANY_HTML = "output/brochure/zerolabs-company-profile-ko-2026.html"
 LEGACY_COMPANY_PDF_PATTERN = "company-profile-*-2026-v6.pdf"
 LEGACY_COMPANY_PREVIEW = OUTPUT / "company-profile-preview-ko.png"
 LEGACY_PRODUCT_HTML = ROOT / "output" / "brochure" / "zerolabs-product-profile-ko-2026.html"
+FORBIDDEN_AUDIENCE_AI_COPY = (
+    r"\bAI\b",
+    r"인공지능",
+    r"생성형",
+    r"참고\s*이미지",
+    r"촬영한\s*것이\s*(?:아닙니다|아님)",
+)
 
 EXPECTED_PRODUCT_REVIEW_COUNTS = {
     "meat": 11_659,
@@ -486,6 +491,12 @@ def validate_featured_html(entry: dict[str, object]) -> None:
     )
     if contents_numbers != [f"{value:02d}" for value in range(1, 11)]:
         fail(f"Featured company contents numbering regressed: {contents_numbers}")
+    contents_heading = (
+        '<div data-contents-heading="top" '
+        'style="display:flex; flex-direction:column; justify-content:flex-start; gap:18px;">'
+    )
+    if contents_match.group(0).count(contents_heading) != 1:
+        fail("Featured company contents heading is not positioned below CONTENTS")
     if ordinal_free_sections["06 제품 라인업"].count(
         'justify-content:flex-end; align-items:baseline; flex:none;">'
         '<span style="font-size:24px; color:#5b6b5e; white-space:nowrap;">'
@@ -499,30 +510,48 @@ def validate_featured_html(entry: dict[str, object]) -> None:
     image_embedder_source = (
         ROOT / "scripts" / "embed_company_profile_factory_images.py"
     ).read_text(encoding="utf-8")
-    if "strip_decorative_ordinals" not in image_embedder_source or "{number}" in image_embedder_source:
+    if (
+        "strip_decorative_ordinals" not in image_embedder_source
+        or "reposition_contents_heading" not in image_embedder_source
+        or "{number}" in image_embedder_source
+    ):
         fail("Featured company ordinal removal is not durable in the canonical embedder")
     references = set(re.findall(r"\b[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}\b", template, re.I))
     if not references.issubset(bundled_manifest):
         fail(f"Featured HTML has missing bundled asset references: {path}")
+    audience_attributes = re.findall(
+        r'(?:alt|title|aria-label|data-speaker-notes)="([^"]*)"', template
+    )
+    audience_copy = html.unescape(
+        " ".join((re.sub(r"<[^>]+>", " ", template), *audience_attributes))
+    )
+    exposed_ai_copy = [
+        pattern
+        for pattern in FORBIDDEN_AUDIENCE_AI_COPY
+        if re.search(pattern, audience_copy)
+    ]
     if (
-        template.count(SECTION_DISCLOSURE) != 1
-        or template.count(PRINCIPLE_DISCLOSURE) != 1
-        or template.count(f">{CARD_DISCLOSURE}</span>") != 0
+        exposed_ai_copy
+        or "data-ai-image-disclosure=" in template
         or "data-ai-image-label=" in template
-        or template.count(
-            f'data-ai-image-disclosure="production-reference-images" '
-            f'style="margin:0; font-size:19px; line-height:1.45; '
-            f'color:#4c5c50; flex:none;"'
-        )
-        != 1
-        or template.count(
-            f'data-ai-image-disclosure="principle-reference-images" '
-            f'style="margin:0; font-size:19px; line-height:1.45; '
-            f'color:#cfdcd2; text-align:right;"'
-        )
-        != 1
     ):
-        fail("Featured company AI reference image disclosure is missing or duplicated")
+        fail(f"Featured company exposes AI reference copy: {exposed_ai_copy}")
+    contact_match = re.search(
+        r'<section\b[^>]*data-label="12 문의".*?</section>', template, re.S
+    )
+    expected_phone_row = (
+        '<div data-contact-phone="true" style="display:flex; gap:40px; '
+        'border-top:1px solid #33513b; border-bottom:1px solid #33513b; padding:24px 0;">'
+        '<span style="width:220px; font-size:26px; color:#9dbaa5;">문의전화</span>'
+        f'<span style="font-size:29px; font-weight:500;">{CONTACT_PHONE}</span></div>'
+    )
+    if (
+        not contact_match
+        or contact_match.group(0).count(expected_phone_row) != 1
+        or contact_match.group(0).find("companimal.kr")
+        > contact_match.group(0).find(CONTACT_PHONE)
+    ):
+        fail("Featured company contact phone is missing or misplaced")
     if (
         template.count('data-principle-card="') != len(PRINCIPLE_IMAGE_SPECS)
         or template.count('data-principle-image-card="') != len(PRINCIPLE_IMAGE_SPECS)
@@ -542,11 +571,7 @@ def validate_featured_html(entry: dict[str, object]) -> None:
     except (OSError, json.JSONDecodeError) as error:
         fail(f"Featured company AI image provenance is invalid: {error}")
     provenance_assets = {item.get("path"): item for item in provenance.get("assets", [])}
-    if (
-        provenance.get("generation_tool") != "Codex built-in imagegen"
-        or provenance.get("disclosure") != SECTION_DISCLOSURE
-        or provenance.get("principle_disclosure") != PRINCIPLE_DISCLOSURE
-    ):
+    if provenance.get("generation_tool") != "Codex built-in imagegen":
         fail("Featured company AI image provenance contract is invalid")
     for asset_id, spec in REFERENCE_IMAGE_SPECS.items():
         expected_alt = str(spec["alt"])
