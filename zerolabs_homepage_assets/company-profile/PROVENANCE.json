@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-08-27",
+  "generation_tool": "Codex built-in imagegen",
+  "ai_generated": true,
+  "disclosure": "※ 생산·원료 이미지는 이해를 돕기 위한 AI 생성 참고 이미지이며, 실제 자사 소유 시설 또는 특정 협력 제조 시설·원료·제품을 촬영한 것이 아닙니다.",
+  "assets": [
+    {
+      "role": "oem-production",
+      "path": "zerolabs_homepage_assets/company-profile/oem-production-ai-v1.jpg",
+      "source_png_sha256": "103573a90f19821fc3bdd3f85afe86dcc52c8462e144b71df922ccc49bb8d1c0",
+      "derived_jpeg_sha256": "174d5b31170cc8ebb6fc2a97cfe0c40aeb0620569808b8e02482b1b1be8fbfd5",
+      "dimensions": [1200, 800],
+      "prompt": "Photorealistic editorial scene for a company-profile production card: a believable clean mid-sized pet-treat OEM factory with stainless mixing, forming and drying equipment; two secondary workers in white hygienic uniforms, hair nets and masks monitoring the line; 3:2 landscape, eye-level wide-medium framing, centered machinery and safe crop margins; soft neutral daylight, stainless silver, off-white and restrained forest-green accents; realistic clean factory wear; no logos, readable text, packaging labels, flags, certificates, watermarks, brewery tanks, pharmaceutical styling or futuristic machinery."
+    },
+    {
+      "role": "ingredient-inspection",
+      "path": "zerolabs_homepage_assets/company-profile/ingredient-inspection-ai-v1.jpg",
+      "source_png_sha256": "613d99861227cc88204afde508e842966c323565e6ba7660185a7bf219f2b69d",
+      "derived_jpeg_sha256": "7f0623d745e8fc855207bc00051222f9f9650da3b559ab1297e1cb28e9b0c3c5",
+      "dimensions": [1200, 800],
+      "prompt": "Photorealistic editorial scene for a company-profile ingredient card: a clean food-factory receiving and inspection station with a stainless table; a masked quality-control worker in white hygienic uniform and food-safe gloves inspecting restrained trays of salmon, beef or poultry, pumpkin, broccoli and tomato; 3:2 landscape, slight three-quarter overhead medium framing with safe crop margins; soft neutral daylight and natural unsaturated food colors; no home kitchen, wood board, restaurant plating, logos, readable text, maps, flags, certificates, test-tube laboratory or watermark."
+    },
+    {
+      "role": "packing-dispatch",
+      "path": "zerolabs_homepage_assets/company-profile/packing-dispatch-ai-v1.jpg",
+      "source_png_sha256": "b20ecb124189f152c22d89cabac224033c4b107458d1ea28711b827fb7d9d32f",
+      "derived_jpeg_sha256": "b58611b15adb21f888dfcfdcf51ed1c7383df00d2679e29c514f2c57a6fd1f21",
+      "dimensions": [1200, 800],
+      "prompt": "Photorealistic editorial scene for a company-profile supply card: a clean end-of-line pet-treat packing area connected to an organized small warehouse; anonymous workers seen only from behind or with faces fully obscured, gloved hands packing plain unbranded pouches into clean cartons, with a few wrapped pallets ready for dispatch; 3:2 landscape, eye-level wide-medium framing and 15 percent safe crop margins; soft neutral daylight with restrained forest-green accents; no visible faces, logos, readable labels, product claims, certifications, retail shelving, giant distribution center, futuristic robots, unsafe stacking or watermark."
+    }
+  ],
+  "derivation": "Built-in generated PNG selected by visual inspection, converted to 1200×800 RGB JPEG with macOS sips at JPEG quality 88, then embedded byte-for-byte in the standalone company-profile bundle."
+}

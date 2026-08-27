@@ -3,14 +3,17 @@
 
 from __future__ import annotations
 
+import base64
 import html
 import hashlib
+import io
 import json
 import re
 import unicodedata
 from pathlib import Path
 
 import fitz
+from PIL import Image
 from pypdf import PdfReader
 
 from brochure_content import COMPANY_CONTENT, LANGUAGES, PRODUCT_CONTENT
@@ -31,6 +34,13 @@ from build_brochures import (
     WHOLESALE_URL,
 )
 from history_content import BRAND_HISTORY, EXPECTED_HISTORY_ITEM_COUNTS, EXPECTED_HISTORY_YEARS
+from embed_company_profile_factory_images import (
+    CARD_DISCLOSURE,
+    FACTORY_IMAGE_SPECS,
+    MAX_FACTORY_IMAGE_BYTES,
+    PROVENANCE_PATH,
+    SECTION_DISCLOSURE,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -417,6 +427,54 @@ def validate_featured_html(entry: dict[str, object]) -> None:
     references = set(re.findall(r"\b[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}\b", template, re.I))
     if not references.issubset(bundled_manifest):
         fail(f"Featured HTML has missing bundled asset references: {path}")
+    if (
+        template.count(SECTION_DISCLOSURE) != 1
+        or template.count(f">{CARD_DISCLOSURE}</span>") != len(FACTORY_IMAGE_SPECS)
+        or template.count(
+            f'data-ai-image-disclosure="production-reference-images" '
+            f'style="margin:0; font-size:19px; line-height:1.45; '
+            f'color:#4c5c50; flex:none;"'
+        )
+        != 1
+    ):
+        fail("Featured company AI reference image disclosure is missing or duplicated")
+    try:
+        provenance = json.loads(PROVENANCE_PATH.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        fail(f"Featured company AI image provenance is invalid: {error}")
+    provenance_assets = {item.get("path"): item for item in provenance.get("assets", [])}
+    if provenance.get("generation_tool") != "Codex built-in imagegen" or provenance.get("disclosure") != SECTION_DISCLOSURE:
+        fail("Featured company AI image provenance contract is invalid")
+    for asset_id, spec in FACTORY_IMAGE_SPECS.items():
+        expected_alt = str(spec["alt"])
+        if template.count(f'data-ai-image="{asset_id}"') != 1:
+            fail(f"Featured company AI image marker is missing: {asset_id}")
+        if template.count(f'data-ai-image-label="{asset_id}"') != 1:
+            fail(f"Featured company AI image label is missing: {asset_id}")
+        if template.count(f'alt="{expected_alt}"') != 1:
+            fail(f"Featured company AI image alt text is invalid: {asset_id}")
+        item = bundled_manifest.get(asset_id)
+        if not isinstance(item, dict) or item.get("mime") != "image/jpeg" or item.get("compressed") is not False:
+            fail(f"Featured company AI image manifest metadata is invalid: {asset_id}")
+        try:
+            decoded = base64.b64decode(str(item.get("data", "")), validate=True)
+        except (ValueError, TypeError) as error:
+            fail(f"Featured company AI image payload is invalid: {asset_id}: {error}")
+        asset_path = ROOT / str(spec["path"])
+        if not asset_path.is_file() or asset_path.is_symlink():
+            fail(f"Featured company AI source asset is missing: {asset_path}")
+        if decoded != asset_path.read_bytes() or hashlib.sha256(decoded).hexdigest() != spec["sha256"]:
+            fail(f"Featured company AI image bytes or SHA-256 differ: {asset_id}")
+        provenance_item = provenance_assets.get(str(spec["path"]))
+        if not isinstance(provenance_item, dict) or provenance_item.get("derived_jpeg_sha256") != spec["sha256"]:
+            fail(f"Featured company AI image provenance differs: {asset_id}")
+        if not decoded.startswith(b"\xff\xd8\xff") or len(decoded) > MAX_FACTORY_IMAGE_BYTES:
+            fail(f"Featured company AI image format or size is invalid: {asset_id}")
+        with Image.open(io.BytesIO(decoded)) as image:
+            if image.format != "JPEG" or image.mode != "RGB" or image.size != (1200, 800):
+                fail(f"Featured company AI image dimensions or color mode are invalid: {asset_id}")
+            if image.getexif().get_ifd(0x8825):
+                fail(f"Featured company AI image contains GPS metadata: {asset_id}")
     for required in ("ZERO LABS", "주식회사 반려동행", "Remove", "Balance", "Supply"):
         if required not in template:
             fail(f"Featured HTML required content missing: {required}")

@@ -24,6 +24,8 @@ jobs:
         run: |
           rm -f zerolabs_homepage_assets/logo-*.png
           rm -f zerolabs_homepage_assets/lockup_*.png
+          # 회사소개서가 JPEG를 자체 내장하므로 AI 생성 원본·provenance는 사이트에 중복 공개하지 않는다.
+          rm -rf zerolabs_homepage_assets/company-profile
           # product-*.png와 trial-*.png는 HTML 제품소개서가 직접 요청하므로 보존한다.
           rm -rf scripts
       - uses: actions/configure-pages@v5
