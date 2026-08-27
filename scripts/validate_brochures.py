@@ -37,8 +37,12 @@ from history_content import BRAND_HISTORY, EXPECTED_HISTORY_ITEM_COUNTS, EXPECTE
 from embed_company_profile_factory_images import (
     CARD_DISCLOSURE,
     FACTORY_IMAGE_SPECS,
-    MAX_FACTORY_IMAGE_BYTES,
+    MAX_REFERENCE_IMAGE_BYTES,
+    PRINCIPLE_CARDS,
+    PRINCIPLE_DISCLOSURE,
+    PRINCIPLE_IMAGE_SPECS,
     PROVENANCE_PATH,
+    REFERENCE_IMAGE_SPECS,
     SECTION_DISCLOSURE,
 )
 
@@ -429,30 +433,74 @@ def validate_featured_html(entry: dict[str, object]) -> None:
         fail(f"Featured HTML has missing bundled asset references: {path}")
     if (
         template.count(SECTION_DISCLOSURE) != 1
-        or template.count(f">{CARD_DISCLOSURE}</span>") != len(FACTORY_IMAGE_SPECS)
+        or template.count(PRINCIPLE_DISCLOSURE) != 1
+        or template.count(f">{CARD_DISCLOSURE}</span>") != 0
+        or "data-ai-image-label=" in template
         or template.count(
             f'data-ai-image-disclosure="production-reference-images" '
             f'style="margin:0; font-size:19px; line-height:1.45; '
             f'color:#4c5c50; flex:none;"'
         )
         != 1
+        or template.count(
+            f'data-ai-image-disclosure="principle-reference-images" '
+            f'style="margin:0; font-size:19px; line-height:1.45; '
+            f'color:#cfdcd2; text-align:right;"'
+        )
+        != 1
     ):
         fail("Featured company AI reference image disclosure is missing or duplicated")
+    if (
+        template.count('data-principle-card="') != len(PRINCIPLE_IMAGE_SPECS)
+        or template.count('data-principle-image-card="') != len(PRINCIPLE_IMAGE_SPECS)
+        or template.count('height:372px; overflow:hidden; display:flex; flex:none;')
+        != len(PRINCIPLE_IMAGE_SPECS)
+        or template.count(
+            '<h2 style="margin:0; font-size:62px; font-weight:600; '
+            'letter-spacing:-0.025em; line-height:1.18;">'
+            '제로랩스가 간식을 만드는 세 가지 원칙</h2>'
+        )
+        != 1
+        or any(stale_alt in template for stale_alt in ("국내산 원물", "채소 원료와 제품", "제품 진열"))
+    ):
+        fail("Featured company principle image layout is stale or invalid")
     try:
         provenance = json.loads(PROVENANCE_PATH.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as error:
         fail(f"Featured company AI image provenance is invalid: {error}")
     provenance_assets = {item.get("path"): item for item in provenance.get("assets", [])}
-    if provenance.get("generation_tool") != "Codex built-in imagegen" or provenance.get("disclosure") != SECTION_DISCLOSURE:
+    if (
+        provenance.get("generation_tool") != "Codex built-in imagegen"
+        or provenance.get("disclosure") != SECTION_DISCLOSURE
+        or provenance.get("principle_disclosure") != PRINCIPLE_DISCLOSURE
+    ):
         fail("Featured company AI image provenance contract is invalid")
-    for asset_id, spec in FACTORY_IMAGE_SPECS.items():
+    for asset_id, spec in REFERENCE_IMAGE_SPECS.items():
         expected_alt = str(spec["alt"])
         if template.count(f'data-ai-image="{asset_id}"') != 1:
             fail(f"Featured company AI image marker is missing: {asset_id}")
-        if template.count(f'data-ai-image-label="{asset_id}"') != 1:
-            fail(f"Featured company AI image label is missing: {asset_id}")
         if template.count(f'alt="{expected_alt}"') != 1:
             fail(f"Featured company AI image alt text is invalid: {asset_id}")
+        if asset_id in FACTORY_IMAGE_SPECS:
+            factory_card = (
+                '<div style="flex:1; min-height:56px; overflow:hidden; display:flex;">'
+                f'<img src="{asset_id}" alt="{expected_alt}" '
+                'style="width:100%; height:100%; object-fit:cover; display:block;" '
+                f'data-ai-image="{asset_id}"></div>'
+            )
+            if template.count(factory_card) != 1:
+                fail(f"Featured company factory image has an unexpected overlay: {asset_id}")
+        if asset_id in PRINCIPLE_IMAGE_SPECS:
+            english = next(card[2] for card in PRINCIPLE_CARDS if card[0] == asset_id)
+            principle_image_card = (
+                f'<div data-principle-image-card="{english.lower()}" '
+                'style="height:372px; overflow:hidden; display:flex; flex:none;">'
+                f'<img src="{asset_id}" alt="{expected_alt}" '
+                'style="width:100%; height:100%; object-fit:cover; display:block;" '
+                f'data-ai-image="{asset_id}"></div>'
+            )
+            if template.count(principle_image_card) != 1:
+                fail(f"Featured company principle image has an unexpected overlay: {asset_id}")
         item = bundled_manifest.get(asset_id)
         if not isinstance(item, dict) or item.get("mime") != "image/jpeg" or item.get("compressed") is not False:
             fail(f"Featured company AI image manifest metadata is invalid: {asset_id}")
@@ -466,9 +514,15 @@ def validate_featured_html(entry: dict[str, object]) -> None:
         if decoded != asset_path.read_bytes() or hashlib.sha256(decoded).hexdigest() != spec["sha256"]:
             fail(f"Featured company AI image bytes or SHA-256 differ: {asset_id}")
         provenance_item = provenance_assets.get(str(spec["path"]))
-        if not isinstance(provenance_item, dict) or provenance_item.get("derived_jpeg_sha256") != spec["sha256"]:
+        if (
+            not isinstance(provenance_item, dict)
+            or provenance_item.get("derived_jpeg_sha256") != spec["sha256"]
+            or provenance_item.get("dimensions") != [1200, 800]
+            or not re.fullmatch(r"[0-9a-f]{64}", str(provenance_item.get("source_png_sha256", "")))
+            or not str(provenance_item.get("prompt", "")).strip()
+        ):
             fail(f"Featured company AI image provenance differs: {asset_id}")
-        if not decoded.startswith(b"\xff\xd8\xff") or len(decoded) > MAX_FACTORY_IMAGE_BYTES:
+        if not decoded.startswith(b"\xff\xd8\xff") or len(decoded) > MAX_REFERENCE_IMAGE_BYTES:
             fail(f"Featured company AI image format or size is invalid: {asset_id}")
         with Image.open(io.BytesIO(decoded)) as image:
             if image.format != "JPEG" or image.mode != "RGB" or image.size != (1200, 800):

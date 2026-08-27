@@ -4,6 +4,7 @@
   "generation_tool": "Codex built-in imagegen",
   "ai_generated": true,
   "disclosure": "※ 생산·원료 이미지는 이해를 돕기 위한 AI 생성 참고 이미지이며, 실제 자사 소유 시설 또는 특정 협력 제조 시설·원료·제품을 촬영한 것이 아닙니다.",
+  "principle_disclosure": "※ 이 페이지의 이미지는 이해를 돕기 위한 AI 생성 참고 이미지이며, 실제 원료·제품·거래처·시설을 촬영한 것이 아닙니다.",
   "assets": [
     {
       "role": "oem-production",
@@ -28,7 +29,31 @@
       "derived_jpeg_sha256": "b58611b15adb21f888dfcfdcf51ed1c7383df00d2679e29c514f2c57a6fd1f21",
       "dimensions": [1200, 800],
       "prompt": "Photorealistic editorial scene for a company-profile supply card: a clean end-of-line pet-treat packing area connected to an organized small warehouse; anonymous workers seen only from behind or with faces fully obscured, gloved hands packing plain unbranded pouches into clean cartons, with a few wrapped pallets ready for dispatch; 3:2 landscape, eye-level wide-medium framing and 15 percent safe crop margins; soft neutral daylight with restrained forest-green accents; no visible faces, logos, readable labels, product claims, certifications, retail shelving, giant distribution center, futuristic robots, unsafe stacking or watermark."
+    },
+    {
+      "role": "principle-remove",
+      "path": "zerolabs_homepage_assets/company-profile/principle-remove-ai-v1.jpg",
+      "source_png_sha256": "0ef03a07e8f015c0f723b0ee98d0751b2b26ae04f8335e1f4c8a795817eed4ed",
+      "derived_jpeg_sha256": "90c9f01fd304295127a427d69739f25568a77214312bb213ed14cf5d133964ce",
+      "dimensions": [1200, 800],
+      "prompt": "Regenerate a clean REMOVE / 덜어내다 conceptual editorial still-life for a Korean B2B pet-treat company profile. Landscape 3:2, designed for a 557×372 px card. Warm cream matte paper-texture tabletop (#F2EFE6). Place one deep forest-green (#1F3325) matte tray only on the right third. The tray must contain only two restrained, clearly separated groups: pale beige dried protein cubes and three to five unmistakable miniature broccoli florets with visible branching stems and rounded crowns. No other food or green cubes. The left 65–70% must remain calm negative space with only a very faint circular removal mark. Camera 30-degree overhead, 50mm premium editorial photography, softbox upper left, soft shadow lower right, low saturation, matte cream/oat/deep-green/soft-sage palette, 10% safe crop margins. This is a general studio concept, not an actual product, recipe, ingredient claim, or facility. Absolutely no avocado, green cubes, garlic, onion, chives, grapes, citrus, seasoning, raw meat, raw fish, text, letters, numbers, labels, packaging, logo, certification, flag, person, hand, face, factory, lab equipment, watermark, glossy CGI, clutter, extra ingredients, or decorative botanical props."
+    },
+    {
+      "role": "principle-balance",
+      "path": "zerolabs_homepage_assets/company-profile/principle-balance-ai-v1.jpg",
+      "source_png_sha256": "ba6fe60bb4ce918be60563df56869de7c04b72f67532a2b43b1aaac5c76faae0",
+      "derived_jpeg_sha256": "4210de7dc30e3b73efb07009300ba32cafe42366c35fd8dc7663175dcbb25c4a",
+      "dimensions": [1200, 800],
+      "prompt": "Create a brand-new photorealistic conceptual editorial still-life image for a Korean B2B pet-treat company profile. Theme: BALANCE / 조합하다 — measured components intentionally combined for a purpose. Landscape 3:2 composition, intended for a 557×372 px card and visually matched to a companion REMOVE image. Warm cream matte paper-texture tabletop (#F2EFE6). Center a deep forest-green (#1F3325) matte four-compartment modular tray. In the four compartments place small measured portions at visibly different but orderly levels: pale beige dried protein cubes, muted orange pumpkin dice, soft green broccoli pieces, and a few muted red tomato pieces. Beside it, only two plain off-white ceramic dishes and one small unbranded matte measuring scoop. No finished product and no packaging. Camera 30-degree overhead, 50mm editorial food photography, softbox from upper left, soft shadow toward lower right, low saturation, matte finish, cream/oat/deep-green/soft-sage/muted-terracotta palette, consistent object scale and table horizon with the REMOVE image. Preserve 10% safe crop margins. This is a general conceptual studio still life, not an actual recipe or ingredient claim. Absolutely no text, letters, numbers, labels, packaging, logo, brand mark, certification, flag, person, hand, face, factory, laboratory equipment, transparent jars, garlic, onion, chives, grapes, citrus, seasoning props, raw meat, raw fish, watermark, glossy CGI, or clutter."
+    },
+    {
+      "role": "principle-supply",
+      "path": "zerolabs_homepage_assets/company-profile/principle-supply-ai-v1.jpg",
+      "source_png_sha256": "31f6597eb8c40ecd3cbdc63caee808b767f4fe94c391991da17df1a76d36ef10",
+      "derived_jpeg_sha256": "5d82b27eb1d1429d26b103f251873d905557f04e6d67a2814d1dcc59f56c416f",
+      "dimensions": [1200, 800],
+      "prompt": "Regenerate a clean conceptual studio still-life for SUPPLY / 공급하다 in a Korean B2B pet-treat company profile. Landscape 3:2. The only objects in the entire scene must be exactly three plain unprinted kraft shipping boxes and exactly seven identical sealed blank matte-cream stand-up pouches. No other objects or decoration whatsoever. Arrange the three cartons in a stable stepped stack on the left and the seven pouches in two precise orderly rows on the right, expressing repeatable supply units. Warm cream matte paper tabletop (#F2EFE6), deep forest-green (#1F3325) matte background panel. Same visual series as premium REMOVE and BALANCE still lifes: camera 30-degree overhead, 50mm editorial photography, softbox upper left, soft shadows lower right, low saturation, matte finish, cream/oat/deep-green palette, preserve 10% crop margins. This is an abstract studio concept, not a real product, shipment, warehouse, customer, or facility. Absolutely no leaves, branches, flowers, food, ingredients, text, letters, numbers, logo, labels, seams shaped like lettering, barcode, QR, shipping label, certification, flag, product claim, person, hand, warehouse, factory, forklift, pallet rack, truck, signage, watermark, glossy CGI, clutter, extra cartons, or extra pouches."
     }
   ],
-  "derivation": "Built-in generated PNG selected by visual inspection, converted to 1200×800 RGB JPEG with macOS sips at JPEG quality 88, then embedded byte-for-byte in the standalone company-profile bundle."
+  "derivation": "Built-in generated PNG selected by visual inspection, converted to 1200×800 RGB JPEG with macOS sips at JPEG quality 88, then embedded byte-for-byte in the standalone company-profile bundle. Page-4 principle images use the shared cream, deep-green, 30-degree-overhead studio still-life system; page-5 production images retain documentary styling."
 }
