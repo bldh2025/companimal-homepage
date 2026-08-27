@@ -32,15 +32,15 @@ const chrome = [
   "/usr/bin/chromium",
 ].find((candidate) => candidate && existsSync(candidate));
 const screenshotPath = process.argv[2] ? path.resolve(process.argv[2]) : null;
-const expectedCoupangCards = [
-  ["고기가득", "10,762건"],
-  ["영양가득", "6,282건"],
-  ["베리가득", "10,769건"],
-  ["치카하개", "1,717건"],
-  ["굽빵", "43건"],
-  ["미트리스", "419건"],
-  ["멍스", "340건"],
-  ["프레쉬링", "837건"],
+const expectedAllChannelCards = [
+  ["고기가득", "11,659건"],
+  ["영양가득", "6,473건"],
+  ["베리가득", "10,906건"],
+  ["치카하개", "1,886건"],
+  ["굽빵", "54건"],
+  ["미트리스", "433건"],
+  ["멍스", "477건"],
+  ["프레쉬링", "869건"],
 ];
 
 function assert(condition, message) {
@@ -188,11 +188,11 @@ try {
   await cdp.call("Page.navigate", { url });
   await waitFor(async () => {
     const result = await cdp.call("Runtime.evaluate", {
-      expression: "document.querySelectorAll('section').length === 14",
+      expression: "document.querySelectorAll('section').length === 13",
       returnByValue: true,
     });
     return result.result.value;
-  }, 45_000, "14-page enhanced company profile");
+  }, 45_000, "13-page enhanced company profile");
   await cdp.call("Runtime.evaluate", {
     expression: "Promise.all([document.fonts.ready, ...Array.from(document.images, image => image.decode().catch(() => {}))])",
     awaitPromise: true,
@@ -203,11 +203,12 @@ try {
     expression: "window.enhanceCompanyProfile(document); document.querySelectorAll('section').length",
     returnByValue: true,
   });
-  assert(idempotentResult.result.value === 14, "Company profile enhancer is not idempotent");
+  assert(idempotentResult.result.value === 13, "Company profile enhancer is not idempotent");
   const changedPageLayouts = {
     page2: await readSectionLayout(cdp, 2),
     page7: await readSectionLayout(cdp, 7),
     page8: await readSectionLayout(cdp, 8),
+    page9: await readSectionLayout(cdp, 9),
   };
   const result = await cdp.call("Runtime.evaluate", {
     expression: `(() => {
@@ -220,50 +221,49 @@ try {
         screenLabels: sections.map((section) => section.getAttribute('data-screen-label')),
         eyebrows: sections.slice(2).map((section) => eyebrow(section)?.textContent.trim() || ''),
         allChannelMarker: sections[6].getAttribute('data-review-proof'),
-        coupangMarker: page8.getAttribute('data-channel-review-proof'),
+        deprecatedCoupangMarkers: document.querySelectorAll('[data-channel-review-proof="coupang"]').length,
         page7Text: sections[6].textContent,
         page8Text: page8.textContent,
+        page9Text: sections[8].textContent,
         page8Overflow: page8.scrollWidth > page8.clientWidth || page8.scrollHeight > page8.clientHeight,
-        page8Cards: Array.from(page8.querySelectorAll('article')).map((card) => ({
+        page7Cards: Array.from(sections[6].querySelectorAll('article')).map((card) => ({
           name: card.querySelector('h3')?.textContent.trim() || '',
           count: card.querySelector('strong')?.textContent.trim() || '',
           imageAlt: card.querySelector('img')?.getAttribute('alt') || '',
-          clientWidth: card.clientWidth,
-          clientHeight: card.clientHeight,
-          overflow: card.scrollWidth > card.clientWidth || card.scrollHeight > card.clientHeight,
         })),
         contentsRows: Array.from(contents.children[1].children).filter((child) => child.tagName === 'DIV').length,
         contentsText: contents.textContent,
         enhancerError: window.__companyProfileEnhancementError || null,
-        contactText: sections[13].textContent,
+        contactText: sections[12].textContent,
       };
     })()`,
     returnByValue: true,
   });
   const metrics = result.result.value;
-  assert(metrics.labels.length === 14, "Runtime slide count is not 14");
+  assert(metrics.labels.length === 13, "Runtime slide count is not 13");
   assert(metrics.labels.every((label, index) => label.startsWith(String(index + 1).padStart(2, "0") + " ")), `Runtime data-label sequence is invalid: ${JSON.stringify(metrics.labels)}`);
   // The enhancer authors a number-only data-screen-label. The presentation
   // runtime then prefixes that ordinal to data-label for the final sidebar
-  // display, yielding values such as "08 08 쿠팡 리뷰" in the live DOM.
+  // display, yielding values such as "08 08 제품 선택 가이드" in the live DOM.
   assert(metrics.screenLabels.every((label, index) => label === `${String(index + 1).padStart(2, "0")} ${metrics.labels[index]}`), `Rendered screen-label sequence is invalid: ${JSON.stringify(metrics.screenLabels)}`);
   assert(metrics.eyebrows.every((label, index) => label.startsWith(String(index + 1).padStart(2, "0") + " — ")), `Runtime eyebrow sequence is invalid: ${JSON.stringify(metrics.eyebrows)}`);
   assert(metrics.labels[6].endsWith("리뷰 데이터"), "Page 7 is not the all-channel review page");
-  assert(metrics.labels[7].endsWith("쿠팡 리뷰"), "Page 8 is not the Coupang review page");
-  assert(metrics.labels[8].endsWith("제품 선택 가이드"), "The previous page 8 was not shifted to page 9");
-  assert(metrics.allChannelMarker === "true" && metrics.coupangMarker === "coupang", "Review page markers are invalid");
+  assert(metrics.labels[7].endsWith("제품 선택 가이드"), "Page 8 is not the product guide after removing the duplicate page");
+  assert(metrics.labels[8].endsWith("채널"), "Page 9 is not the channels page after removing the duplicate page");
+  assert(metrics.allChannelMarker === "true", "The all-channel review page marker is invalid");
+  assert(metrics.deprecatedCoupangMarkers === 0, "The deprecated Coupang review page marker remains");
   assert(metrics.page7Text.includes("전체 판매채널 누적 리뷰 32,757건"), "Page 7 does not preserve the all-channel total");
-  assert(metrics.page8Text.includes("31,169건") && metrics.page8Text.includes("32,757건"), "Coupang/all-channel totals are not clearly distinguished");
-  assert(metrics.page8Cards.length === expectedCoupangCards.length, `Page 8 has ${metrics.page8Cards.length} product cards instead of 8`);
-  metrics.page8Cards.forEach((card, index) => {
-    const [expectedName, expectedCount] = expectedCoupangCards[index];
-    assert(card.name === expectedName && card.count === expectedCount, `Coupang card ${index + 1} is ${card.name}/${card.count}, expected ${expectedName}/${expectedCount}`);
-    assert(card.imageAlt.includes(expectedName), `Coupang card ${index + 1} image alt does not match ${expectedName}: ${card.imageAlt}`);
-    assert(card.clientWidth > 0 && card.clientHeight > 0 && !card.overflow, `Coupang card ${index + 1} is hidden or clips its content`);
+  assert(metrics.page7Cards.length === expectedAllChannelCards.length, `Page 7 has ${metrics.page7Cards.length} product cards instead of 8`);
+  metrics.page7Cards.forEach((card, index) => {
+    const [expectedName, expectedCount] = expectedAllChannelCards[index];
+    assert(card.name === expectedName && card.count === expectedCount, `All-channel card ${index + 1} is ${card.name}/${card.count}, expected ${expectedName}/${expectedCount}`);
+    assert(card.imageAlt.includes(expectedName), `All-channel card ${index + 1} image alt does not match ${expectedName}: ${card.imageAlt}`);
   });
-  assert(metrics.contentsRows === 12, `Contents page has ${metrics.contentsRows} rows instead of 12`);
-  assert(metrics.contentsText.includes("쿠팡 채널 · 누적 리뷰 31,169건"), `Contents page is missing the Coupang review row: ${JSON.stringify(metrics.contentsText)}`);
-  assert(!metrics.page8Overflow, "Coupang review page overflows at 1920×1080");
+  assert(!metrics.page8Text.includes("31,169건") && !metrics.labels.some((label) => label.includes("쿠팡 리뷰")), "The duplicate Coupang review page remains");
+  assert(metrics.page9Text.includes("판매 채널") || metrics.page9Text.includes("채널"), "Page 9 channels content is missing");
+  assert(metrics.contentsRows === 11, `Contents page has ${metrics.contentsRows} rows instead of 11`);
+  assert(!metrics.contentsText.includes("쿠팡 채널 · 누적 리뷰"), `Contents page still lists the deleted Coupang review page: ${JSON.stringify(metrics.contentsText)}`);
+  assert(!metrics.page8Overflow, "Product guide page overflows at 1920×1080");
   Object.entries(changedPageLayouts).forEach(([page, layout]) => {
     assert(layout.clientWidth === 1920 && layout.clientHeight === 1080, `${page} layout is ${layout.clientWidth}×${layout.clientHeight}, expected 1920×1080`);
     assert(layout.rectWidth > 0 && layout.rectHeight > 0 && !layout.overflow, `${page} is hidden or overflows at 1920×1080`);
@@ -284,22 +284,24 @@ try {
   await cdp.call("Page.navigate", { url: standaloneUrl });
   await waitFor(async () => {
     const state = await cdp.call("Runtime.evaluate", {
-      expression: "document.querySelectorAll('section').length === 14",
+      expression: "document.querySelectorAll('section').length === 13",
       returnByValue: true,
     });
     return state.result.value;
-  }, 45_000, "14-page standalone file company profile");
+  }, 45_000, "13-page standalone file company profile");
   const standalone = await cdp.call("Runtime.evaluate", {
     expression: `(() => ({
       pages: document.querySelectorAll('section').length,
       protocol: location.protocol,
-      coupangMarker: document.querySelectorAll('section')[7]?.getAttribute('data-channel-review-proof'),
-      coupangTotal: document.querySelectorAll('section')[7]?.textContent.includes('31,169건'),
+      allChannelMarker: document.querySelectorAll('section')[6]?.getAttribute('data-review-proof'),
+      page8IsGuide: document.querySelectorAll('section')[7]?.getAttribute('data-label')?.endsWith('제품 선택 가이드'),
+      deprecatedCoupangMarkers: document.querySelectorAll('[data-channel-review-proof="coupang"]').length,
       externalRuntimeScripts: document.querySelectorAll('script[src*="brochure-review-data"],script[src*="company-contact-patch"]').length,
     }))()`,
     returnByValue: true,
   });
-  assert(standalone.result.value.pages === 14 && standalone.result.value.coupangMarker === "coupang" && standalone.result.value.coupangTotal, "Standalone downloaded company profile is missing the Coupang page");
+  assert(standalone.result.value.pages === 13 && standalone.result.value.allChannelMarker === "true" && standalone.result.value.page8IsGuide, "Standalone downloaded company profile does not have the expected 13-page order");
+  assert(standalone.result.value.deprecatedCoupangMarkers === 0, "Standalone company profile still contains the deleted Coupang page");
   assert(standalone.result.value.protocol === "file:", `Standalone company profile did not load through file://: ${standalone.result.value.protocol}`);
   assert(standalone.result.value.externalRuntimeScripts === 0, "Standalone company profile still requests external runtime scripts");
 
@@ -317,8 +319,8 @@ try {
   assert(fallback.count === 12, `Enhancer fail-open deck has ${fallback.count} pages instead of 12`);
   console.log(JSON.stringify({
     status: "ok",
-    pages: 14,
-    coupangTotal: 31_169,
+    pages: 13,
+    removedCoupangPage: true,
     screenshot: screenshotPath,
     labels: metrics.labels,
     screenLabels: metrics.screenLabels,

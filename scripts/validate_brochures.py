@@ -21,6 +21,7 @@ from build_brochures import (
     CHANNEL_URLS,
     COMPANY_REVIEW_PORTFOLIO_KEYS,
     COMPANY_PAGE_COUNT,
+    COMPANY_HTML_PAGE_COUNT,
     CONTACT_URIS,
     COUPANG_REVIEW_AS_OF,
     COUPANG_REVIEW_COUNTS,
@@ -438,8 +439,8 @@ def validate_homepage_company_source() -> None:
 def validate_featured_html(entry: dict[str, object]) -> None:
     if entry.get("format") != "html":
         fail("Featured HTML brochure manifest format must be html")
-    if entry.get("pages") != 14:
-        fail("Featured HTML brochure manifest page count must be 14")
+    if entry.get("pages") != COMPANY_HTML_PAGE_COUNT:
+        fail(f"Featured HTML brochure manifest page count must be {COMPANY_HTML_PAGE_COUNT}")
     path = ROOT / str(entry["path"])
     if not path.is_file() or path.is_symlink() or path.stat().st_size < 1_000_000:
         fail(f"Featured HTML brochure is missing or unexpectedly small: {path}")
@@ -572,22 +573,26 @@ def validate_featured_html(entry: dict[str, object]) -> None:
     for required in (
         "enhanceCompanyProfile",
         'data-review-proof',
-        'data-channel-review-proof',
         "MARKET PROOF",
-        "COUPANG PROOF",
         "cloneNode(true)",
         'doc.querySelector("x-import")',
         "snapshot.total.toLocaleString",
-        "snapshot.coupang.total.toLocaleString",
-        "makeCoupangReviewSlide",
         "productImages",
-        "sections.length !== 14",
-        "sections[7] !== coupangSlide",
+        "sections.length !== 13",
+        "sections[7] !== guide",
         'section.setAttribute("data-screen-label", pageNumber);',
-        "Company profile review enhancement is only partially present",
     ):
         if required not in patch_script:
             fail(f"Featured company review enhancer contract is missing: {required}")
+    for forbidden in (
+        "makeCoupangReviewSlide",
+        "COUPANG PROOF",
+        "snapshot.coupang",
+        "data-channel-review-proof",
+        'slide.setAttribute("data-label", "08 쿠팡 리뷰")',
+    ):
+        if forbidden in patch_script:
+            fail(f"Deprecated Coupang review page contract remains in the enhancer: {forbidden}")
     review_data_source = (ROOT / "brochure-review-data.js").read_text(encoding="utf-8")
     if EXPECTED_REVIEW_DEFINITION not in review_data_source or EXPECTED_COUPANG_REVIEW_DEFINITION not in review_data_source:
         fail("Canonical all-channel or Coupang review disclosure is missing from browser data")
@@ -672,14 +677,14 @@ def validate_site(manifest: dict[str, object]) -> None:
         for fallback in expected_fallbacks:
             if fallback not in source:
                 fail(f"Fallback brochure link missing in {path}: {fallback}")
-        if path == ROOT / "index.html" and ("type=\"text/html\"" not in source or "HTML · 14쪽" not in source):
+        if path == ROOT / "index.html" and ("type=\"text/html\"" not in source or f"HTML · {COMPANY_HTML_PAGE_COUNT}쪽" not in source):
             fail(f"Korean featured HTML fallback is not wired in {path}")
         if path == ROOT / "index.html" and source.count('type="text/html"') < 2:
             fail(f"Korean product HTML fallback is not wired in {path}")
         company_fallback_meta = {
-            ROOT / "en" / "index.html": "HTML · 14 pages",
-            ROOT / "zh" / "index.html": "HTML · 14页",
-            ROOT / "zh-hant" / "index.html": "HTML · 14頁",
+            ROOT / "en" / "index.html": f"HTML · {COMPANY_HTML_PAGE_COUNT} pages",
+            ROOT / "zh" / "index.html": f"HTML · {COMPANY_HTML_PAGE_COUNT}页",
+            ROOT / "zh-hant" / "index.html": f"HTML · {COMPANY_HTML_PAGE_COUNT}頁",
         }
         if path in company_fallback_meta and company_fallback_meta[path] not in source:
             fail(f"Latest company HTML fallback metadata is missing in {path}")

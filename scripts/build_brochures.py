@@ -55,6 +55,7 @@ PALE_GREEN = (225 / 255, 232 / 255, 223 / 255)
 CONTACT_EMAIL = "ceo@companimal.kr"
 WHOLESALE_URL = "https://제로랩스.com/"
 COMPANY_PAGE_COUNT = 14
+COMPANY_HTML_PAGE_COUNT = 13
 PRODUCT_PAGE_COUNT = 15
 
 # The browser-facing JavaScript object is also the PDF generator's canonical

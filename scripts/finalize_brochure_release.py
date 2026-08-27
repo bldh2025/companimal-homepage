@@ -9,7 +9,7 @@ import os
 from pathlib import Path
 
 from brochure_content import LANGUAGES
-from build_brochures import PRODUCT_PAGE_COUNT
+from build_brochures import COMPANY_HTML_PAGE_COUNT, PRODUCT_PAGE_COUNT
 from embed_company_profile_runtime_assets import update_company_profile_runtime_assets
 from validate_brochures import validate_featured_html, validate_pdf, validate_product_html
 
@@ -39,7 +39,7 @@ def main() -> None:
     results["ko"]["companyHtml"] = {
             "path": str(featured.relative_to(ROOT)),
             "bytes": featured.stat().st_size,
-            "pages": 14,
+            "pages": COMPANY_HTML_PAGE_COUNT,
             "format": "html",
             "sha256": hashlib.sha256(featured.read_bytes()).hexdigest(),
     }
