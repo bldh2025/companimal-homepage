@@ -7,13 +7,29 @@ import html
 import hashlib
 import json
 import re
+import unicodedata
 from pathlib import Path
 
 import fitz
 from pypdf import PdfReader
 
 from brochure_content import COMPANY_CONTENT, LANGUAGES, PRODUCT_CONTENT
-from build_brochures import CHANNEL_URLS, COMPANY_PAGE_COUNT, CONTACT_URIS, HOMEPAGE_COMPANY, PRODUCT_PAGE_COUNT, WHOLESALE_URL
+from build_brochures import (
+    CHANNEL_URLS,
+    COMPANY_REVIEW_PORTFOLIO_KEYS,
+    COMPANY_PAGE_COUNT,
+    CONTACT_URIS,
+    HOMEPAGE_COMPANY,
+    PRODUCT_PAGE_COUNT,
+    PRODUCT_REVIEW_AS_OF,
+    PRODUCT_REVIEW_COUNTS,
+    PRODUCT_REVIEW_DEFINITION,
+    PRODUCT_REVIEW_LINEUP_KEYS,
+    PRODUCT_REVIEW_SNAPSHOT,
+    PRODUCT_REVIEW_TOTAL,
+    REVIEW_UI,
+    WHOLESALE_URL,
+)
 from history_content import BRAND_HISTORY, EXPECTED_HISTORY_ITEM_COUNTS, EXPECTED_HISTORY_YEARS
 
 
@@ -23,6 +39,42 @@ MANIFEST_PATH = OUTPUT / "brochure-files.json"
 HTML_FILES = [ROOT / "index.html", ROOT / "en" / "index.html", ROOT / "zh" / "index.html", ROOT / "zh-hant" / "index.html"]
 EXPECTED_EMAIL = "ceo@companimal.kr"
 LEGACY_EMAIL = "bldh2025@naver.com"
+LATEST_COMPANY_HTML = "output/brochure/zerolabs-company-profile-ko-2026.html"
+LEGACY_COMPANY_PDF_PATTERN = "company-profile-*-2026-v6.pdf"
+LEGACY_COMPANY_PREVIEW = OUTPUT / "company-profile-preview-ko.png"
+LEGACY_PRODUCT_HTML = ROOT / "output" / "brochure" / "zerolabs-product-profile-ko-2026.html"
+
+EXPECTED_PRODUCT_REVIEW_COUNTS = {
+    "meat": 11_659,
+    "nutrition": 6_473,
+    "berry": 10_906,
+    "dental": 1_886,
+    "baked": 54,
+    "meatless": 433,
+    "mungs": 477,
+    "fresh": 869,
+}
+EXPECTED_COMPANY_REVIEW_PORTFOLIO_KEYS = (
+    "meat",
+    "nutrition",
+    "berry",
+    "dental",
+    "baked",
+    "meatless",
+    "mungs",
+    "fresh",
+)
+EXPECTED_REVIEW_DEFINITION = "2026.08.27 기준 · 회사 제공 판매채널 화면의 공개 리뷰 게시물 수 합산 · 포장 규격을 통합한 제품군 기준"
+EXPECTED_REVIEW_LABELS = {
+    "meat": "고기가득",
+    "nutrition": "영양가득",
+    "berry": "베리가득",
+    "dental": "치카하개",
+    "baked": "굽빵",
+    "meatless": "미트리스",
+    "mungs": "멍스",
+    "fresh": "프레쉬링",
+}
 
 
 def fail(message: str) -> None:
@@ -30,7 +82,11 @@ def fail(message: str) -> None:
 
 
 def compact(value: str) -> str:
-    normalized = value.replace("・", "·").replace("―", "—").replace("\u00ad", "-")
+    normalized = value.replace("・", "·").replace("―", "—").replace("\u00ad", "-").replace("\u200b", "").replace("\x00", "")
+    normalized = unicodedata.normalize("NFKC", normalized)
+    # MuPDF may extract a middle dot as NUL in Arabic runs. It is a visual
+    # separator rather than semantic content, so remove it on both sides.
+    normalized = normalized.replace("·", "")
     return "".join(normalized.split())
 
 
@@ -64,6 +120,75 @@ def validate_image_boundary_guard() -> None:
         fail("Boundary guard missed a dark image-edge stroke")
     if is_image_boundary({"rect": fitz.Rect(20, 20, 80, 80), "color": (0.88, 0.84, 0.74)}, [image_rect]):
         fail("Boundary guard rejected an intended light card border")
+
+
+def validate_review_snapshot_source() -> None:
+    if PRODUCT_REVIEW_COUNTS != EXPECTED_PRODUCT_REVIEW_COUNTS:
+        fail(f"Product review snapshot differs from the approved source: {PRODUCT_REVIEW_COUNTS}")
+    if PRODUCT_REVIEW_TOTAL != 32_757 or PRODUCT_REVIEW_TOTAL != sum(PRODUCT_REVIEW_COUNTS.values()):
+        fail(f"Product review total is inconsistent: {PRODUCT_REVIEW_TOTAL}")
+    if PRODUCT_REVIEW_AS_OF != "2026.08.27":
+        fail(f"Product review snapshot date is inconsistent: {PRODUCT_REVIEW_AS_OF}")
+    if PRODUCT_REVIEW_SNAPSHOT.get("asOfIso") != "2026-08-27":
+        fail(f"Product review ISO date is inconsistent: {PRODUCT_REVIEW_SNAPSHOT.get('asOfIso')}")
+    if PRODUCT_REVIEW_SNAPSHOT.get("definition") != EXPECTED_REVIEW_DEFINITION:
+        fail("Product review definition is not the approved narrow disclosure")
+    labels = {
+        key: value.get("label")
+        for key, value in PRODUCT_REVIEW_SNAPSHOT.get("products", {}).items()
+    }
+    if labels != EXPECTED_REVIEW_LABELS:
+        fail(f"Product review labels differ from the approved mapping: {labels}")
+    if COMPANY_REVIEW_PORTFOLIO_KEYS != EXPECTED_COMPANY_REVIEW_PORTFOLIO_KEYS:
+        fail(f"Company review portfolio order is inconsistent: {COMPANY_REVIEW_PORTFOLIO_KEYS}")
+
+
+def review_copy(code: str, field: str, *, count: int | None = None) -> str:
+    return REVIEW_UI[code][field].format(
+        total=f"{PRODUCT_REVIEW_TOTAL:,}",
+        count=f"{count:,}" if count is not None else "",
+        date=PRODUCT_REVIEW_AS_OF,
+    )
+
+
+def validate_review_page(document: fitz.Document, code: str, path: Path, kind: str) -> None:
+    page = document[5] if kind == "company" else document[2]
+    page_text = compact(page.get_text("text"))
+    for field in ("summary", "source"):
+        if compact(review_copy(code, field)) not in page_text:
+            fail(f"Localized review {field} copy missing from {kind} review page in {path}")
+
+    rtl = LANGUAGES[code]["dir"] == "rtl"
+    if kind == "company":
+        localized_names = {
+            key: item[0]
+            for key, item in zip(COMPANY_REVIEW_PORTFOLIO_KEYS, COMPANY_CONTENT[code]["products"])
+        }
+        visual_keys = list(COMPANY_REVIEW_PORTFOLIO_KEYS)
+        if rtl:
+            visual_keys = [visual_keys[index] for index in (3, 2, 1, 0, 7, 6, 5, 4)]
+        cards = []
+        for visual_index, review_key in enumerate(visual_keys):
+            row, col = divmod(visual_index, 4)
+            x, y = 48 + col * 187, 150 + row * 188
+            cards.append((review_key, localized_names[review_key], fitz.Rect(x, y, x + 169, y + 185)))
+    else:
+        cards = []
+        for semantic_index, (product_key, review_key) in enumerate(PRODUCT_REVIEW_LINEUP_KEYS):
+            row, col = divmod(semantic_index, 4)
+            visual_col = 3 - col if rtl else col
+            x, y = 48 + visual_col * 187, 140 + row * 188
+            name = PRODUCT_CONTENT[code]["products"][product_key][0]
+            cards.append((review_key, name, fitz.Rect(x, y, x + 169, y + 173)))
+
+    for review_key, expected_name, card in cards:
+        card_text = compact(page.get_textbox(card))
+        expected_count = f"{PRODUCT_REVIEW_COUNTS[review_key]:,}"
+        if compact(expected_name) not in card_text or expected_count not in card_text:
+            fail(
+                f"Review card mapping mismatch for {review_key} in {path}: "
+                f"expected {expected_name!r} with {expected_count}"
+            )
 
 
 def validate_pdf(path: Path, code: str, locale: str, pages: int, kind: str) -> dict[str, object]:
@@ -130,6 +255,7 @@ def validate_pdf(path: Path, code: str, locale: str, pages: int, kind: str) -> d
             if compact(expected) not in searchable:
                 fail(f"Homepage company content missing from {path}: {expected}")
     if kind == "company":
+        validate_review_page(document, code, path, kind)
         if len(document[1].get_images(full=True)) < 1:
             fail(f"CEO photograph missing from {path}")
         if len(document[2].get_images(full=True)) < 3:
@@ -154,6 +280,7 @@ def validate_pdf(path: Path, code: str, locale: str, pages: int, kind: str) -> d
         if not {uri for uri in CONTACT_URIS if uri}.issubset(contact_links):
             fail(f"Contact links missing from {path}")
     if kind == "product":
+        validate_review_page(document, code, path, kind)
         product_content = PRODUCT_CONTENT[code]
         if "30g" not in compact(combined):
             fail(f"Trial-pack size missing from {path}")
@@ -265,8 +392,8 @@ def validate_homepage_company_source() -> None:
 def validate_featured_html(entry: dict[str, object]) -> None:
     if entry.get("format") != "html":
         fail("Featured HTML brochure manifest format must be html")
-    if entry.get("pages") != 12:
-        fail("Featured HTML brochure manifest page count must be 12")
+    if entry.get("pages") != 13:
+        fail("Featured HTML brochure manifest page count must be 13")
     path = ROOT / str(entry["path"])
     if not path.is_file() or path.is_symlink() or path.stat().st_size < 1_000_000:
         fail(f"Featured HTML brochure is missing or unexpectedly small: {path}")
@@ -286,7 +413,7 @@ def validate_featured_html(entry: dict[str, object]) -> None:
     except json.JSONDecodeError as error:
         fail(f"Featured HTML bundle JSON is invalid: {path}: {error}")
     if len(re.findall(r"<section\b", template, re.I)) != 12:
-        fail(f"Featured HTML slide count is not 12: {path}")
+        fail(f"Featured HTML base slide count is not 12: {path}")
     references = set(re.findall(r"\b[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}\b", template, re.I))
     if not references.issubset(bundled_manifest):
         fail(f"Featured HTML has missing bundled asset references: {path}")
@@ -298,6 +425,30 @@ def validate_featured_html(entry: dict[str, object]) -> None:
     patch_script = (ROOT / "company-contact-patch.js").read_text(encoding="utf-8")
     if EXPECTED_EMAIL not in patch_script or LEGACY_EMAIL in patch_script:
         fail("Featured company HTML contact patch is stale")
+    for required in (
+        "enhanceCompanyProfile",
+        'data-review-proof',
+        "MARKET PROOF",
+        "cloneNode(true)",
+        'doc.querySelector("x-import")',
+        "snapshot.total.toLocaleString",
+        "sections.length !== 13",
+    ):
+        if required not in patch_script:
+            fail(f"Featured company review enhancer contract is missing: {required}")
+    if EXPECTED_REVIEW_DEFINITION not in (ROOT / "brochure-review-data.js").read_text(encoding="utf-8"):
+        fail("Canonical review disclosure is missing from browser data")
+    if PRODUCT_REVIEW_DEFINITION != EXPECTED_REVIEW_DEFINITION:
+        fail("Brochure builder review disclosure is not canonical")
+    if source.count('../../brochure-review-data.js') != 1 or source.count('../../company-contact-patch.js') != 1:
+        fail("Featured company review scripts are missing or duplicated")
+    hook = source.find("window.enhanceCompanyProfile(doc)")
+    parsed = source.find("new DOMParser().parseFromString(template, 'text/html')")
+    swapped = source.find("document.documentElement.replaceWith(doc.documentElement)")
+    if not (0 <= parsed < hook < swapped):
+        fail("Featured company review enhancer is not between parse and root swap")
+    if "doc = new DOMParser().parseFromString(template, 'text/html');" not in source or "catch (enhancementError)" not in source:
+        fail("Featured company review enhancer does not fail open to the base deck")
 
 
 def validate_product_html(entry: dict[str, object]) -> None:
@@ -315,6 +466,30 @@ def validate_product_html(entry: dict[str, object]) -> None:
     for required in ("고기가득", "영양가득", "베리가득", "치카하개", "굽빵", "미트리스", "멍스", "프레쉬링"):
         if required not in source:
             fail(f"Featured product HTML content missing: {required}")
+    page_numbers = re.findall(r'class="page">(\d{2} / \d{2})</span>', source)
+    if page_numbers != [f"{page:02d} / 16" for page in range(2, 17)]:
+        fail(f"Featured product HTML page numbers are inconsistent: {page_numbers}")
+    eyebrow_numbers = [
+        int(value)
+        for value in re.findall(r'class="eyebrow">(\d{2}) — ', source)
+    ]
+    if eyebrow_numbers != list(range(1, 16)):
+        fail(f"Featured product HTML section numbers are inconsistent: {eyebrow_numbers}")
+    for key in EXPECTED_PRODUCT_REVIEW_COUNTS:
+        if source.count(f'data-review-key="{key}"') != 2:
+            fail(f"Featured product HTML review mapping is not overview+detail for {key}")
+    review_count_targets = len(re.findall(r"\sdata-review-count(?:\s|>)", source))
+    if source.count('class="market-response"') != 8 or review_count_targets != 16:
+        fail("Featured product HTML review badges are incomplete")
+    review_total_targets = len(re.findall(r"\sdata-review-total(?:\s|>)", source))
+    review_total_number_targets = len(re.findall(r"\sdata-review-total-number(?:\s|>)", source))
+    review_source_targets = len(re.findall(r"\sdata-review-source(?:\s|>)", source))
+    if review_total_targets != 2 or review_total_number_targets != 1 or review_source_targets != 1:
+        fail("Featured product HTML review summary is incomplete")
+    if 'document.querySelectorAll("[data-review-total-number]")' not in source:
+        fail("Featured product HTML review title is not bound to canonical data")
+    if source.count('../../brochure-review-data.js') != 1 or EXPECTED_REVIEW_DEFINITION not in (ROOT / "brochure-review-data.js").read_text(encoding="utf-8"):
+        fail("Featured product HTML canonical review data is not wired once")
     if EXPECTED_EMAIL not in source or f"mailto:{EXPECTED_EMAIL}" not in source or "제로랩스.com" not in source or LEGACY_EMAIL in source:
         fail(f"Featured product HTML contact email is stale: {path}")
 
@@ -332,16 +507,21 @@ def validate_site(manifest: dict[str, object]) -> None:
             fail(f"Download script missing or duplicated in {path}")
         if 'href="#downloads"' not in source:
             fail(f"Download navigation link missing in {path}")
-        expected_fallbacks = ("/output/brochure/zerolabs-company-profile-ko-2026.html", "/output/brochure/zerolabs-product-profile-ko-2026-v2.html") if path == ROOT / "index.html" else ("/output/pdf/company-profile-ko-2026-v6.pdf", "/output/pdf/product-brochure-ko-2026-v3.pdf")
+        expected_fallbacks = (f"/{LATEST_COMPANY_HTML}", "/output/brochure/zerolabs-product-profile-ko-2026-v2.html") if path == ROOT / "index.html" else (f"/{LATEST_COMPANY_HTML}", "/output/pdf/product-brochure-ko-2026-v3.pdf")
         for fallback in expected_fallbacks:
             if fallback not in source:
-                fail(f"Fallback PDF link missing in {path}: {fallback}")
-        if path == ROOT / "index.html" and ("type=\"text/html\"" not in source or "HTML · 12쪽" not in source):
+                fail(f"Fallback brochure link missing in {path}: {fallback}")
+        if path == ROOT / "index.html" and ("type=\"text/html\"" not in source or "HTML · 13쪽" not in source):
             fail(f"Korean featured HTML fallback is not wired in {path}")
         if path == ROOT / "index.html" and source.count('type="text/html"') < 2:
             fail(f"Korean product HTML fallback is not wired in {path}")
-        if path != ROOT / "index.html" and "PDF · 14" not in source:
-            fail(f"Company brochure fallback page count is not 14 in {path}")
+        company_fallback_meta = {
+            ROOT / "en" / "index.html": "HTML · 13 pages",
+            ROOT / "zh" / "index.html": "HTML · 13页",
+            ROOT / "zh-hant" / "index.html": "HTML · 13頁",
+        }
+        if path in company_fallback_meta and company_fallback_meta[path] not in source:
+            fail(f"Latest company HTML fallback metadata is missing in {path}")
     korean_source = (ROOT / "index.html").read_text(encoding="utf-8")
     if "자료실" in korean_source or korean_source.count('href="#downloads">소개서</a>') != 2:
         fail("Korean main navigation and footer must label the download area 소개서")
@@ -355,37 +535,45 @@ def validate_site(manifest: dict[str, object]) -> None:
     generator = (ROOT / "scripts" / "build_brochures.py").read_text(encoding="utf-8")
     if "keep_proportion=False" in generator:
         fail("Non-proportional image insertion remains in the brochure generator")
+    if "brochure-files.json.new" in generator or "staged_manifest" in generator:
+        fail("The PDF builder must not publish the live brochure manifest")
     styles = (ROOT / "styles.css").read_text(encoding="utf-8")
     if not re.search(r"\.download-select\{[^}]*font-size:16px", styles):
         fail("Mobile-safe brochure selector font size is missing in styles.css")
     for entry in manifest.values():
-        for kind in ("company", "product"):
-            if not (ROOT / entry[kind]["path"]).is_file():
-                fail(f"Manifest points to a missing file: {entry[kind]['path']}")
+        for kind in ("companyHtml", "productHtml", "product"):
+            artifact = entry.get(kind)
+            if artifact and not (ROOT / artifact["path"]).is_file():
+                fail(f"Manifest points to a missing file: {artifact['path']}")
+        if "company" in entry:
+            fail("Legacy company PDF remains in the live manifest")
     if "companyHtml" not in manifest["ko"]:
         fail("Korean featured HTML brochure is missing from the manifest")
+    if manifest["ko"]["companyHtml"].get("path") != LATEST_COMPANY_HTML:
+        fail("Live company profile does not point to the latest HTML")
     validate_featured_html(manifest["ko"]["companyHtml"])
     if "productHtml" not in manifest["ko"]:
         fail("Korean featured product HTML brochure is missing from the manifest")
     validate_product_html(manifest["ko"]["productHtml"])
+    if list(OUTPUT.glob(LEGACY_COMPANY_PDF_PATTERN)):
+        fail("Legacy company PDF files remain in the live output directory")
+    if LEGACY_COMPANY_PREVIEW.exists():
+        fail("Legacy company PDF preview remains in the live output directory")
+    if LEGACY_PRODUCT_HTML.exists():
+        fail("Superseded product HTML remains beside the v2 live edition")
 
 
 def main() -> None:
     validate_image_boundary_guard()
+    validate_review_snapshot_source()
     validate_history_source()
     validate_homepage_company_source()
     manifest = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
     if list(manifest) != list(LANGUAGES):
         fail(f"Manifest languages differ: {list(manifest)}")
-    pdfs = sorted(
-        {
-            ROOT / entry[kind]["path"]
-            for entry in manifest.values()
-            for kind in ("company", "product")
-        }
-    )
-    if len(pdfs) != 14:
-        fail(f"Expected exactly 14 PDFs, found {len(pdfs)}")
+    pdfs = sorted({ROOT / entry["product"]["path"] for entry in manifest.values()})
+    if len(pdfs) != len(LANGUAGES):
+        fail(f"Expected exactly {len(LANGUAGES)} product PDFs, found {len(pdfs)}")
 
     report = {}
     for code, language in LANGUAGES.items():
@@ -395,7 +583,7 @@ def main() -> None:
         if entry.get("label_ko") != language["label_ko"]:
             fail(f"Manifest Korean language label mismatch for {code}")
         report[code] = {}
-        for kind, expected_pages in (("company", COMPANY_PAGE_COUNT), ("product", PRODUCT_PAGE_COUNT)):
+        for kind, expected_pages in (("product", PRODUCT_PAGE_COUNT),):
             path = ROOT / entry[kind]["path"]
             report[code][kind] = validate_pdf(path, code, language["locale"], expected_pages, kind)
             if entry[kind]["bytes"] != path.stat().st_size:

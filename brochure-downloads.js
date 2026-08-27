@@ -23,30 +23,36 @@
     return pages + (pages === 1 ? " page" : " pages");
   }
 
+  function brochureFile(entry, kind, code) {
+    if (!entry) return null;
+    if (code === "ko" && entry[kind + "Html"]) return entry[kind + "Html"];
+    return entry[kind] || null;
+  }
+
   function enhanceCard(card, manifest) {
     var kind = card.getAttribute("data-brochure-kind");
     var select = card.querySelector("select");
     var link = card.querySelector("a[data-download-link]");
     var size = card.querySelector("[data-file-size]");
-    if (!select || !link || !manifest.ko || !manifest.ko[kind]) return;
+    if (!select || !link || !brochureFile(manifest.ko, kind, "ko")) return;
 
     select.replaceChildren();
     languageOrder.forEach(function (code) {
       var entry = manifest[code];
-      if (!entry || !entry[kind]) return;
+      if (!brochureFile(entry, kind, code)) return;
       var option = document.createElement("option");
       option.value = code;
       option.textContent = pageLanguage() === "ko" && entry.label_ko ? entry.label_ko : entry.label;
       option.lang = entry.locale;
       select.appendChild(option);
     });
-    if (manifest[pageLanguage()]) select.value = pageLanguage();
+    select.value = pageLanguage();
+    if (!select.value && select.options.length) select.selectedIndex = 0;
 
     function updateDownload() {
       var code = select.value;
       var entry = manifest[code];
-      var file = entry && entry[kind];
-      if (code === "ko" && entry && entry[kind + "Html"]) file = entry[kind + "Html"];
+      var file = brochureFile(entry, kind, code);
       if (!file) return;
       link.href = "/" + file.path;
       if (file.format === "html") link.removeAttribute("download");
@@ -73,6 +79,6 @@
       });
     })
     .catch(function () {
-      // The server-rendered Korean PDF links remain usable as a safe fallback.
+      // The server-rendered latest links remain usable as a safe fallback.
     });
 })();

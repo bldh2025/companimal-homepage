@@ -57,6 +57,90 @@ WHOLESALE_URL = "https://제로랩스.com/"
 COMPANY_PAGE_COUNT = 14
 PRODUCT_PAGE_COUNT = 15
 
+# The browser-facing JavaScript object is also the PDF generator's canonical
+# review snapshot, keeping the latest HTML and localized PDFs in lockstep.
+REVIEW_DATA_PATH = ROOT / "brochure-review-data.js"
+
+
+def load_review_snapshot() -> dict[str, object]:
+    source = REVIEW_DATA_PATH.read_text(encoding="utf-8")
+    match = re.fullmatch(r"\s*window\.ZERO_LABS_REVIEW_SNAPSHOT\s*=\s*(\{.*\})\s*;\s*", source, re.S)
+    if not match:
+        raise RuntimeError(f"Invalid review snapshot wrapper: {REVIEW_DATA_PATH}")
+    snapshot = json.loads(match.group(1))
+    products = snapshot.get("products")
+    if not isinstance(products, dict) or not products:
+        raise RuntimeError(f"Review snapshot has no products: {REVIEW_DATA_PATH}")
+    return snapshot
+
+
+PRODUCT_REVIEW_SNAPSHOT = load_review_snapshot()
+PRODUCT_REVIEW_AS_OF = str(PRODUCT_REVIEW_SNAPSHOT["asOf"])
+PRODUCT_REVIEW_COUNTS = {
+    key: int(value["count"])
+    for key, value in PRODUCT_REVIEW_SNAPSHOT["products"].items()
+}
+PRODUCT_REVIEW_TOTAL = int(PRODUCT_REVIEW_SNAPSHOT["total"])
+PRODUCT_REVIEW_DEFINITION = str(PRODUCT_REVIEW_SNAPSHOT["definition"])
+COMPANY_REVIEW_PORTFOLIO_KEYS = (
+    "meat",
+    "nutrition",
+    "berry",
+    "dental",
+    "baked",
+    "meatless",
+    "mungs",
+    "fresh",
+)
+PRODUCT_REVIEW_LINEUP_KEYS = (
+    ("meat_1kg", "meat"),
+    ("nutrition_1kg", "nutrition"),
+    ("berry_1kg", "berry"),
+    ("dental", "dental"),
+    ("baked_200g", "baked"),
+    ("meatless", "meatless"),
+    ("mungs", "mungs"),
+    ("fresh_ring", "fresh"),
+)
+
+REVIEW_UI = {
+    "ko": {
+        "summary": "8개 제품군 누적 리뷰 {total}건",
+        "item": "리뷰 {count}건",
+        "source": PRODUCT_REVIEW_DEFINITION,
+    },
+    "en": {
+        "summary": "{total} cumulative reviews across 8 product families",
+        "item": "{count} reviews",
+        "source": "As of {date} · Sum of public review posts shown on company-provided sales-channel pages · Product-family basis combining pack sizes",
+    },
+    "zh-hans": {
+        "summary": "8 个产品系列累计 {total} 条评价",
+        "item": "{count} 条评价",
+        "source": "截至 {date} · 汇总公司提供的销售渠道页面所显示的公开评价条数 · 按合并包装规格后的产品系列统计",
+    },
+    "zh-hant": {
+        "summary": "8 個產品系列累計 {total} 則評價",
+        "item": "{count} 則評價",
+        "source": "截至 {date} · 加總公司提供之銷售通路頁面顯示的公開評價篇數 · 以合併包裝規格後的產品系列計算",
+    },
+    "ja": {
+        "summary": "8商品シリーズ · 累計レビュー {total}件",
+        "item": "レビュー {count}件",
+        "source": "{date}時点 · 会社提供の販売チャネル画面に表示された公開レビュー投稿数の合計 · 包装規格を統合した商品シリーズ単位",
+    },
+    "th": {
+        "summary": "รีวิวสะสม {total} รายการ จาก 8 กลุ่มสินค้า",
+        "item": "รีวิว {count}",
+        "source": "ข้อมูล ณ {date} · ผลรวมจำนวนโพสต์รีวิวสาธารณะที่แสดงบนหน้าช่องทางขายที่บริษัทจัดเตรียม · รวมขนาดบรรจุภัณฑ์ตามกลุ่มสินค้า",
+    },
+    "ar": {
+        "summary": "{total} مراجعة تراكمية عبر 8 فئات منتجات",
+        "item": "{count} مراجعة",
+        "source": "حتى {date} · مجموع منشورات المراجعات العامة الظاهرة في صفحات قنوات البيع المقدمة من الشركة · محسوب حسب فئة المنتج مع دمج أحجام العبوات",
+    },
+}
+
 CONTACT_VALUES = [
     "https://companimal.kr",
     "https://zerolabs.co.kr",
@@ -756,6 +840,22 @@ def company_title(
     add_html(page, fitz.Rect(x, y, x + width, y + height), markup, lang, scale_low=0.9)
 
 
+def review_markup(lang: str, field: str, *, count: int | None = None) -> str:
+    """Return escaped localized review copy with stable LTR numerals for Arabic."""
+    values = {
+        "total": f"{PRODUCT_REVIEW_TOTAL:,}",
+        "count": f"{count:,}" if count is not None else "",
+        "date": PRODUCT_REVIEW_AS_OF,
+    }
+    template = html.escape(REVIEW_UI[lang][field])
+    for key, value in values.items():
+        safe_value = html.escape(value)
+        if lang == "ar" and value:
+            safe_value = f'<bdo dir="ltr">{safe_value}</bdo>'
+        template = template.replace("{" + key + "}", safe_value)
+    return template
+
+
 def new_source_page(doc: fitz.Document) -> fitz.Page:
     return doc.new_page(width=SOURCE_PAGE.width, height=SOURCE_PAGE.height)
 
@@ -1128,21 +1228,21 @@ def company_brochure_v5(lang: str) -> fitz.Document:
 
     # 6. Product portfolio — products dominate the slide.
     p = new_company_page(doc, FOREST)
-    company_title(p, lang, c["portfolio_kicker"], c["portfolio_title"], c["portfolio_subtitle"], light=True, x=48, y=34, width=746, height=96)
-    company_product_images = [
-        PRODUCT_IMAGES["meat"],
-        PRODUCT_IMAGES["nutrition"],
-        PRODUCT_IMAGES["berry"],
-        PRODUCT_IMAGES["dental"],
-        PRODUCT_IMAGES["baked"],
-        PRODUCT_IMAGES["meatless"],
-        PRODUCT_IMAGES["mungs"],
-        PRODUCT_IMAGES["fresh"],
+    company_title(p, lang, c["portfolio_kicker"], c["portfolio_title"], light=True, x=48, y=34, width=746, height=78)
+    add_html(
+        p,
+        fitz.Rect(48, 113, 794, 143),
+        f'<p class="gold" style="font-size:9pt;font-weight:700">{review_markup(lang, "summary")}</p>',
+        lang,
+        scale_low=0.82,
+    )
+    products = [
+        (key, item, PRODUCT_IMAGES[key])
+        for key, item in zip(COMPANY_REVIEW_PORTFOLIO_KEYS, c["products"])
     ]
-    products = list(zip(c["products"], company_product_images))
     if rtl:
         products = [products[i] for i in (3, 2, 1, 0, 7, 6, 5, 4)]
-    for i, ((name, pack), image_path) in enumerate(products):
+    for i, (review_key, (name, pack), image_path) in enumerate(products):
         row, col = divmod(i, 4)
         x = 48 + col * 187
         y = 150 + row * 188
@@ -1152,11 +1252,18 @@ def company_brochure_v5(lang: str) -> fitz.Document:
         add_image_fit(p, fitz.Rect(x + 30.5, y + 5, x + 138.5, y + 113), image_path)
         add_html(
             p,
-            fitz.Rect(x, y + 130, x + 169, y + 177),
-            f'<p class="white" style="font-size:10.5pt;font-weight:700">{html.escape(name)}</p><p class="gold" style="font-size:7.5pt;font-weight:700;margin-top:4pt">{html.escape(pack)}</p>',
+            fitz.Rect(x, y + 128, x + 169, y + 185),
+            f'<p class="white" style="font-size:10.5pt;font-weight:700">{html.escape(name)}</p><p class="gold" style="font-size:7.5pt;font-weight:700;margin-top:3pt">{html.escape(pack)}</p><p class="soft" style="font-size:7.2pt;font-weight:700;margin-top:3pt">{review_markup(lang, "item", count=PRODUCT_REVIEW_COUNTS[review_key])}</p>',
             lang,
-            scale_low=0.86,
+            scale_low=0.78,
         )
+    add_html(
+        p,
+        fitz.Rect(48, 532, 794, 552),
+        f'<p class="soft" style="font-size:7pt;text-align:center">{review_markup(lang, "source")}</p>',
+        lang,
+        scale_low=0.8,
+    )
     company_footer(p, 6, total, lang, light=True)
 
     # 7. Brand principles — the three homepage principles in compact photo panels.
@@ -1505,14 +1612,14 @@ def product_a_heading(page: fitz.Page, lang: str, kicker: str, title: str, body:
     add_html(page, rect, markup, lang, scale_low=0.82)
 
 
-def product_a_card(page: fitz.Page, lang: str, item: tuple[str, str, list[str], str], image_key: str, rect: fitz.Rect, *, dark: bool = False, show_pack: bool = True) -> None:
+def product_a_card(page: fitz.Page, lang: str, item: tuple[str, str, list[str], str], image_key: str, rect: fitz.Rect, *, dark: bool = False, show_pack: bool = True, review_key: str | None = None) -> None:
     name, description, bullets, pack = item
     fill = GREEN if dark else WHITE
     title_color = "#ffffff" if dark else "#16241a"
     body_color = "#dce2dc" if dark else "#506056"
     page.draw_rect(rect, radius=0.025, color=(0.88, 0.84, 0.74), fill=fill, width=0.5)
     compact = rect.height < 250
-    image_size = min(rect.width - 20, 120 if compact else rect.width - 20)
+    image_size = min(rect.width - 20, 108 if compact and review_key else 120 if compact else rect.width - 20)
     image_x = rect.x0 + (rect.width - image_size) / 2
     image_rect = fitz.Rect(image_x, rect.y0 + 10, image_x + image_size, rect.y0 + 10 + image_size)
     text_top = image_rect.y1 + 10
@@ -1521,6 +1628,8 @@ def product_a_card(page: fitz.Page, lang: str, item: tuple[str, str, list[str], 
         markup = f'<p style="font-size:10pt;font-weight:700;color:{title_color}">{html.escape(name)}</p>'
         if show_pack:
             markup += f'<p style="font-size:7.5pt;font-weight:700;color:{"#d8b36a" if dark else "#a57d30"};margin-top:4pt">{html.escape(pack)}</p>'
+        if review_key:
+            markup += f'<p style="font-size:7.2pt;font-weight:700;color:#a57d30;margin-top:4pt">{review_markup(lang, "item", count=PRODUCT_REVIEW_COUNTS[review_key])}</p>'
     else:
         markup = f'<p style="font-size:13pt;font-weight:700;color:{title_color}">{html.escape(name)}</p><p style="font-size:8pt;line-height:1.4;color:{body_color};margin-top:6pt">{html.escape(description)}</p><p style="font-size:8.5pt;font-weight:700;color:{"#d8b36a" if dark else "#a57d30"};margin-top:8pt">{html.escape(pack)}</p>'
     add_html(page, fitz.Rect(rect.x0 + 14, text_top, rect.x1 - 14, rect.y1 - 12), markup, lang, scale_low=0.78)
@@ -1572,14 +1681,27 @@ def product_brochure_a(lang: str) -> fitz.Document:
 
     # 3. Line-up overview
     p = new_company_page(doc)
-    product_a_heading(p, lang, "PRODUCT LINEUP", c["catalog_title"], " · ".join(c["catalog"][:8]), rect=fitz.Rect(48, 34, 794, 118), size=25)
-    lineups = [("meat_1kg", "meat"), ("nutrition_1kg", "nutrition"), ("berry_1kg", "berry"), ("dental", "dental"), ("baked_200g", "baked"), ("meatless", "meatless"), ("mungs", "mungs"), ("fresh_ring", "fresh")]
-    for index, (key, image_key) in enumerate(lineups):
+    product_a_heading(p, lang, "PRODUCT LINEUP", c["catalog_title"], "", rect=fitz.Rect(48, 34, 794, 105), size=25)
+    add_html(
+        p,
+        fitz.Rect(48, 104, 794, 132),
+        f'<p style="font-size:9pt;font-weight:700;color:#a57d30">{review_markup(lang, "summary")}</p>',
+        lang,
+        scale_low=0.82,
+    )
+    for index, (key, image_key) in enumerate(PRODUCT_REVIEW_LINEUP_KEYS):
         row, col = divmod(index, 4)
         visual_col = 3 - col if rtl else col
         x, y = 48 + visual_col * 187, 140 + row * 188
         item = c["products"][key]
-        product_a_card(p, lang, item, image_key, fitz.Rect(x, y, x + 169, y + 173), show_pack=False)
+        product_a_card(p, lang, item, image_key, fitz.Rect(x, y, x + 169, y + 173), show_pack=False, review_key=image_key)
+    add_html(
+        p,
+        fitz.Rect(48, 515, 794, 543),
+        f'<p style="font-size:7pt;text-align:center;color:#657268">{review_markup(lang, "source")}</p>',
+        lang,
+        scale_low=0.8,
+    )
     product_a_footer(p, 3, total, lang)
 
     # 4–11. Individual product stories and pack variants.
@@ -1728,30 +1850,20 @@ def build(languages: list[str]) -> dict[str, dict[str, object]]:
     OUTPUT.mkdir(parents=True, exist_ok=True)
     results: dict[str, dict[str, object]] = {}
     for lang in languages:
-        company_path = OUTPUT / f"company-profile-{lang}-2026-v6.pdf"
         product_path = OUTPUT / f"product-brochure-{lang}-2026-v3.pdf"
-        save_with_language(company_brochure_v5(lang), company_path, LANGUAGES[lang]["locale"])
         save_with_language(product_brochure_a(lang), product_path, LANGUAGES[lang]["locale"])
-        company_renders = render_pdf(company_path)
         product_renders = render_pdf(product_path)
-        company_sheet = RENDER_DIR / f"company-profile-{lang}-contact-sheet.png"
         product_sheet = RENDER_DIR / f"product-brochure-{lang}-contact-sheet.png"
-        contact_sheet(company_renders, company_sheet)
         contact_sheet(product_renders, product_sheet)
         results[lang] = {
             "label": LANGUAGES[lang]["label"],
             "label_ko": LANGUAGES[lang]["label_ko"],
             "locale": LANGUAGES[lang]["locale"],
-            "company": {"path": str(company_path.relative_to(ROOT)), "bytes": company_path.stat().st_size, "pages": len(company_renders)},
             "product": {"path": str(product_path.relative_to(ROOT)), "bytes": product_path.stat().st_size, "pages": len(product_renders)},
         }
-    if "ko" in languages:
-        shutil.copy2(RENDER_DIR / "company-profile-ko-contact-sheet.png", OUTPUT / "company-profile-preview-ko.png")
-    if set(results) == set(LANGUAGES):
-        manifest = OUTPUT / "brochure-files.json"
-        staged_manifest = OUTPUT / "brochure-files.json.new"
-        staged_manifest.write_text(json.dumps(results, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-        os.replace(staged_manifest, manifest)
+    # The live manifest is published only by finalize_brochure_release.py after
+    # the complete artifact set passes validation. A build must never expose a
+    # partial product-only manifest between generation and finalization.
     return results
 
 
