@@ -22,6 +22,11 @@ from build_brochures import (
     COMPANY_REVIEW_PORTFOLIO_KEYS,
     COMPANY_PAGE_COUNT,
     CONTACT_URIS,
+    COUPANG_REVIEW_AS_OF,
+    COUPANG_REVIEW_COUNTS,
+    COUPANG_REVIEW_DEFINITION,
+    COUPANG_REVIEW_SNAPSHOT,
+    COUPANG_REVIEW_TOTAL,
     HOMEPAGE_COMPANY,
     PRODUCT_PAGE_COUNT,
     PRODUCT_REVIEW_AS_OF,
@@ -68,6 +73,16 @@ EXPECTED_PRODUCT_REVIEW_COUNTS = {
     "mungs": 477,
     "fresh": 869,
 }
+EXPECTED_COUPANG_REVIEW_COUNTS = {
+    "meat": 10_762,
+    "nutrition": 6_282,
+    "berry": 10_769,
+    "dental": 1_717,
+    "baked": 43,
+    "meatless": 419,
+    "mungs": 340,
+    "fresh": 837,
+}
 EXPECTED_COMPANY_REVIEW_PORTFOLIO_KEYS = (
     "meat",
     "nutrition",
@@ -79,6 +94,7 @@ EXPECTED_COMPANY_REVIEW_PORTFOLIO_KEYS = (
     "fresh",
 )
 EXPECTED_REVIEW_DEFINITION = "2026.08.27 기준 · 회사 제공 판매채널 화면의 공개 리뷰 게시물 수 합산 · 포장 규격을 통합한 제품군 기준"
+EXPECTED_COUPANG_REVIEW_DEFINITION = "2026.08.27 기준 · 쿠팡 상품 페이지에 표시된 공개 리뷰 게시물 수 합산 · 포장 규격을 통합한 제품군 기준"
 EXPECTED_REVIEW_LABELS = {
     "meat": "고기가득",
     "nutrition": "영양가득",
@@ -155,6 +171,22 @@ def validate_review_snapshot_source() -> None:
         fail(f"Product review labels differ from the approved mapping: {labels}")
     if COMPANY_REVIEW_PORTFOLIO_KEYS != EXPECTED_COMPANY_REVIEW_PORTFOLIO_KEYS:
         fail(f"Company review portfolio order is inconsistent: {COMPANY_REVIEW_PORTFOLIO_KEYS}")
+    if COUPANG_REVIEW_COUNTS != EXPECTED_COUPANG_REVIEW_COUNTS:
+        fail(f"Coupang review snapshot differs from the approved source: {COUPANG_REVIEW_COUNTS}")
+    if COUPANG_REVIEW_TOTAL != 31_169 or COUPANG_REVIEW_TOTAL != sum(COUPANG_REVIEW_COUNTS.values()):
+        fail(f"Coupang review total is inconsistent: {COUPANG_REVIEW_TOTAL}")
+    if COUPANG_REVIEW_AS_OF != "2026.08.27" or COUPANG_REVIEW_SNAPSHOT.get("asOfIso") != "2026-08-27":
+        fail("Coupang review snapshot date is inconsistent")
+    if COUPANG_REVIEW_DEFINITION != EXPECTED_COUPANG_REVIEW_DEFINITION:
+        fail("Coupang review definition is not the approved narrow disclosure")
+    coupang_labels = {
+        key: value.get("label")
+        for key, value in dict(COUPANG_REVIEW_SNAPSHOT.get("products", {})).items()
+    }
+    if coupang_labels != EXPECTED_REVIEW_LABELS:
+        fail(f"Coupang review labels differ from the approved mapping: {coupang_labels}")
+    if any(COUPANG_REVIEW_COUNTS[key] > PRODUCT_REVIEW_COUNTS[key] for key in EXPECTED_COUPANG_REVIEW_COUNTS):
+        fail("A Coupang review count exceeds its all-channel counterpart")
 
 
 def review_copy(code: str, field: str, *, count: int | None = None) -> str:
@@ -406,8 +438,8 @@ def validate_homepage_company_source() -> None:
 def validate_featured_html(entry: dict[str, object]) -> None:
     if entry.get("format") != "html":
         fail("Featured HTML brochure manifest format must be html")
-    if entry.get("pages") != 13:
-        fail("Featured HTML brochure manifest page count must be 13")
+    if entry.get("pages") != 14:
+        fail("Featured HTML brochure manifest page count must be 14")
     path = ROOT / str(entry["path"])
     if not path.is_file() or path.is_symlink() or path.stat().st_size < 1_000_000:
         fail(f"Featured HTML brochure is missing or unexpectedly small: {path}")
@@ -540,20 +572,37 @@ def validate_featured_html(entry: dict[str, object]) -> None:
     for required in (
         "enhanceCompanyProfile",
         'data-review-proof',
+        'data-channel-review-proof',
         "MARKET PROOF",
+        "COUPANG PROOF",
         "cloneNode(true)",
         'doc.querySelector("x-import")',
         "snapshot.total.toLocaleString",
-        "sections.length !== 13",
+        "snapshot.coupang.total.toLocaleString",
+        "makeCoupangReviewSlide",
+        "productImages",
+        "sections.length !== 14",
+        "sections[7] !== coupangSlide",
+        'section.setAttribute("data-screen-label", pageNumber);',
+        "Company profile review enhancement is only partially present",
     ):
         if required not in patch_script:
             fail(f"Featured company review enhancer contract is missing: {required}")
-    if EXPECTED_REVIEW_DEFINITION not in (ROOT / "brochure-review-data.js").read_text(encoding="utf-8"):
-        fail("Canonical review disclosure is missing from browser data")
+    review_data_source = (ROOT / "brochure-review-data.js").read_text(encoding="utf-8")
+    if EXPECTED_REVIEW_DEFINITION not in review_data_source or EXPECTED_COUPANG_REVIEW_DEFINITION not in review_data_source:
+        fail("Canonical all-channel or Coupang review disclosure is missing from browser data")
     if PRODUCT_REVIEW_DEFINITION != EXPECTED_REVIEW_DEFINITION:
         fail("Brochure builder review disclosure is not canonical")
-    if source.count('../../brochure-review-data.js') != 1 or source.count('../../company-contact-patch.js') != 1:
-        fail("Featured company review scripts are missing or duplicated")
+    inline_runtime_assets = {
+        "review-data": review_data_source.rstrip(),
+        "enhancer": patch_script.rstrip(),
+    }
+    for name, payload in inline_runtime_assets.items():
+        expected_inline = f'<script data-company-profile-runtime="{name}">\n{payload}\n</script>'
+        if source.count(expected_inline) != 1:
+            fail(f"Featured company standalone runtime asset is stale or duplicated: {name}")
+    if '../../brochure-review-data.js' in source or '../../company-contact-patch.js' in source:
+        fail("Featured company HTML still depends on external runtime scripts")
     hook = source.find("window.enhanceCompanyProfile(doc)")
     parsed = source.find("new DOMParser().parseFromString(template, 'text/html')")
     swapped = source.find("document.documentElement.replaceWith(doc.documentElement)")
@@ -623,14 +672,14 @@ def validate_site(manifest: dict[str, object]) -> None:
         for fallback in expected_fallbacks:
             if fallback not in source:
                 fail(f"Fallback brochure link missing in {path}: {fallback}")
-        if path == ROOT / "index.html" and ("type=\"text/html\"" not in source or "HTML · 13쪽" not in source):
+        if path == ROOT / "index.html" and ("type=\"text/html\"" not in source or "HTML · 14쪽" not in source):
             fail(f"Korean featured HTML fallback is not wired in {path}")
         if path == ROOT / "index.html" and source.count('type="text/html"') < 2:
             fail(f"Korean product HTML fallback is not wired in {path}")
         company_fallback_meta = {
-            ROOT / "en" / "index.html": "HTML · 13 pages",
-            ROOT / "zh" / "index.html": "HTML · 13页",
-            ROOT / "zh-hant" / "index.html": "HTML · 13頁",
+            ROOT / "en" / "index.html": "HTML · 14 pages",
+            ROOT / "zh" / "index.html": "HTML · 14页",
+            ROOT / "zh-hant" / "index.html": "HTML · 14頁",
         }
         if path in company_fallback_meta and company_fallback_meta[path] not in source:
             fail(f"Latest company HTML fallback metadata is missing in {path}")

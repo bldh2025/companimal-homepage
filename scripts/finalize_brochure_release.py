@@ -10,6 +10,7 @@ from pathlib import Path
 
 from brochure_content import LANGUAGES
 from build_brochures import PRODUCT_PAGE_COUNT
+from embed_company_profile_runtime_assets import update_company_profile_runtime_assets
 from validate_brochures import validate_featured_html, validate_pdf, validate_product_html
 
 
@@ -19,6 +20,7 @@ MANIFEST = OUTPUT / "brochure-files.json"
 
 
 def main() -> None:
+    update_company_profile_runtime_assets()
     results: dict[str, dict[str, object]] = {}
     for code, language in LANGUAGES.items():
         product = OUTPUT / f"product-brochure-{code}-2026-v3.pdf"
@@ -37,7 +39,7 @@ def main() -> None:
     results["ko"]["companyHtml"] = {
             "path": str(featured.relative_to(ROOT)),
             "bytes": featured.stat().st_size,
-            "pages": 13,
+            "pages": 14,
             "format": "html",
             "sha256": hashlib.sha256(featured.read_bytes()).hexdigest(),
     }
