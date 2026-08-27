@@ -10,6 +10,7 @@ from pathlib import Path
 
 from brochure_content import LANGUAGES
 from build_brochures import COMPANY_HTML_PAGE_COUNT, PRODUCT_PAGE_COUNT
+from embed_company_profile_factory_images import update_company_profile_bundle
 from embed_company_profile_runtime_assets import update_company_profile_runtime_assets
 from validate_brochures import validate_featured_html, validate_pdf, validate_product_html
 
@@ -20,6 +21,7 @@ MANIFEST = OUTPUT / "brochure-files.json"
 
 
 def main() -> None:
+    update_company_profile_bundle()
     update_company_profile_runtime_assets()
     results: dict[str, dict[str, object]] = {}
     for code, language in LANGUAGES.items():

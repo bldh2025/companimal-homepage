@@ -32,6 +32,8 @@ const chrome = [
   "/usr/bin/chromium",
 ].find((candidate) => candidate && existsSync(candidate));
 const screenshotPath = process.argv[2] ? path.resolve(process.argv[2]) : null;
+const screenshotPage = Number.parseInt(process.env.COMPANY_PROFILE_SCREENSHOT_PAGE || "8", 10);
+assert(Number.isInteger(screenshotPage) && screenshotPage >= 1 && screenshotPage <= 13, "Screenshot page must be between 1 and 13");
 const expectedAllChannelCards = [
   ["고기가득", "11,659건"],
   ["영양가득", "6,473건"],
@@ -232,7 +234,13 @@ try {
           imageAlt: card.querySelector('img')?.getAttribute('alt') || '',
         })),
         contentsRows: Array.from(contents.children[1].children).filter((child) => child.tagName === 'DIV').length,
+        contentsNumbers: Array.from(contents.children[1].children)
+          .filter((child) => child.tagName === 'DIV')
+          .map((row) => row.querySelector('span')?.textContent.trim() || ''),
         contentsText: contents.textContent,
+        decorativeOrdinals: [3, 5, 9].map((index) => Array.from(sections[index].querySelectorAll('span'))
+          .map((span) => span.textContent.trim())
+          .filter((text) => /^0[1-8]$/.test(text))),
         enhancerError: window.__companyProfileEnhancementError || null,
         contactText: sections[12].textContent,
       };
@@ -262,7 +270,9 @@ try {
   assert(!metrics.page8Text.includes("31,169건") && !metrics.labels.some((label) => label.includes("쿠팡 리뷰")), "The duplicate Coupang review page remains");
   assert(metrics.page9Text.includes("판매 채널") || metrics.page9Text.includes("채널"), "Page 9 channels content is missing");
   assert(metrics.contentsRows === 11, `Contents page has ${metrics.contentsRows} rows instead of 11`);
+  assert(metrics.contentsNumbers.every((value, index) => value === String(index + 1).padStart(2, "0")), `Contents numbering regressed: ${JSON.stringify(metrics.contentsNumbers)}`);
   assert(!metrics.contentsText.includes("쿠팡 채널 · 누적 리뷰"), `Contents page still lists the deleted Coupang review page: ${JSON.stringify(metrics.contentsText)}`);
+  assert(metrics.decorativeOrdinals.every((values) => values.length === 0), `Decorative card ordinals remain: ${JSON.stringify(metrics.decorativeOrdinals)}`);
   assert(!metrics.page8Overflow, "Product guide page overflows at 1920×1080");
   Object.entries(changedPageLayouts).forEach(([page, layout]) => {
     assert(layout.clientWidth === 1920 && layout.clientHeight === 1080, `${page} layout is ${layout.clientWidth}×${layout.clientHeight}, expected 1920×1080`);
@@ -272,8 +282,35 @@ try {
   assert(metrics.contactText.includes("ceo@companimal.kr"), "Company contact email regressed");
 
   if (screenshotPath) {
-    await cdp.call("Runtime.evaluate", { expression: "location.hash = '#8'", returnByValue: true });
-    await delay(400);
+    const screenshotUrl = url.replace(/#.*$/, `#${screenshotPage}`);
+    await cdp.call("Page.navigate", { url: screenshotUrl });
+    await waitFor(async () => {
+      const state = await cdp.call("Runtime.evaluate", {
+        expression: `document.querySelectorAll('section').length === 13 && location.hash === '#${screenshotPage}'`,
+        returnByValue: true,
+      });
+      return state.result.value;
+    }, 45_000, `company profile screenshot page ${screenshotPage}`);
+    await cdp.call("Runtime.evaluate", {
+      expression: "Promise.all([document.fonts.ready, ...Array.from(document.images, image => image.decode().catch(() => {}))])",
+      awaitPromise: true,
+      returnByValue: true,
+    });
+    await cdp.call("Runtime.evaluate", { expression: "document.body.focus()", returnByValue: true });
+    for (const key of ["Home", ...Array.from({ length: screenshotPage - 1 }, () => "ArrowRight")]) {
+      await cdp.call("Input.dispatchKeyEvent", { type: "keyDown", key, code: key });
+      await cdp.call("Input.dispatchKeyEvent", { type: "keyUp", key, code: key });
+      await delay(120);
+    }
+    await delay(500);
+    const visiblePageResult = await cdp.call("Runtime.evaluate", {
+      expression: `(() => {
+        const section = document.elementFromPoint(innerWidth / 2, innerHeight / 2)?.closest('section');
+        return Array.from(document.querySelectorAll('section')).indexOf(section) + 1;
+      })()`,
+      returnByValue: true,
+    });
+    assert(visiblePageResult.result.value === screenshotPage, `Screenshot navigation landed on page ${visiblePageResult.result.value}, expected ${screenshotPage}`);
     const screenshot = await cdp.call("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
     writeFileSync(screenshotPath, Buffer.from(screenshot.data, "base64"));
   }
@@ -322,6 +359,7 @@ try {
     pages: 13,
     removedCoupangPage: true,
     screenshot: screenshotPath,
+    screenshotPage,
     labels: metrics.labels,
     screenLabels: metrics.screenLabels,
     changedPageLayouts,

@@ -461,6 +461,46 @@ def validate_featured_html(entry: dict[str, object]) -> None:
         fail(f"Featured HTML bundle JSON is invalid: {path}: {error}")
     if len(re.findall(r"<section\b", template, re.I)) != 12:
         fail(f"Featured HTML base slide count is not 12: {path}")
+    ordinal_free_sections: dict[str, str] = {}
+    for label in ("04 브랜드 원칙", "06 제품 라인업", "09 파트너십"):
+        section_match = re.search(
+            rf'<section\b[^>]*data-label="{re.escape(label)}".*?</section>', template, re.S
+        )
+        if not section_match:
+            fail(f"Featured company ordinal-free section is missing: {label}")
+        ordinal_free_sections[label] = section_match.group(0)
+        decorative_ordinals = re.findall(
+            r'<(?:span|div)\b[^>]*>\s*(0[1-8])\s*</(?:span|div)>',
+            section_match.group(0),
+        )
+        if decorative_ordinals:
+            fail(f"Decorative card ordinals remain in {label}: {decorative_ordinals}")
+    contents_match = re.search(
+        r'<section\b[^>]*data-label="02 목차".*?</section>', template, re.S
+    )
+    if not contents_match:
+        fail("Featured company contents section is missing")
+    contents_numbers = re.findall(
+        r'<span style="font-size:26px; color:#a7d8b4; width:56px;">(\d{2})</span>',
+        contents_match.group(0),
+    )
+    if contents_numbers != [f"{value:02d}" for value in range(1, 11)]:
+        fail(f"Featured company contents numbering regressed: {contents_numbers}")
+    if ordinal_free_sections["06 제품 라인업"].count(
+        'justify-content:flex-end; align-items:baseline; flex:none;">'
+        '<span style="font-size:24px; color:#5b6b5e; white-space:nowrap;">'
+    ) != 8:
+        fail("Featured company product type rows are not aligned after ordinal removal")
+    for title in ("제품력", "설명력", "재구매 구조"):
+        if ordinal_free_sections["09 파트너십"].count(
+            f'<div style="font-size:46px; font-weight:600;">{title}</div>'
+        ) != 1:
+            fail(f"Featured company partnership card is missing after ordinal removal: {title}")
+    image_embedder_source = (
+        ROOT / "scripts" / "embed_company_profile_factory_images.py"
+    ).read_text(encoding="utf-8")
+    if "strip_decorative_ordinals" not in image_embedder_source or "{number}" in image_embedder_source:
+        fail("Featured company ordinal removal is not durable in the canonical embedder")
     references = set(re.findall(r"\b[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}\b", template, re.I))
     if not references.issubset(bundled_manifest):
         fail(f"Featured HTML has missing bundled asset references: {path}")
@@ -524,7 +564,7 @@ def validate_featured_html(entry: dict[str, object]) -> None:
             if template.count(factory_card) != 1:
                 fail(f"Featured company factory image has an unexpected overlay: {asset_id}")
         if asset_id in PRINCIPLE_IMAGE_SPECS:
-            english = next(card[2] for card in PRINCIPLE_CARDS if card[0] == asset_id)
+            english = next(card[1] for card in PRINCIPLE_CARDS if card[0] == asset_id)
             principle_image_card = (
                 f'<div data-principle-image-card="{english.lower()}" '
                 'style="height:372px; overflow:hidden; display:flex; flex:none;">'

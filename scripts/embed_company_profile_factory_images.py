@@ -66,21 +66,18 @@ REFERENCE_IMAGE_SPECS = {**FACTORY_IMAGE_SPECS, **PRINCIPLE_IMAGE_SPECS}
 PRINCIPLE_CARDS = (
     (
         "947d3d77-9af4-4457-89ff-956f7a05d96a",
-        "01",
         "Remove",
         "덜어내다",
         "인공첨가물과 불필요한 성분을 줄여, 반려견이 매일 먹어도 부담이 적은 간식을 지향합니다.",
     ),
     (
         "b088532b-c297-4e78-950c-97a277a371a6",
-        "02",
         "Balance",
         "조합하다",
         "육류·채소·과일·기능성 원료를 목적에 맞게 조합하여 균형 잡힌 레시피를 설계합니다.",
     ),
     (
         "4170fae5-51dd-4a46-9262-a2378f39a524",
-        "03",
         "Supply",
         "공급하다",
         "B2B 거래처가 안정적으로 운영할 수 있는 공급 구조를 갖추어 지속 가능한 판매를 돕습니다.",
@@ -129,13 +126,13 @@ def normalize_factory_image_card(template: str, asset_id: str, alt: str) -> str:
 
 def build_principle_section() -> str:
     cards: list[str] = []
-    for asset_id, number, english, korean, body in PRINCIPLE_CARDS:
+    for asset_id, english, korean, body in PRINCIPLE_CARDS:
         alt = str(PRINCIPLE_IMAGE_SPECS[asset_id]["alt"])
         cards.append(
             f'''      <div data-principle-card="{english.lower()}" style="background:#fbfcf9; color:#1f3325; padding:0; overflow:hidden; display:flex; flex-direction:column;">
         <div data-principle-image-card="{english.lower()}" style="height:372px; overflow:hidden; display:flex; flex:none;"><img src="{asset_id}" alt="{alt}" style="width:100%; height:100%; object-fit:cover; display:block;" data-ai-image="{asset_id}"></div>
         <div style="padding:30px 32px 34px; display:flex; flex-direction:column; gap:18px;">
-          <div style="display:flex; align-items:baseline; gap:16px; white-space:nowrap;"><span style="font-size:26px; color:#3f6b4a;">{number}</span><span style="font-size:40px; font-weight:600;">{english}</span><span style="font-size:30px; color:#5b6b5e;">{korean}</span></div>
+          <div style="display:flex; align-items:baseline; gap:16px; white-space:nowrap;"><span style="font-size:40px; font-weight:600;">{english}</span><span style="font-size:30px; color:#5b6b5e;">{korean}</span></div>
           <p style="margin:0; font-size:26px; line-height:1.62; font-weight:300; color:#4c5c50;">{body}</p>
         </div>
       </div>
@@ -164,6 +161,57 @@ def replace_principle_section(template: str) -> str:
     template, count = pattern.subn(lambda _: build_principle_section(), template)
     if count != 1:
         raise RuntimeError("Company profile principle section is missing or duplicated")
+    return template
+
+
+def strip_decorative_ordinals(template: str) -> str:
+    product_match = re.search(
+        r'<section\b[^>]*data-label="06 제품 라인업".*?</section>', template, re.S
+    )
+    if not product_match:
+        raise RuntimeError("Company profile product lineup section is missing")
+    product_section = product_match.group(0)
+    product_pattern = re.compile(
+        r'<div style="display:flex; justify-content:space-between; align-items:baseline; flex:none;">'
+        r'<span style="font-size:24px; color:#3f6b4a;">0[1-8]</span>'
+        r'(<span style="font-size:24px; color:#5b6b5e; white-space:nowrap;">[^<]+</span>)'
+        r'</div>'
+    )
+    product_replacement = (
+        '<div style="display:flex; justify-content:flex-end; '
+        'align-items:baseline; flex:none;">\\1</div>'
+    )
+    product_section, product_count = product_pattern.subn(product_replacement, product_section)
+    if product_count not in (0, 8):
+        raise RuntimeError(f"Company profile product ordinal count is {product_count}, expected 0 or 8")
+    product_type_rows = product_section.count(
+        'justify-content:flex-end; align-items:baseline; flex:none;">'
+        '<span style="font-size:24px; color:#5b6b5e; white-space:nowrap;">'
+    )
+    if product_type_rows != 8:
+        raise RuntimeError(f"Company profile product type row count is {product_type_rows}, expected 8")
+    template = template[: product_match.start()] + product_section + template[product_match.end() :]
+
+    partnership_match = re.search(
+        r'<section\b[^>]*data-label="09 파트너십".*?</section>', template, re.S
+    )
+    if not partnership_match:
+        raise RuntimeError("Company profile partnership section is missing")
+    partnership_section = partnership_match.group(0)
+    partnership_pattern = re.compile(
+        r'\s*<span style="font-size:26px; color:#3f6b4a;">0[1-3]</span>'
+    )
+    partnership_section, partnership_count = partnership_pattern.subn("", partnership_section)
+    if partnership_count not in (0, 3):
+        raise RuntimeError(f"Company profile partnership ordinal count is {partnership_count}, expected 0 or 3")
+    for title in ("제품력", "설명력", "재구매 구조"):
+        if partnership_section.count(f'<div style="font-size:46px; font-weight:600;">{title}</div>') != 1:
+            raise RuntimeError(f"Company profile partnership card is missing: {title}")
+    template = (
+        template[: partnership_match.start()]
+        + partnership_section
+        + template[partnership_match.end() :]
+    )
     return template
 
 
@@ -235,6 +283,7 @@ def update_company_profile_bundle(path: Path = COMPANY_PROFILE) -> bool:
             template = normalize_factory_image_card(template, asset_id, str(spec["alt"]))
 
     template = replace_principle_section(template)
+    template = strip_decorative_ordinals(template)
     template = add_section_disclosure(template)
     manifest_payload = json.dumps(manifest, ensure_ascii=False, separators=(",", ":"))
     template_payload = json.dumps(template, ensure_ascii=False).replace("</", "<\\u002F")
