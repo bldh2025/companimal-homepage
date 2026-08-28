@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="ko-KR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ZERO LABS B2B 파트너십 제안서 2026</title>
+  <style>
+    @page { size:13.333333in 7.5in; margin:0; }
+    :root { --green:#1f3325; --mint:#a7d8b4; --cream:#f4f0e7; --paper:#fbfaf6; --ink:#15251a; --muted:#5f6d63; --line:#d8d2c7; --amber:#f3d991; --blue:#d9e8f1; }
+    * { box-sizing:border-box; }
+    html,body { margin:0; padding:0; background:#dcded9; color:var(--ink); font-family:"Apple SD Gothic Neo","Noto Sans KR",Arial,sans-serif; }
+    body { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    main { width:1280px; margin:0 auto; }
+    section.slide { position:relative; width:1280px; height:720px; overflow:hidden; break-after:page; page-break-after:always; padding:52px 64px 48px; background:var(--paper); display:flex; flex-direction:column; }
+    section.slide:last-child { break-after:auto; page-break-after:auto; }
+    .dark { background:var(--green)!important; color:var(--cream); }
+    .cream { background:var(--cream)!important; }
+    h1,h2,h3,p { margin:0; }
+    h1 { font-size:60px; line-height:1.05; letter-spacing:-.045em; font-weight:760; }
+    h2 { font-size:39px; line-height:1.14; letter-spacing:-.035em; font-weight:760; }
+    h3 { font-size:21px; line-height:1.3; letter-spacing:-.02em; }
+    p { font-size:17px; line-height:1.52; }
+    a { color:inherit; text-decoration:none; }
+    .eyebrow,.label { color:#4e7b59; font-size:14px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; }
+    .dark .eyebrow,.dark .label { color:var(--mint); }
+    .head { display:flex; justify-content:space-between; gap:24px; align-items:flex-start; margin-bottom:23px; flex:0 0 auto; }
+    .head p { margin-top:10px; color:var(--muted); max-width:900px; font-size:16px; }
+    .dark .head p { color:#c8d5cb; }
+    .section-no { font-size:14px; letter-spacing:.1em; color:#6f8073; white-space:nowrap; margin-top:5px; }
+    .dark .section-no { color:#a7b9aa; }
+    .footer { position:absolute; left:64px; right:64px; bottom:20px; display:flex; justify-content:space-between; color:#6d7a71; font-size:14px; }
+    .dark .footer { color:#a7b9aa; }
+    .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+    .card { background:rgba(255,255,255,.82); border:1px solid var(--line); padding:18px; }
+    .sub { color:var(--muted); }
+    .note { font-size:14px; line-height:1.5; color:#6e7972; }
+    .dark .note { color:#a9b9ad; }
+    .status { display:inline-flex; align-items:center; min-height:27px; padding:3px 10px; border-radius:14px; font-size:14px; font-weight:800; }
+    .status.ok { background:#d8eadb; color:#20502e; }
+    .status.ref { background:var(--blue); color:#234a62; }
+    .status.quote { background:var(--amber); color:#5f4310; }
+    table { width:100%; border-collapse:collapse; table-layout:fixed; font-size:14px; }
+    th { text-align:left; color:#58675d; background:#eee9de; font-size:14px; }
+    th,td { border-bottom:1px solid var(--line); padding:9px 10px; vertical-align:middle; line-height:1.35; }
+    .pill { display:inline-block; padding:4px 9px; border:1px solid #7fa288; border-radius:15px; color:#355941; font-size:14px; font-weight:700; }
+    .button { display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:0 17px; border:1px solid #6f9b79; background:#fff; color:#20472c; font-size:15px; font-weight:800; }
+    .dark .button { background:var(--mint); color:#183520; border-color:var(--mint); }
+
+    .cover { padding:0!important; display:grid!important; grid-template-columns:58% 42%; }
+    .cover-copy { padding:60px 64px 50px; display:flex; flex-direction:column; justify-content:space-between; }
+    .cover-kicker { display:flex; justify-content:space-between; color:var(--mint); font-size:15px; font-weight:800; letter-spacing:.1em; }
+    .cover h1 { font-size:58px; max-width:680px; }
+    .cover .accent { color:var(--mint); }
+    .cover-lead { color:#cad8cd; font-size:20px; max-width:650px; margin-top:22px; }
+    .cover-meta { display:flex; justify-content:space-between; padding-top:18px; border-top:1px solid #435d49; color:#b5c3b7; font-size:14px; }
+    .cover-visual { position:relative; overflow:hidden; background:#526553; }
+    .cover-visual img { width:100%; height:100%; object-fit:cover; }
+    .cover-visual::after { content:""; position:absolute; inset:0; background:linear-gradient(90deg,rgba(31,51,37,.34),transparent 38%),linear-gradient(0deg,rgba(31,51,37,.32),transparent 45%); }
+
+    .offer-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; flex:1; }
+    .offer-card { display:flex; flex-direction:column; border-top:5px solid #4e7b59; }
+    .offer-card strong { font-size:34px; color:#355d40; margin:12px 0; }
+    .offer-card p { font-size:16px; color:var(--muted); }
+    .offer-card .bottom { margin-top:auto; border-top:1px solid var(--line); padding-top:14px; font-size:14px; }
+    .decision-bar { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; margin-top:15px; background:#bdc8bf; }
+    .decision-bar div { background:var(--green); color:white; padding:13px 15px; font-size:14px; text-align:center; }
+
+    .proof-layout { display:grid; grid-template-columns:1.02fr .98fr; gap:20px; flex:1; }
+    .metrics { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .metric { background:var(--green); color:white; padding:19px; display:flex; flex-direction:column; justify-content:space-between; min-height:128px; }
+    .metric b { font-size:38px; color:var(--mint); }
+    .metric span { font-size:15px; color:#c9d7cc; }
+    .proof-card { display:flex; flex-direction:column; justify-content:space-between; }
+    .proof-row { padding:13px 0; border-top:1px solid var(--line); display:grid; grid-template-columns:132px 1fr; gap:16px; font-size:15px; }
+    .proof-row span:first-child { color:var(--muted); }
+
+    .products { display:grid; grid-template-columns:1fr 1fr; gap:13px 16px; flex:1; }
+    .product { display:grid; grid-template-columns:116px 1fr; gap:16px; align-items:center; background:#fff; border:1px solid var(--line); padding:12px 15px; min-height:196px; }
+    .product img { width:112px; height:154px; object-fit:contain; }
+    .product h3 { font-size:24px; margin:7px 0 8px; }
+    .product p { font-size:15px; color:var(--muted); }
+    .product .spec { margin-top:10px; font-size:15px; font-weight:800; color:#31543a; }
+
+    .scenario-grid { display:grid; grid-template-columns:1fr 1fr; gap:17px; flex:1; }
+    .scenario { background:#fff; border:1px solid var(--line); padding:22px; display:flex; flex-direction:column; }
+    .scenario h3 { font-size:27px; margin:10px 0 13px; }
+    .scenario .big { font-size:34px; color:#345e40; font-weight:800; }
+    .scenario .rows { margin-top:13px; }
+    .scenario .rows div { display:flex; justify-content:space-between; border-top:1px solid var(--line); padding:9px 0; font-size:15px; }
+    .scenario .scenario-bottom { margin-top:auto; padding-top:12px; border-top:1px solid var(--line); font-size:14px; }
+
+    .sku-table th:nth-child(1){width:18%}.sku-table th:nth-child(2){width:12%}.sku-table th:nth-child(3){width:12%}.sku-table th:nth-child(4){width:18%}.sku-table th:nth-child(5){width:21%}.sku-table th:nth-child(6){width:19%}
+    .sku-table th,.sku-table td { padding:7px 9px; }
+
+    .economics { display:grid; grid-template-columns:1.05fr .95fr; gap:19px; flex:1; }
+    .formula { background:var(--green); color:white; padding:23px; }
+    .formula h3 { color:var(--mint); font-size:27px; margin:9px 0 16px; }
+    .formula-row { border-top:1px solid #45614c; padding:11px 0; }
+    .formula-row b { display:block; color:#d6e4d9; font-size:15px; }
+    .formula-row span { display:block; margin-top:4px; color:#afc0b3; font-size:14px; }
+    .gates { display:grid; gap:10px; }
+    .gate { padding:15px 17px; border:1px solid var(--line); background:#fff; }
+    .gate b { display:block; color:#3d6b48; font-size:17px; margin-bottom:5px; }
+    .gate span { color:var(--muted); font-size:14px; line-height:1.45; }
+
+    .flow { display:grid; grid-template-columns:repeat(5,1fr); gap:9px; margin-bottom:14px; }
+    .step { background:#294a34; color:white; padding:15px; min-height:103px; }
+    .step b { color:var(--mint); font-size:21px; display:block; margin-bottom:7px; }
+    .step p { font-size:14px; color:#cad6cc; }
+    .rr th:nth-child(1){width:18%}.rr th:nth-child(2){width:31%}.rr th:nth-child(3){width:31%}.rr th:nth-child(4){width:20%}
+    .rr th,.rr td { padding:7px 9px; }
+
+    .pilot-top { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+    .pilot-step { background:white; border:1px solid var(--line); padding:16px; min-height:116px; }
+    .pilot-step b { color:#4f7c59; font-size:23px; display:block; margin-bottom:7px; }
+    .pilot-step span { font-size:14px; color:var(--muted); line-height:1.45; }
+    .kpi-table { margin-top:14px; }
+    .kpi-table th:nth-child(1){width:19%}.kpi-table th:nth-child(2){width:43%}.kpi-table th:nth-child(3){width:19%}.kpi-table th:nth-child(4){width:19%}
+    .kpi-table th,.kpi-table td { padding:7px 9px; }
+
+    .evidence-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; flex:1; }
+    .evidence-card { display:flex; flex-direction:column; }
+    .evidence-card h3 { margin:8px 0; }
+    .evidence-card p { color:var(--muted); font-size:15px; }
+    .evidence-card .links { display:flex; gap:8px; flex-wrap:wrap; margin-top:auto; padding-top:12px; }
+
+    .cta-layout { display:grid; grid-template-columns:1.03fr .97fr; gap:20px; flex:1; }
+    .agenda { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .agenda div { border-top:1px solid #47624d; padding:13px 4px 8px 0; }
+    .agenda b { display:block; color:var(--mint); font-size:15px; margin-bottom:5px; }
+    .agenda span { color:#d0dcd2; font-size:15px; }
+    .contact { background:#294632; border:1px solid #46624c; padding:22px; display:flex; flex-direction:column; }
+    .contact h3 { color:var(--mint); font-size:27px; margin:8px 0 13px; }
+    .contact-row { display:grid; grid-template-columns:112px 1fr; gap:12px; padding:10px 0; border-top:1px solid #4a6650; font-size:15px; }
+    .contact-row span:first-child { color:#a8b9ac; }
+    .contact .buttons { margin-top:auto; display:flex; gap:9px; flex-wrap:wrap; }
+  </style>
+</head>
+<body>
+<main id="proposal">
+  <section class="slide cover dark" data-label="01 표지">
+    <div class="cover-copy"><div class="cover-kicker"><span>ZERO LABS × DISTRIBUTION PARTNER</span><span>유통 파트너사 귀중</span></div><div><div class="eyebrow">B2B PARTNERSHIP PROPOSAL · VERSION 2.0</div><h1 style="margin-top:18px">검토에서 발주까지,<br><span class="accent">판단할 수 있는<br>파트너십 제안.</span></h1><p class="cover-lead">8개 제품군, 현재 공개 B2B 공급 기준, 파일럿 운영안을 한 문서에 담았습니다.</p></div><div class="cover-meta"><span>주식회사 반려동행 · 2026.08.28</span><span>수신자 검토용 · 무단 재배포 금지</span></div></div>
+    <div class="cover-visual"><img src="../../zerolabs_homepage_assets/hero-dog-treats.webp" alt="ZERO LABS 제품과 반려견"></div>
+  </section>
+
+  <section class="slide cream" data-label="02 제안 요약">
+    <div class="head"><div><span class="eyebrow">EXECUTIVE OFFER</span><h2 style="margin-top:8px">무엇을 도입하고, 어떤 기준으로 판단할지<br>첫 미팅부터 명확하게 제안합니다.</h2><p>본 자료는 펫샵·온라인 셀러·지역 유통사를 위한 공통 외부 제안본입니다.</p></div><span class="section-no">02 / 12</span></div>
+    <div class="offer-grid"><div class="card offer-card"><span class="label">WHAT</span><strong>8개 제품군</strong><p>져키·덴탈·베이크드·식물성·시리얼을 고객 상황과 판매 채널에 맞춰 선택합니다.</p><div class="bottom"><span class="status ok">제품군 확인</span> 최신 공급 SKU는 견적서에서 확정</div></div><div class="card offer-card"><span class="label">START</span><strong>4박스부터 비교</strong><p>중간용량 100개 또는 대용량 48개의 공개 B2B몰 기준 시나리오로 초기 재고를 비교합니다.</p><div class="bottom"><span class="status ref">공개 기준가</span> 재고·VAT·배송·프로모션 별도 확인</div></div><div class="card offer-card"><span class="label">DECIDE</span><strong>4주 파일럿</strong><p>판매·재고·반품·기여이익을 같은 산식으로 보고 확대·조정·중단을 결정합니다.</p><div class="bottom"><span class="status quote">최종 견적 우선</span> 계약과 견적이 본 자료보다 우선</div></div></div>
+    <div class="decision-bar"><div>01 · 제품·구성 선택</div><div>02 · 견적·운영조건 확정</div><div>03 · 파일럿 후 확대 판단</div></div><div class="footer"><span>ZERO LABS · 유통 파트너 공통 제안서</span><span>02</span></div>
+  </section>
+
+  <section class="slide" data-label="03 사업 근거">
+    <div class="head"><div><span class="eyebrow">WHY ZERO LABS</span><h2 style="margin-top:8px">브랜드 설명보다 먼저,<br>바이어가 확인할 수 있는 사업 근거를 제시합니다.</h2><p>수치는 기준일과 정의를 함께 표기하고, 판매량·재구매율로 확대 해석하지 않습니다.</p></div><span class="section-no">03 / 12</span></div>
+    <div class="proof-layout"><div class="metrics"><div class="metric"><b>8개</b><span>반려견 간식 제품군</span></div><div class="metric"><b>4채널</b><span>공식몰 · 쿠팡 · 스마트스토어 · B2B몰</span></div><div class="metric"><b>2021</b><span>브랜드 출시 · 2021–2024 전 운영사 시기 포함</span></div><div class="metric"><b>32,757건</b><span>회사 제공 판매채널 공개 리뷰 게시물 합산*</span></div></div><div class="card proof-card"><div><span class="label">LEGAL &amp; OPERATING PROFILE</span><h3 style="font-size:28px;margin:10px 0 17px">주식회사 반려동행</h3></div><div><div class="proof-row"><span>대표이사</span><strong>장성환</strong></div><div class="proof-row"><span>사업자등록번호</span><strong>266-88-03624</strong></div><div class="proof-row"><span>브랜드 승계</span><strong>2025년 10월 인수 후 운영</strong></div><div class="proof-row"><span>리뷰 채널</span><strong>쿠팡 31,169건 · 기타 1,588건</strong></div></div><p class="note">* 2026.08.27 기준 · 회사 제공 판매채널의 공개 리뷰 게시물 수를 포장 규격 통합 제품군으로 합산. 판매량·구매자 수·재구매율이 아닙니다.</p></div></div>
+    <div class="footer"><span>ZERO LABS · 사업 근거</span><span>03</span></div>
+  </section>
+
+  <section class="slide cream" data-label="04 주력 제품">
+    <div class="head"><div><span class="eyebrow">CORE ASSORTMENT</span><h2 style="margin-top:8px">리뷰 축적 제품군과 두 가지 포장 크기로<br>초기 진열을 설계합니다.</h2><p>제품 구성은 2026.08.28 제품소개서와 공식 B2B몰을 대조한 기준입니다.</p></div><span class="section-no">04 / 12</span></div>
+    <div class="products"><div class="product"><img src="../../zerolabs_homepage_assets/products/gogi.webp" alt="고기가득 져키"><div><span class="label">JERKY · 11,659 REVIEWS</span><h3>고기가득</h3><p>육류 원료 콘셉트의 대표 져키</p><div class="spec">4종 · 1kg / 350g</div></div></div><div class="product"><img src="../../zerolabs_homepage_assets/products/yeongyang.webp" alt="영양가득 져키"><div><span class="label">JERKY · 6,473 REVIEWS</span><h3>영양가득</h3><p>채소와 연어 콘셉트의 컬러 져키</p><div class="spec">3종 · 1kg / 350g</div></div></div><div class="product"><img src="../../zerolabs_homepage_assets/products/berry.webp" alt="베리가득 져키"><div><span class="label">JERKY · 10,906 REVIEWS</span><h3>베리가득</h3><p>과일과 요거트 콘셉트의 져키</p><div class="spec">3종 · 1kg / 400g</div></div></div><div class="product"><img src="../../zerolabs_homepage_assets/products/gupbbang.webp" alt="굽빵"><div><span class="label">BAKED · 54 REVIEWS</span><h3>굽빵</h3><p>오븐 베이크드 콘셉트의 빵 모양 간식</p><div class="spec">1종 · 1kg / 200g</div></div></div></div>
+    <p class="note" style="margin-top:9px">리뷰는 2026.08.27 회사 제공 판매채널 공개 게시물 합산(쿠팡 31,169건·기타 채널 1,588건)이며 판매량이나 효능을 의미하지 않습니다. 원재료·급여·표시정보는 개별 제품 표시사항이 우선합니다.</p><div class="footer"><span>ZERO LABS · 주력 제품</span><span>04</span></div>
+  </section>
+
+  <section class="slide" data-label="05 확장 제품">
+    <div class="head"><div><span class="eyebrow">CATEGORY EXTENSION</span><h2 style="margin-top:8px">져키 이후의 선택지를 더하는<br>4개 확장 제품군</h2><p>현재 공개 B2B몰에 노출되지 않은 제품군은 공급 가능 여부를 견적 단계에서 확인합니다.</p></div><span class="section-no">05 / 12</span></div>
+    <div class="products"><div class="product"><img src="../../zerolabs_homepage_assets/products/chika.webp" alt="치카하개"><div><span class="label">DENTAL</span><h3>치카하개</h3><p>씹는 간식으로 제안하는 3개 테마</p><div class="spec">3종 · 30P / 240g</div></div></div><div class="product"><img src="../../zerolabs_homepage_assets/products/meatless.webp" alt="미트리스"><div><span class="label">PLANT-BASED</span><h3>미트리스</h3><p>식물성 콘셉트의 부드러운 져키</p><div class="spec">혼합 구성·1종 · 1kg · 공개 B2B몰 15입</div></div></div><div class="product"><img src="../../zerolabs_homepage_assets/products/mungs.webp" alt="멍스"><div><span class="label">CEREAL</span><h3>멍스</h3><p>캐롭 콘셉트의 시리얼 간식</p><div class="spec">1종 · 100g</div></div></div><div class="product"><img src="../../zerolabs_homepage_assets/products/fresh.webp" alt="프레쉬링"><div><span class="label">CEREAL</span><h3>프레쉬링</h3><p>링 형태의 혼합 시리얼 간식</p><div class="spec">1종 · 100g</div></div></div></div>
+    <p class="note" style="margin-top:9px">제품소개서와 2026.08.28 공식 판매면에 확인되는 제품명·구성·중량을 적용했습니다. 질병·알레르기 치료 또는 예방 효과를 제안하지 않습니다.</p><div class="footer"><span>ZERO LABS · 확장 제품</span><span>05</span></div>
+  </section>
+
+  <section class="slide cream" data-label="06 도입 시나리오">
+    <div class="head"><div><span class="eyebrow">STARTER ASSORTMENT</span><h2 style="margin-top:8px">채널의 객단가와 진열 공간에 맞춰<br>두 가지 시작안을 비교합니다.</h2><p>공식 B2B몰 공개 표시가를 단순 합산한 의사결정 참고이며, 발주 확정 견적이 아닙니다.</p></div><span class="section-no">06 / 12</span></div>
+    <div class="scenario-grid"><div class="scenario"><span class="label">OPTION A · MID SIZE</span><h3>중간용량 4박스</h3><div class="big">100개 · 840,000원</div><div class="rows"><div><span>고기가득 350g</span><b>25개</b></div><div><span>영양가득 350g</span><b>25개</b></div><div><span>베리가득 400g</span><b>25개</b></div><div><span>굽빵 200g</span><b>25개</b></div></div><div class="scenario-bottom"><span class="status ref">공개 기준가</span> 품목 폭과 진열 수량을 우선하는 시작안</div></div><div class="scenario"><span class="label">OPTION B · LARGE SIZE</span><h3>대용량 4박스</h3><div class="big">48개 · 993,600원</div><div class="rows"><div><span>고기가득 1kg</span><b>12개</b></div><div><span>영양가득 1kg</span><b>12개</b></div><div><span>베리가득 1kg</span><b>12개</b></div><div><span>굽빵 1kg</span><b>12개</b></div></div><div class="scenario-bottom"><span class="status ref">공개 기준가</span> 대용량 수요와 반복구매를 검증하는 시작안</div></div></div>
+    <div class="card" style="margin-top:13px;display:flex;justify-content:space-between;align-items:center;padding:14px 17px"><div><strong>확장 선택</strong> · 미트리스 혼합 1kg 15입 추가 시</div><div><b style="font-size:21px;color:#355d40">63개 · 1,397,100원</b> <span class="status quote">최종 견적 우선</span></div></div><div class="footer"><span>ZERO LABS · 도입 시나리오</span><span>06</span></div>
+  </section>
+
+  <section class="slide" data-label="07 공개 거래 기준">
+    <div class="head"><div><span class="eyebrow">DATED COMMERCIAL REFERENCE</span><h2 style="margin-top:8px">현재 공개된 박스 입수와 표시가를<br>날짜가 있는 기준표로 제공합니다.</h2><p>2026.08.28 공식 B2B몰 확인 · 단가는 박스 표시가÷입수량의 단순 계산값입니다.</p></div><span class="section-no">07 / 12</span></div>
+    <table class="sku-table"><thead><tr><th>제품</th><th>중량</th><th>구성</th><th>박스 입수</th><th>공개 박스 표시가</th><th>개당 참고가</th></tr></thead><tbody><tr><td><strong>고기가득</strong></td><td>350g</td><td>4종</td><td>25개</td><td>222,500원</td><td>8,900원</td></tr><tr><td><strong>영양가득</strong></td><td>350g</td><td>3종</td><td>25개</td><td>197,500원</td><td>7,900원</td></tr><tr><td><strong>베리가득</strong></td><td>400g</td><td>3종</td><td>25개</td><td>247,500원</td><td>9,900원</td></tr><tr><td><strong>굽빵</strong></td><td>200g</td><td>1종</td><td>25개</td><td>172,500원</td><td>6,900원</td></tr><tr><td><strong>고기가득</strong></td><td>1kg</td><td>4종</td><td>12개</td><td>262,800원</td><td>21,900원</td></tr><tr><td><strong>영양가득</strong></td><td>1kg</td><td>3종</td><td>12개</td><td>214,800원</td><td>17,900원</td></tr><tr><td><strong>베리가득</strong></td><td>1kg</td><td>3종</td><td>12개</td><td>264,000원</td><td>22,000원</td></tr><tr><td><strong>굽빵</strong></td><td>1kg</td><td>1종</td><td>12개</td><td>252,000원</td><td>21,000원</td></tr><tr><td><strong>미트리스</strong></td><td>1kg</td><td>혼합·1종</td><td>15개</td><td>403,500원</td><td>26,900원</td></tr></tbody></table>
+    <p class="note" style="margin-top:9px">공개 표시가는 재고·프로모션에 따라 바뀔 수 있습니다. VAT 표시 방식, 배송비, 결제조건, 유통기한과 실제 공급 가능 수량은 발주 전 견적서에서 확인하며 최종 견적서가 본 표보다 우선합니다.</p><div class="footer"><span>ZERO LABS · 공개 거래 기준</span><span>07</span></div>
+  </section>
+
+  <section class="slide cream" data-label="08 수익성 기준">
+    <div class="head"><div><span class="eyebrow">PARTNER ECONOMICS</span><h2 style="margin-top:8px">할인율이 아니라 실제 비용을 반영한<br>기여이익으로 도입 여부를 판단합니다.</h2><p>직영몰 프로모션과 파트너 판매가가 달라질 수 있으므로 확정 견적 전 마진을 약속하지 않습니다.</p></div><span class="section-no">08 / 12</span></div>
+    <div class="economics"><div class="formula"><span class="label">CALCULATION</span><h3>파트너 수익성 공통 산식</h3><div class="formula-row"><b>VAT 제외 순매출</b><span>실판매수량 × (VAT 포함 실제 판매가 ÷ 1.1)</span></div><div class="formula-row"><b>개당 매입 공급가액</b><span>견적서의 VAT 별도 박스 공급가액 ÷ 박스 입수량</span></div><div class="formula-row"><b>기여이익</b><span>VAT 제외 순매출 − 매입 공급가액 − 채널수수료 − 프로모션 − 배송·반품비</span></div><div class="formula-row"><b>기여이익률</b><span>기여이익 ÷ VAT 제외 순매출 × 100</span></div></div><div class="gates"><div class="gate"><b>GO · 확대</b><span>합의한 목표 기여이익과 재고회전을 모두 충족</span></div><div class="gate"><b>ADJUST · 조정</b><span>기여이익은 양수이나 소진·반품·프로모션 비용 중 하나가 목표 미달</span></div><div class="gate"><b>STOP · 중단</b><span>기여이익이 음수이거나 품질 이슈가 합의 기한 안에 해결되지 않음</span></div><div class="gate"><b>견적서 필수 표기</b><span>가격 유효기간 · VAT · 배송 · 재고 · 결제 · 반품 · 채널 정책</span></div></div></div>
+    <div class="footer"><span>ZERO LABS · 수익성 기준</span><span>08</span></div>
+  </section>
+
+  <section class="slide" data-label="09 운영과 이슈 대응">
+    <div class="head"><div><span class="eyebrow">OPERATIONS &amp; R&amp;R</span><h2 style="margin-top:8px">발주부터 품질 이슈까지,<br>누가 먼저 움직이는지 정합니다.</h2><p>아래 역할은 제안 기본안이며 최종 공급계약·반품정책·제품별 표시사항이 우선합니다.</p></div><span class="section-no">09 / 12</span></div>
+    <div class="flow"><div class="step"><b>01</b><strong>SKU·견적</strong><p>제품·가격·유효기간 확정</p></div><div class="step"><b>02</b><strong>발주·재고</strong><p>수량·결제·출고일 확정</p></div><div class="step"><b>03</b><strong>출고·검수</strong><p>수량·파손·기한 확인</p></div><div class="step"><b>04</b><strong>판매·CS</strong><p>승인 정보·1차 고객응대</p></div><div class="step"><b>05</b><strong>품질·개선</strong><p>추적·공지·재발방지</p></div></div>
+    <table class="rr"><thead><tr><th>업무</th><th>ZERO LABS 기본 역할</th><th>파트너 기본 역할</th><th>확정 문서</th></tr></thead><tbody><tr><td>제품·표시정보</td><td>승인본 제공·변경 사전 고지</td><td>채널 반영·임의 효능표현 금지</td><td>상품정보서</td></tr><tr><td>재고·발주</td><td>공급 가능 수량·출고 예정일 안내</td><td>수요예측·발주서·결제</td><td>견적·발주서</td></tr><tr><td>출고·검수</td><td>출고명세·로트 추적 정보 제공</td><td>수량·파손·유통기한 검수</td><td>배송·검수 기준</td></tr><tr><td>CS·반품</td><td>제품 판단·교환/정산 기준 적용</td><td>1차 접수·사진/로트 증빙 수집</td><td>반품정책</td></tr><tr><td>품질·리콜</td><td>판매중지 판단·원인분석·공식 공지</td><td>즉시 판매중지·판매이력 제공·회수 협조</td><td>이슈 대응안</td></tr></tbody></table>
+    <div class="footer"><span>ZERO LABS · 운영과 이슈 대응</span><span>09</span></div>
+  </section>
+
+  <section class="slide cream" data-label="10 파일럿 KPI">
+    <div class="head"><div><span class="eyebrow">4-WEEK PILOT</span><h2 style="margin-top:8px">같은 데이터와 산식으로 4주를 보고,<br>확대·조정·중단을 결정합니다.</h2><p>파일럿 기간과 목표값은 견적·채널 데이터를 확인한 뒤 양사가 서명한 운영안에서 확정합니다.</p></div><span class="section-no">10 / 12</span></div>
+    <div class="pilot-top"><div class="pilot-step"><b>W0</b><strong>기준선</strong><br><span>SKU·판매가·초기재고·비용·담당자 확정</span></div><div class="pilot-step"><b>W1</b><strong>오픈</strong><br><span>진열·상품정보·초기 CS 점검</span></div><div class="pilot-step"><b>W2–3</b><strong>주간 리뷰</strong><br><span>판매·재고·반품·비용을 매주 공유</span></div><div class="pilot-step"><b>W4</b><strong>공동 판단</strong><br><span>GO·ADJUST·STOP과 다음 발주 결정</span></div></div>
+    <table class="kpi-table"><thead><tr><th>KPI</th><th>정의 / 산식</th><th>데이터 담당</th><th>검토 주기</th></tr></thead><tbody><tr><td>판매소진율</td><td>실판매수량 ÷ 입고수량</td><td>파트너</td><td>주 1회</td></tr><tr><td>재고주수</td><td>기말재고 ÷ 최근 주평균 판매수량</td><td>파트너</td><td>주 1회</td></tr><tr><td>반품·불량률</td><td>승인 반품·불량수량 ÷ 출고수량</td><td>공동</td><td>주 1회</td></tr><tr><td>기여이익률</td><td>기여이익 ÷ VAT 제외 순매출</td><td>파트너</td><td>W2·W4</td></tr><tr><td>재주문</td><td>추가 발주 여부·수량·SKU 변화</td><td>공동</td><td>W4</td></tr></tbody></table>
+    <div class="footer"><span>ZERO LABS · 파일럿 KPI</span><span>10</span></div>
+  </section>
+
+  <section class="slide" data-label="11 증빙과 출처">
+    <div class="head"><div><span class="eyebrow">EVIDENCE &amp; SOURCE LINKS</span><h2 style="margin-top:8px">확인 가능한 출처는 바로 열고,<br>계약에 필요한 서류는 발주 전에 닫습니다.</h2><p>실제 시설처럼 보이는 생성 이미지는 사용하지 않았으며, 본 문서의 사진은 제품·브랜드 자산만 사용했습니다.</p></div><span class="section-no">11 / 12</span></div>
+    <div class="evidence-grid"><div class="card evidence-card"><span class="label">PUBLIC SOURCES</span><h3>회사·제품·현재 판매면</h3><p>법인 정보, 8개 제품군, 공식 B2C·B2B 채널과 2026.08.28 공개 박스 입수·표시가를 확인할 수 있습니다.</p><div class="links"><a class="button" href="https://companimal.kr/">회사 홈페이지</a><a class="button" href="https://제로랩스.com/category/강아지간식/55/">공식 B2B몰</a><a class="button" href="https://zerolabs.co.kr/">공식 B2C몰</a></div></div><div class="card evidence-card"><span class="label">REVIEW SNAPSHOT</span><h3>리뷰 집계 정의</h3><p>2026.08.27 회사 제공 판매채널 공개 리뷰 게시물 32,757건. 제품군 통합 기준이며 판매량·구매자·재구매율로 사용하지 않습니다.</p><div class="links"><span class="pill">고기가득 11,659</span><span class="pill">베리가득 10,906</span><span class="pill">영양가득 6,473</span><span class="pill">기타 3,719</span></div></div><div class="card evidence-card"><span class="label">BEFORE PURCHASE</span><h3>견적과 함께 확인할 문서</h3><p>제품별 표시사항·제조/품질 제공범위·바코드·박스 규격·유통기한·최소 잔여기간·재고·정식 견적서를 확인합니다.</p><div class="links"><span class="status quote">발주 전 필수</span></div></div><div class="card evidence-card"><span class="label">OPERATING POLICY</span><h3>계약에서 닫을 정책</h3><p>VAT·배송·결제·검수기한·하자/단순반품·가격/채널·콘텐츠 사용·품질 이슈·리콜 책임을 계약서에 반영합니다.</p><div class="links"><span class="status quote">계약서 우선</span></div></div></div>
+    <div class="footer"><span>ZERO LABS · 증빙과 출처</span><span>11</span></div>
+  </section>
+
+  <section class="slide dark" data-label="12 다음 단계와 문의">
+    <div class="head"><div><span class="eyebrow">NEXT STEP</span><h2 style="margin-top:8px">다음 미팅에서 스타터 구성과 견적을 확정하고,<br>파일럿 시작 여부를 결정합니다.</h2><p>유통 파트너사 귀중 · 채널과 예상 수량을 알려주시면 맞춤 견적과 운영 확인표를 준비합니다.</p></div><span class="section-no">12 / 12</span></div>
+    <div class="cta-layout"><div><div class="agenda"><div><b>01 · 채널</b><span>오프라인·온라인·권역</span></div><div><b>02 · 시작안</b><span>중간용량·대용량·혼합</span></div><div><b>03 · 수량</b><span>첫 발주와 월 예상수량</span></div><div><b>04 · 조건</b><span>가격·VAT·배송·반품</span></div><div><b>05 · 일정</b><span>견적 유효기간·오픈일</span></div><div><b>06 · KPI</b><span>목표·담당자·주간 리뷰</span></div></div><div class="card" style="margin-top:14px;background:#294632;border-color:#46624c"><span class="label">ONE CLEAR ASK</span><p style="margin-top:7px;color:#d3ded5">관심 SKU와 예상 첫 발주 수량을 회신해 주시면, 현재 재고를 반영한 정식 견적서를 보내드립니다.</p></div></div><div class="contact"><span class="label">CONTACT</span><h3>B2B 제휴와 주문 문의를 분리했습니다.</h3><div class="contact-row"><span>B2B 제휴</span><strong><a href="mailto:ceo@companimal.kr">ceo@companimal.kr</a></strong></div><div class="contact-row"><span>제휴 전화</span><strong><a href="tel:+821065407787">010-6540-7787</a></strong></div><div class="contact-row"><span>주문·CS</span><strong><a href="tel:+821065324544">010-6532-4544</a></strong></div><div class="contact-row"><span>주문 이메일</span><strong><a href="mailto:bldh2025@naver.com">bldh2025@naver.com</a></strong></div><div class="buttons"><a class="button" href="https://제로랩스.com/">B2B몰 열기</a><a class="button" href="https://pf.kakao.com/_xnyDcs">카카오톡 문의</a><a class="button" href="https://companimal.kr/">회사 확인</a></div></div></div>
+    <p class="note" style="margin-top:12px">본 제안은 2026.08.28 공개자료 기준의 검토용이며 법적 구속력이 있는 확정 견적 또는 계약이 아닙니다. 최종 견적서와 공급계약서가 본 제안보다 우선합니다.</p><div class="footer"><span>ZERO LABS · 주식회사 반려동행</span><span>12</span></div>
+  </section>
+</main>
+</body>
+</html>
