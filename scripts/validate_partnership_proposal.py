@@ -142,6 +142,23 @@ REQUIRED_TBD_IDS = {
     "incident_response",
     "contract",
 }
+FORBIDDEN_DESIGN_TOKENS = (
+    "#171817",
+    "#172018",
+    "#000",
+    "#000000",
+    "var(--blue)",
+    "#d9e8f1",
+    "#234a62",
+)
+REQUIRED_BRAND_CSS = (
+    "--green2:#2f5c3c",
+    "--sage:#e6efe7",
+    ".status.ref { background:var(--sage); color:var(--green2); }",
+    "th { text-align:left; color:var(--paper); background:#33513b;",
+    ".model-band { background:var(--green2); color:var(--paper);",
+    ".commission-hero { background:var(--green2); color:var(--paper);",
+)
 
 
 def assert_true(condition: bool, message: str) -> None:
@@ -179,6 +196,13 @@ def main() -> None:
     assert_true(REFERENCE_JSON.is_file(), f"CPS reference is missing: {REFERENCE_JSON}")
     proposal_html = PROPOSAL_HTML.read_text(encoding="utf-8")
     reference = json.loads(REFERENCE_JSON.read_text(encoding="utf-8"))
+
+    lowered_html = proposal_html.lower()
+    for token in FORBIDDEN_DESIGN_TOKENS:
+        assert_true(token not in lowered_html, f"Forbidden black/off-brand design token remains: {token}")
+    assert_true(re.search(r"\b(?:black|charcoal)\b", lowered_html) is None, "Black/charcoal CSS keyword remains")
+    for contract in REQUIRED_BRAND_CSS:
+        assert_true(contract in proposal_html, f"Required brand CSS contract is missing: {contract}")
 
     review_cards = re.findall(
         r'<div class="review-product [^"]+" data-product="([^"]+)" data-reviews="([\d,]+)">.*?<img src="[^"]*/([^"/]+)\.webp"',
