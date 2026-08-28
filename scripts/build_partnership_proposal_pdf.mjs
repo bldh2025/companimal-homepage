@@ -15,7 +15,7 @@ const outputPath = path.join(root, "output/pdf/zerolabs-b2b-partnership-proposal
 const stagedOutput = `${outputPath}.new`;
 const expectedLabels = [
   "01 표지", "02 제안 요약", "03 사업 근거", "04 주력 제품", "05 확장 제품", "06 도입 시나리오",
-  "07 공개 거래 기준", "08 수익성 기준", "09 운영과 이슈 대응", "10 파일럿 KPI", "11 증빙과 출처", "12 다음 단계와 문의",
+  "07 가격과 박스 구성", "08 수익성 기준", "09 운영과 이슈 대응", "10 파일럿 KPI", "11 거래 준비", "12 다음 단계와 문의",
 ];
 const chrome = [
   process.env.CHROME_PATH,
@@ -172,7 +172,7 @@ try {
   assert(metrics.overflow.length === 0, `Page overflow detected: ${JSON.stringify(metrics.overflow)}`);
   assert(metrics.brokenImages.length === 0, `Broken images: ${JSON.stringify(metrics.brokenImages)}`);
   assert(metrics.minFontPx >= 13.3, `Visible text is smaller than 10pt print size: ${metrics.minFontPx}px`);
-  for (const target of ["mailto:ceo@companimal.kr", "mailto:bldh2025@naver.com", "https://companimal.kr/", "https://pf.kakao.com/_xnyDcs"]) {
+  for (const target of ["mailto:ceo@companimal.kr", "tel:+821065407787", "https://companimal.kr/", "https://pf.kakao.com/_xnyDcs"]) {
     assert(metrics.links.includes(target), `Required clickable link is missing: ${target}`);
   }
   assert(metrics.lang === "ko-KR", `Unexpected language: ${metrics.lang}`);

@@ -9,8 +9,7 @@
     "kakao": "https://pf.kakao.com/_xnyDcs"
   },
   "contacts": {
-    "b2b_partnership": {"email": "ceo@companimal.kr", "phone": "010-6540-7787"},
-    "order_cs": {"email": "bldh2025@naver.com", "phone": "010-6532-4544"}
+    "inquiries": {"email": "ceo@companimal.kr", "phone": "010-6540-7787"}
   },
   "public_b2b_skus": [
     {"id":"gogi-350","product":"고기가득","pack":"350g","case_quantity":25,"configuration":"4종","box_price_krw":222500,"unit_reference_krw":8900},

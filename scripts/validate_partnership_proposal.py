@@ -15,17 +15,17 @@ ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_PDF = ROOT / "output/pdf/zerolabs-b2b-partnership-proposal-ko-2026.pdf"
 REFERENCE_JSON = ROOT / "output/proposal/zerolabs-b2b-sku-commercial-reference-2026-08-28.json"
 EXPECTED_HEADINGS = [
-    "검토에서 발주까지",
-    "무엇을 도입하고",
-    "바이어가 확인할 수 있는 사업 근거",
-    "리뷰 축적 제품군",
-    "4개 확장 제품군",
-    "두 가지 시작안을 비교",
-    "날짜가 있는 기준표",
-    "기여이익으로 도입 여부",
-    "누가 먼저 움직이는지",
-    "같은 데이터와 산식",
-    "확인 가능한 출처",
+    "검토에서 첫 발주까지",
+    "어떤 제품으로 시작하고",
+    "제로랩스의 현재",
+    "리뷰가 쌓인 대표 제품",
+    "져키와 함께 구성하기 좋은",
+    "두 가지 첫 발주 구성",
+    "제품별 박스 입수",
+    "실제 남는 금액",
+    "역할과 연락 순서",
+    "다음 발주를 결정",
+    "첫 발주 전에",
     "파일럿 시작 여부를 결정",
 ]
 REQUIRED_TEXT = [
@@ -33,18 +33,19 @@ REQUIRED_TEXT = [
     "주식회사 반려동행",
     "266-88-03624",
     "2026.08.28",
-    "공개 기준가",
-    "최종 견적 우선",
+    "현재 판매가",
+    "견적 시 확정",
     "혼합 구성·1종",
     "판매소진율",
     "기여이익률",
     "품질·리콜",
-    "B2B 제휴와 주문 문의를 분리했습니다",
+    "거래 문의",
     "ceo@companimal.kr",
     "010-6540-7787",
-    "bldh2025@naver.com",
-    "010-6532-4544",
-    "최종 견적서와 공급계약서가 본 제안보다 우선합니다",
+    "가격과 거래 조건은 최종 견적서와 공급계약서를 기준으로 합니다",
+    "가격과 재고는 주문 시점에 달라질 수 있습니다.",
+    "VAT·배송·결제 조건은 견적서에서 안내드립니다.",
+    "세부 역할과 반품 기준은 공급계약에서 확정합니다.",
 ]
 FORBIDDEN_TEXT = [
     "WARDROBE",
@@ -62,12 +63,30 @@ FORBIDDEN_TEXT = [
     "알러지 걱정 없는",
     "미트리스 3종",
     "8g×30",
+    "VERSION 2.0",
+    "본 자료는",
+    "공통 외부 제안본",
+    "회사 제공 판매채널",
+    "확대 해석하지 않습니다",
+    "제품소개서와",
+    "공식 판매면에 확인되는",
+    "질병·알레르기",
+    "치료 또는 예방",
+    "생성 이미지",
+    "EVIDENCE & SOURCE LINKS",
+    "증빙과 출처",
+    "리뷰 집계 정의",
+    "단순 합산한 의사결정",
+    "마진을 약속하지 않습니다",
+    "법적 구속력이 있는",
+    "B2B 제휴와 주문 문의를 분리했습니다",
+    "bldh2025@naver.com",
+    "010-6532-4544",
+    "공통 제안서",
 ]
 REQUIRED_LINKS = {
     "mailto:ceo@companimal.kr",
-    "mailto:bldh2025@naver.com",
     "tel:+821065407787",
-    "tel:+821065324544",
     "https://companimal.kr/",
     "https://zerolabs.co.kr/",
     "https://pf.kakao.com/_xnyDcs",
@@ -105,6 +124,7 @@ def main() -> None:
     assert_true(pdf_path.is_file(), f"PDF not found: {pdf_path}")
     assert_true(REFERENCE_JSON.is_file(), f"SKU reference is missing: {REFERENCE_JSON}")
     reference = json.loads(REFERENCE_JSON.read_text(encoding="utf-8"))
+    assert_true(reference.get("contacts") == {"inquiries": {"email": "ceo@companimal.kr", "phone": "010-6540-7787"}}, "Contact reference must use the canonical inquiry email and phone")
 
     reader = PdfReader(str(pdf_path))
     assert_true(not reader.is_encrypted, "PDF must not be encrypted")
@@ -147,7 +167,7 @@ def main() -> None:
     assert_true(page_images[3] >= 4 and page_images[4] >= 4, "Product pages must include all eight product images")
     assert_true(min(font_sizes) >= 9.8, f"PDF contains text smaller than 10pt: {min(font_sizes):.2f}pt")
 
-    for review_text in ("11,659", "10,906", "6,473", "3,719", "31,169", "1,588", "판매량·구매자 수·재구매율이 아닙니다"):
+    for review_text in ("32,757", "11,659", "10,906", "6,473", "31,169", "1,588"):
         assert_true(review_text in all_text, f"Review evidence is missing: {review_text}")
     assert_true("미트리스" in pages_text[4] and "혼합 구성·1종" in pages_text[4] and "3종" not in pages_text[4].split("미트리스", 1)[1].split("멍스", 1)[0], "Meatless must be one mixed configuration")
 
