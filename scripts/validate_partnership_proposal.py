@@ -30,7 +30,7 @@ EXPECTED_HEADINGS = [
     "노출에서 구매까지",
     "지면은 파트너사가",
     "제품과 소비자 반응",
-    "8개 제품군에 쌓인 리뷰",
+    "리뷰가 말해주는",
     "첫 콘텐츠를 구성",
     "콘텐츠 주제를 넓힙니다",
     "여러 고객 접점",
@@ -181,10 +181,14 @@ def main() -> None:
     reference = json.loads(REFERENCE_JSON.read_text(encoding="utf-8"))
 
     review_cards = re.findall(
-        r'<div class="review-card"><span>([^<]+)</span><img src="[^"/]+(?:/[^"/]+)*/([^"/]+)\.webp" alt="[^"]+"><b>([\d,]+)</b></div>',
+        r'<div class="review-product [^"]+" data-product="([^"]+)" data-reviews="([\d,]+)">.*?<img src="[^"]*/([^"/]+)\.webp"',
         proposal_html,
+        flags=re.DOTALL,
     )
-    assert_true(review_cards == REVIEW_CARD_ASSETS, f"Review card product/image/count mapping differs: {review_cards}")
+    normalized_review_cards = [(product, asset, reviews) for product, reviews, asset in review_cards]
+    assert_true(normalized_review_cards == REVIEW_CARD_ASSETS, f"Review card product/image/count mapping differs: {normalized_review_cards}")
+    assert_true('class="review-story-layout"' in proposal_html, "Review page must use the selected C story layout")
+    assert_true("data-rank=" not in proposal_html and 'class="rank"' not in proposal_html, "Numeric product ranking labels must remain removed")
 
     assert_true(reference.get("schema_version") == 2, "CPS reference schema must be version 2")
     assert_true(reference.get("contacts") == {"inquiries": {"email": "ceo@companimal.kr", "phone": "010-6540-7787"}}, "Contact reference must use the canonical inquiry email and phone")
@@ -240,7 +244,11 @@ def main() -> None:
         assert_true(required in all_text, f"Missing required text: {required}")
     for forbidden in FORBIDDEN_TEXT:
         assert_true(forbidden not in all_text, f"Forbidden wholesale/unsupported text remains: {forbidden}")
-    assert_true(re.search(r"\d+(?:\.\d+)?\s*%", all_text) is None, "Unapproved commission percentage remains")
+    percentages = re.findall(r"\d+(?:\.\d+)?\s*%", all_text)
+    expected_top_share = f"{sum(item['reviews'] for item in review['products'][:3]) / review['total'] * 100:.1f}%"
+    assert_true(percentages == [expected_top_share], f"Unexpected percentage values remain: {percentages}")
+    assert_true(expected_top_share in pages_text[3], "Top-three review share is missing from page 4")
+    assert_true(f"{review['coupang']:,}건" in pages_text[3] and f"{review['other_channels']:,}건" in pages_text[3], "Review channel split is missing from page 4")
     assert_true(page_images[0] >= 1, "Cover must include a hero image")
     assert_true(page_images[3] >= 8, "Review page must include all eight product images")
     assert_true(page_images[4] >= 4 and page_images[5] >= 4, "Product pages must include all eight product images")
