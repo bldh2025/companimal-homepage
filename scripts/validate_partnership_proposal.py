@@ -154,11 +154,41 @@ FORBIDDEN_DESIGN_TOKENS = (
 REQUIRED_BRAND_CSS = (
     "--green2:#2f5c3c",
     "--sage:#e6efe7",
+    "--accent:#a7d8b4",
+    "--cream:#fff",
+    "--paper:#fff",
     ".status.ref { background:var(--sage); color:var(--green2); }",
+    ".status.tbd { background:var(--accent); color:var(--green); }",
     "th { text-align:left; color:var(--paper); background:#33513b;",
     ".model-band { background:var(--green2); color:var(--paper);",
     ".commission-hero { background:var(--green2); color:var(--paper);",
 )
+FORBIDDEN_BACKGROUND_TOKENS = (
+    "#dcded9",
+    "#f4f0e7",
+    "#fbfaf6",
+    "#f3d991",
+    "#b9c6bc",
+    "rgba(255,255,255,.86)",
+    "var(--amber)",
+    "transparent",
+)
+ALLOWED_BACKGROUND_VALUES = {
+    "#fff",
+    "white",
+    "var(--paper)",
+    "var(--green)",
+    "var(--cream)",
+    "#d8eadb",
+    "var(--sage)",
+    "var(--accent)",
+    "var(--mint)",
+    "#33513b",
+    "#526553",
+    "var(--green2)",
+    "#5a6e60",
+    "#294632",
+}
 
 
 def assert_true(condition: bool, message: str) -> None:
@@ -203,6 +233,15 @@ def main() -> None:
     assert_true(re.search(r"\b(?:black|charcoal)\b", lowered_html) is None, "Black/charcoal CSS keyword remains")
     for contract in REQUIRED_BRAND_CSS:
         assert_true(contract in proposal_html, f"Required brand CSS contract is missing: {contract}")
+    for token in FORBIDDEN_BACKGROUND_TOKENS:
+        assert_true(token not in lowered_html, f"Forbidden non-white/non-green background token remains: {token}")
+    background_values = re.findall(r"background(?:-color)?\s*:\s*([^;}\"]+)", lowered_html)
+    for background_value in background_values:
+        normalized = re.sub(r"\s*!important\s*$", "", background_value.strip())
+        if normalized.startswith("linear-gradient("):
+            assert_true("rgba(31,51,37," in normalized and "transparent" not in normalized, f"Background gradient is not green-only: {normalized}")
+            continue
+        assert_true(normalized in ALLOWED_BACKGROUND_VALUES, f"Background is not white or green: {normalized}")
 
     review_cards = re.findall(
         r'<div class="review-product [^"]+" data-product="([^"]+)" data-reviews="([\d,]+)">.*?<img src="[^"]*/([^"/]+)\.webp"',
