@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="ko-KR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ZERO LABS 리뷰 성과 페이지 디자인 3안</title>
+  <style>
+    :root {
+      --green:#1b3728;
+      --green-2:#315d40;
+      --mint:#a8ddb6;
+      --cream:#f4f0e7;
+      --paper:#fffefa;
+      --line:#d8d0c3;
+      --muted:#718078;
+      --amber:#c99e56;
+      --black:#17241c;
+    }
+    * { box-sizing:border-box; }
+    html, body { margin:0; background:#d8d3c9; color:var(--black); font-family:"Pretendard","Noto Sans KR","Apple SD Gothic Neo",Arial,sans-serif; }
+    body[data-option="a"] .slide:not([data-option="a"]), body[data-option="b"] .slide:not([data-option="b"]), body[data-option="c"] .slide:not([data-option="c"]) { display:none; }
+    .slide { position:relative; width:1280px; height:720px; margin:0 auto 24px; padding:34px 46px 28px; overflow:hidden; background:var(--cream); }
+    .eyebrow { color:#4e7b59; font-size:12px; font-weight:850; letter-spacing:.18em; }
+    .option { position:absolute; top:34px; right:46px; color:#617169; font-size:12px; letter-spacing:.14em; }
+    h1 { margin:8px 0 7px; font-size:34px; line-height:1.16; letter-spacing:-.045em; }
+    p { margin:0; color:var(--muted); font-size:14px; line-height:1.55; }
+    .footer { position:absolute; left:46px; right:46px; bottom:14px; display:flex; justify-content:space-between; color:#809087; font-size:11px; }
+    .label { color:#4e7b59; font-size:11px; font-weight:850; letter-spacing:.08em; }
+    .num { font-variant-numeric:tabular-nums; }
+    img { display:block; object-fit:contain; }
+
+    /* A — balanced dashboard */
+    .a-layout { display:grid; grid-template-columns:360px 1fr; gap:18px; height:484px; margin-top:18px; }
+    .a-total { display:flex; flex-direction:column; justify-content:space-between; padding:25px; background:var(--green); color:white; }
+    .a-total .label { color:#75a781; }
+    .a-total strong { display:block; margin:6px 0 8px; color:var(--mint); font-size:58px; letter-spacing:-.05em; }
+    .a-total p { color:#edf5ee; }
+    .a-split { display:grid; grid-template-columns:1fr 1fr; gap:12px; padding-top:15px; border-top:1px solid #4b6a55; }
+    .a-split b { display:block; font-size:22px; }
+    .a-split span { color:#b9c9bc; font-size:12px; }
+    .a-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+    .a-card { display:flex; flex-direction:column; padding:12px 14px 13px; background:var(--paper); border:1px solid var(--line); }
+    .a-card span { font-size:14px; font-weight:850; }
+    .a-card img { width:100%; height:118px; margin:5px auto 4px; }
+    .a-card b { margin-top:auto; color:#3c704a; font-size:25px; line-height:1; }
+
+    /* B — product gallery */
+    .b-head { display:grid; grid-template-columns:1fr 380px; gap:28px; align-items:end; }
+    .b-kpi { display:grid; grid-template-columns:1.2fr .9fr .9fr; background:var(--green); color:white; }
+    .b-kpi > div { padding:13px 17px; border-left:1px solid #4b6652; }
+    .b-kpi > div:first-child { border-left:0; }
+    .b-kpi strong { display:block; color:var(--mint); font-size:25px; line-height:1.05; }
+    .b-kpi span { color:#c6d3c8; font-size:11px; }
+    .b-gallery { display:grid; grid-template-columns:repeat(8,1fr); gap:9px; height:424px; margin-top:20px; }
+    .b-card { display:flex; flex-direction:column; align-items:center; padding:13px 9px 14px; background:var(--paper); border:1px solid var(--line); border-radius:86px 86px 0 0; }
+    .b-card .rank { display:flex; align-items:center; justify-content:center; width:26px; height:26px; margin-bottom:7px; border-radius:50%; background:#e5eee6; color:#3a6b48; font-size:11px; font-weight:900; }
+    .b-card img { width:122px; height:176px; }
+    .b-card h3 { margin:10px 0 4px; font-size:16px; letter-spacing:-.03em; }
+    .b-card b { color:var(--green-2); font-size:23px; }
+    .b-card small { color:#87938c; font-size:10px; }
+    .b-note { position:absolute; left:46px; bottom:43px; color:#7b877f; font-size:10.5px; }
+
+    /* C — ranking story */
+    .c-layout { display:grid; grid-template-columns:310px 1fr; gap:18px; height:488px; margin-top:18px; }
+    .c-story { display:flex; flex-direction:column; padding:24px; background:var(--green); color:white; }
+    .c-story h2 { margin:9px 0 6px; color:var(--mint); font-size:48px; line-height:1; letter-spacing:-.05em; }
+    .c-story p { color:#d8e5db; }
+    .c-share { margin-top:22px; }
+    .c-share strong { display:block; font-size:31px; color:white; }
+    .c-share span { color:#b9c9bc; font-size:12px; }
+    .c-bar { display:flex; height:10px; margin-top:9px; overflow:hidden; border-radius:8px; background:#5a6e60; }
+    .c-bar i:first-child { width:88.6%; background:var(--mint); }
+    .c-bar i:last-child { flex:1; }
+    .c-start { margin-top:20px; padding-top:14px; border-top:1px solid #4b6652; }
+    .c-start span { display:block; margin-bottom:7px; color:#b9c9bc; font-size:11px; }
+    .c-start b { color:white; font-size:13px; line-height:1.6; }
+    .c-channels { margin-top:auto; padding-top:14px; border-top:1px solid #4b6652; color:#dbe6dd; font-size:12px; line-height:1.8; }
+    .c-channels b { float:right; color:white; }
+    .c-board { display:grid; grid-template-rows:284px 1fr; gap:12px; }
+    .c-top { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+    .c-hero { position:relative; display:grid; grid-template-columns:1fr 115px; align-items:center; padding:19px; overflow:hidden; background:var(--paper); border:1px solid var(--line); }
+    .c-hero::before { content:attr(data-rank); position:absolute; right:10px; top:2px; color:#edf0ea; font-size:72px; font-weight:900; line-height:1; }
+    .c-hero > div, .c-hero img { position:relative; z-index:1; }
+    .c-hero h3 { margin:7px 0 8px; font-size:20px; }
+    .c-hero b { color:#356541; font-size:27px; }
+    .c-hero img { width:115px; height:176px; }
+    .c-rest { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; }
+    .c-small { display:grid; grid-template-columns:70px 1fr; align-items:center; padding:10px; background:var(--paper); border:1px solid var(--line); }
+    .c-small img { width:68px; height:98px; }
+    .c-small h3 { margin:0 0 5px; font-size:13px; }
+    .c-small b { color:#356541; font-size:18px; }
+    .c-small small { display:block; margin-bottom:5px; color:var(--amber); font-size:10px; font-weight:900; }
+
+    @media print {
+      @page { size:13.333333in 7.5in; margin:0; }
+      body { background:white; }
+      .slide { margin:0; break-after:page; }
+    }
+  </style>
+</head>
+<body>
+  <section class="slide" data-option="a">
+    <span class="eyebrow">MARKET RESPONSE</span><span class="option">OPTION A · BALANCED</span>
+    <h1>리뷰 규모와 제품 반응을<br>한 화면에서 균형 있게 보여줍니다.</h1>
+    <p>누적 성과와 8개 제품군을 함께 비교하는 데이터 중심 구성입니다.</p>
+    <div class="a-layout">
+      <div class="a-total"><div><span class="label">누적 리뷰</span><strong class="num">32,757건</strong><p>2026.08.27 기준,<br>판매채널 공개 리뷰 게시물 합계</p></div><div class="a-split"><div><b class="num">31,169건</b><span>쿠팡</span></div><div><b class="num">1,588건</b><span>기타 판매채널</span></div></div></div>
+      <div class="a-grid">
+        <div class="a-card"><span>고기가득</span><img src="../../zerolabs_homepage_assets/products/gogi.webp" alt="고기가득"><b class="num">11,659</b></div><div class="a-card"><span>베리가득</span><img src="../../zerolabs_homepage_assets/products/berry.webp" alt="베리가득"><b class="num">10,906</b></div><div class="a-card"><span>영양가득</span><img src="../../zerolabs_homepage_assets/products/yeongyang.webp" alt="영양가득"><b class="num">6,473</b></div><div class="a-card"><span>치카하개</span><img src="../../zerolabs_homepage_assets/products/chika.webp" alt="치카하개"><b class="num">1,886</b></div>
+        <div class="a-card"><span>프레쉬링</span><img src="../../zerolabs_homepage_assets/products/fresh.webp" alt="프레쉬링"><b class="num">869</b></div><div class="a-card"><span>멍스</span><img src="../../zerolabs_homepage_assets/products/mungs.webp" alt="멍스"><b class="num">477</b></div><div class="a-card"><span>미트리스</span><img src="../../zerolabs_homepage_assets/products/meatless.webp" alt="미트리스"><b class="num">433</b></div><div class="a-card"><span>굽빵</span><img src="../../zerolabs_homepage_assets/products/gupbbang.webp" alt="굽빵"><b class="num">54</b></div>
+      </div>
+    </div>
+    <div class="footer"><span>ZERO LABS · 리뷰 성과 디자인 시안</span><span>A</span></div>
+  </section>
+
+  <section class="slide" data-option="b">
+    <div class="b-head"><div><span class="eyebrow">MARKET RESPONSE</span><span class="option">OPTION B · PRODUCT GALLERY</span><h1>제품을 먼저 보여주고,<br>리뷰 수로 신뢰를 더합니다.</h1><p>이미지 비중을 키워 제품 라인업을 한눈에 기억시키는 갤러리형 구성입니다.</p></div><div class="b-kpi"><div><strong class="num">32,757건</strong><span>누적 리뷰</span></div><div><strong class="num">31,169</strong><span>쿠팡</span></div><div><strong class="num">1,588</strong><span>기타</span></div></div></div>
+    <div class="b-gallery">
+      <div class="b-card"><span class="rank">01</span><img src="../../zerolabs_homepage_assets/products/gogi.webp" alt="고기가득"><h3>고기가득</h3><b class="num">11,659</b><small>REVIEWS</small></div><div class="b-card"><span class="rank">02</span><img src="../../zerolabs_homepage_assets/products/berry.webp" alt="베리가득"><h3>베리가득</h3><b class="num">10,906</b><small>REVIEWS</small></div><div class="b-card"><span class="rank">03</span><img src="../../zerolabs_homepage_assets/products/yeongyang.webp" alt="영양가득"><h3>영양가득</h3><b class="num">6,473</b><small>REVIEWS</small></div><div class="b-card"><span class="rank">04</span><img src="../../zerolabs_homepage_assets/products/chika.webp" alt="치카하개"><h3>치카하개</h3><b class="num">1,886</b><small>REVIEWS</small></div>
+      <div class="b-card"><span class="rank">05</span><img src="../../zerolabs_homepage_assets/products/fresh.webp" alt="프레쉬링"><h3>프레쉬링</h3><b class="num">869</b><small>REVIEWS</small></div><div class="b-card"><span class="rank">06</span><img src="../../zerolabs_homepage_assets/products/mungs.webp" alt="멍스"><h3>멍스</h3><b class="num">477</b><small>REVIEWS</small></div><div class="b-card"><span class="rank">07</span><img src="../../zerolabs_homepage_assets/products/meatless.webp" alt="미트리스"><h3>미트리스</h3><b class="num">433</b><small>REVIEWS</small></div><div class="b-card"><span class="rank">08</span><img src="../../zerolabs_homepage_assets/products/gupbbang.webp" alt="굽빵"><h3>굽빵</h3><b class="num">54</b><small>REVIEWS</small></div>
+    </div>
+    <div class="b-note">2026.08.27 기준 · 8개 제품군 판매채널 공개 리뷰 게시물 합계</div>
+    <div class="footer"><span>ZERO LABS · 리뷰 성과 디자인 시안</span><span>B</span></div>
+  </section>
+
+  <section class="slide" data-option="c">
+    <span class="eyebrow">MARKET RESPONSE</span><span class="option">OPTION C · RANKING STORY</span>
+    <h1>리뷰가 말해주는<br>콘텐츠 우선순위를 제안합니다.</h1>
+    <p>반응이 큰 제품군부터 콘텐츠 기획의 시작점을 제시하는 스토리형 구성입니다.</p>
+    <div class="c-layout">
+      <div class="c-story"><span class="label">누적 리뷰</span><h2 class="num">32,757건</h2><p>8개 제품군에 축적된 공개 리뷰가 파트너 콘텐츠의 근거가 됩니다.</p><div class="c-share"><strong class="num">88.6%</strong><span>상위 3개 제품군 리뷰 비중</span><div class="c-bar"><i></i><i></i></div></div><div class="c-start"><span>추천 시작 제품군</span><b>고기가득 · 베리가득<br>영양가득</b></div><div class="c-channels"><div>쿠팡 <b class="num">31,169건</b></div><div>기타 판매채널 <b class="num">1,588건</b></div></div></div>
+      <div class="c-board"><div class="c-top">
+        <div class="c-hero" data-rank="01"><div><span class="label">대표 져키</span><h3>고기가득</h3><b class="num">11,659</b></div><img src="../../zerolabs_homepage_assets/products/gogi.webp" alt="고기가득"></div><div class="c-hero" data-rank="02"><div><span class="label">과일 져키</span><h3>베리가득</h3><b class="num">10,906</b></div><img src="../../zerolabs_homepage_assets/products/berry.webp" alt="베리가득"></div><div class="c-hero" data-rank="03"><div><span class="label">채소·연어 져키</span><h3>영양가득</h3><b class="num">6,473</b></div><img src="../../zerolabs_homepage_assets/products/yeongyang.webp" alt="영양가득"></div>
+      </div><div class="c-rest">
+        <div class="c-small"><img src="../../zerolabs_homepage_assets/products/chika.webp" alt="치카하개"><div><small>04</small><h3>치카하개</h3><b class="num">1,886</b></div></div><div class="c-small"><img src="../../zerolabs_homepage_assets/products/fresh.webp" alt="프레쉬링"><div><small>05</small><h3>프레쉬링</h3><b class="num">869</b></div></div><div class="c-small"><img src="../../zerolabs_homepage_assets/products/mungs.webp" alt="멍스"><div><small>06</small><h3>멍스</h3><b class="num">477</b></div></div><div class="c-small"><img src="../../zerolabs_homepage_assets/products/meatless.webp" alt="미트리스"><div><small>07</small><h3>미트리스</h3><b class="num">433</b></div></div><div class="c-small"><img src="../../zerolabs_homepage_assets/products/gupbbang.webp" alt="굽빵"><div><small>08</small><h3>굽빵</h3><b class="num">54</b></div></div>
+      </div></div>
+    </div>
+    <div class="footer"><span>2026.08.27 기준 · 제품군 리뷰 합계 기준 상위 3개 비중</span><span>C</span></div>
+  </section>
+  <script>
+    const option = new URLSearchParams(location.search).get('option');
+    if (['a','b','c'].includes(option)) document.body.dataset.option = option;
+  </script>
+</body>
+</html>
