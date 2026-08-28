@@ -14,7 +14,18 @@ from pypdf import PdfReader
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_PDF = ROOT / "output/pdf/zerolabs-b2b-partnership-proposal-ko-2026.pdf"
+PROPOSAL_HTML = ROOT / "output/proposal/zerolabs-b2b-partnership-proposal-ko-2026.html"
 REFERENCE_JSON = ROOT / "output/proposal/zerolabs-b2b-sku-commercial-reference-2026-08-28.json"
+REVIEW_CARD_ASSETS = [
+    ("고기가득", "gogi", "11,659"),
+    ("베리가득", "berry", "10,906"),
+    ("영양가득", "yeongyang", "6,473"),
+    ("치카하개", "chika", "1,886"),
+    ("프레쉬링", "fresh", "869"),
+    ("멍스", "mungs", "477"),
+    ("미트리스", "meatless", "433"),
+    ("굽빵", "gupbbang", "54"),
+]
 EXPECTED_HEADINGS = [
     "노출에서 구매까지",
     "지면은 파트너사가",
@@ -164,8 +175,16 @@ def main() -> None:
     args = parser.parse_args()
     pdf_path = args.pdf.resolve()
     assert_true(pdf_path.is_file(), f"PDF not found: {pdf_path}")
+    assert_true(PROPOSAL_HTML.is_file(), f"Proposal HTML not found: {PROPOSAL_HTML}")
     assert_true(REFERENCE_JSON.is_file(), f"CPS reference is missing: {REFERENCE_JSON}")
+    proposal_html = PROPOSAL_HTML.read_text(encoding="utf-8")
     reference = json.loads(REFERENCE_JSON.read_text(encoding="utf-8"))
+
+    review_cards = re.findall(
+        r'<div class="review-card"><span>([^<]+)</span><img src="[^"/]+(?:/[^"/]+)*/([^"/]+)\.webp" alt="[^"]+"><b>([\d,]+)</b></div>',
+        proposal_html,
+    )
+    assert_true(review_cards == REVIEW_CARD_ASSETS, f"Review card product/image/count mapping differs: {review_cards}")
 
     assert_true(reference.get("schema_version") == 2, "CPS reference schema must be version 2")
     assert_true(reference.get("contacts") == {"inquiries": {"email": "ceo@companimal.kr", "phone": "010-6540-7787"}}, "Contact reference must use the canonical inquiry email and phone")
@@ -223,6 +242,7 @@ def main() -> None:
         assert_true(forbidden not in all_text, f"Forbidden wholesale/unsupported text remains: {forbidden}")
     assert_true(re.search(r"\d+(?:\.\d+)?\s*%", all_text) is None, "Unapproved commission percentage remains")
     assert_true(page_images[0] >= 1, "Cover must include a hero image")
+    assert_true(page_images[3] >= 8, "Review page must include all eight product images")
     assert_true(page_images[4] >= 4 and page_images[5] >= 4, "Product pages must include all eight product images")
     assert_true(min(font_sizes) >= 9.8, f"PDF contains text smaller than 10pt: {min(font_sizes):.2f}pt")
 
