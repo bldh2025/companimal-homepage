@@ -3,135 +3,176 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>ZERO LABS B2B 파트너십 제안서 2026</title>
+  <title>ZERO LABS CPS 파트너십 제안서 2026</title>
   <style>
     @page { size:13.333333in 7.5in; margin:0; }
-    :root { --green:#1f3325; --mint:#a7d8b4; --cream:#f4f0e7; --paper:#fbfaf6; --ink:#15251a; --muted:#5f6d63; --line:#d8d2c7; --amber:#f3d991; --blue:#d9e8f1; }
+    :root { --green:#1f3325; --green2:#294a34; --mint:#a7d8b4; --cream:#f4f0e7; --paper:#fbfaf6; --ink:#15251a; --muted:#5f6d63; --line:#d8d2c7; --amber:#f3d991; --blue:#d9e8f1; }
     * { box-sizing:border-box; }
     html,body { margin:0; padding:0; background:#dcded9; color:var(--ink); font-family:"Apple SD Gothic Neo","Noto Sans KR",Arial,sans-serif; }
     body { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
     main { width:1280px; margin:0 auto; }
-    section.slide { position:relative; width:1280px; height:720px; overflow:hidden; break-after:page; page-break-after:always; padding:52px 64px 48px; background:var(--paper); display:flex; flex-direction:column; }
+    section.slide { position:relative; width:1280px; height:720px; overflow:hidden; break-after:page; page-break-after:always; padding:50px 60px 46px; background:var(--paper); display:flex; flex-direction:column; }
     section.slide:last-child { break-after:auto; page-break-after:auto; }
     .dark { background:var(--green)!important; color:var(--cream); }
     .cream { background:var(--cream)!important; }
     h1,h2,h3,p { margin:0; }
-    h1 { font-size:60px; line-height:1.05; letter-spacing:-.045em; font-weight:760; }
-    h2 { font-size:39px; line-height:1.14; letter-spacing:-.035em; font-weight:760; }
+    h1 { font-size:58px; line-height:1.05; letter-spacing:-.045em; font-weight:760; }
+    h2 { font-size:38px; line-height:1.14; letter-spacing:-.035em; font-weight:760; }
     h3 { font-size:21px; line-height:1.3; letter-spacing:-.02em; }
-    p { font-size:17px; line-height:1.52; }
+    p { font-size:16px; line-height:1.5; }
     a { color:inherit; text-decoration:none; }
     .eyebrow,.label { color:#4e7b59; font-size:14px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; }
     .dark .eyebrow,.dark .label { color:var(--mint); }
-    .head { display:flex; justify-content:space-between; gap:24px; align-items:flex-start; margin-bottom:23px; flex:0 0 auto; }
-    .head p { margin-top:10px; color:var(--muted); max-width:900px; font-size:16px; }
+    .head { display:flex; justify-content:space-between; gap:22px; align-items:flex-start; margin-bottom:22px; flex:0 0 auto; }
+    .head p { margin-top:9px; color:var(--muted); max-width:940px; font-size:16px; }
     .dark .head p { color:#c8d5cb; }
     .section-no { font-size:14px; letter-spacing:.1em; color:#6f8073; white-space:nowrap; margin-top:5px; }
     .dark .section-no { color:#a7b9aa; }
-    .footer { position:absolute; left:64px; right:64px; bottom:20px; display:flex; justify-content:space-between; color:#6d7a71; font-size:14px; }
+    .footer { position:absolute; left:60px; right:60px; bottom:18px; display:flex; justify-content:space-between; color:#6d7a71; font-size:13.5px; }
     .dark .footer { color:#a7b9aa; }
-    .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
-    .card { background:rgba(255,255,255,.82); border:1px solid var(--line); padding:18px; }
-    .sub { color:var(--muted); }
-    .note { font-size:14px; line-height:1.5; color:#6e7972; }
+    .card { background:rgba(255,255,255,.86); border:1px solid var(--line); padding:18px; }
+    .note { font-size:13.5px; line-height:1.5; color:#6e7972; }
     .dark .note { color:#a9b9ad; }
-    .status { display:inline-flex; align-items:center; min-height:27px; padding:3px 10px; border-radius:14px; font-size:14px; font-weight:800; }
+    .status { display:inline-flex; align-items:center; min-height:27px; padding:3px 10px; border-radius:14px; font-size:13.5px; font-weight:800; }
     .status.ok { background:#d8eadb; color:#20502e; }
     .status.ref { background:var(--blue); color:#234a62; }
-    .status.quote { background:var(--amber); color:#5f4310; }
-    table { width:100%; border-collapse:collapse; table-layout:fixed; font-size:14px; }
-    th { text-align:left; color:#58675d; background:#eee9de; font-size:14px; }
-    th,td { border-bottom:1px solid var(--line); padding:9px 10px; vertical-align:middle; line-height:1.35; }
-    .pill { display:inline-block; padding:4px 9px; border:1px solid #7fa288; border-radius:15px; color:#355941; font-size:14px; font-weight:700; }
-    .button { display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:0 17px; border:1px solid #6f9b79; background:#fff; color:#20472c; font-size:15px; font-weight:800; }
+    .status.tbd { background:var(--amber); color:#5f4310; }
+    .button { display:inline-flex; align-items:center; justify-content:center; min-height:43px; padding:0 16px; border:1px solid #6f9b79; background:#fff; color:#20472c; font-size:14.5px; font-weight:800; }
     .dark .button { background:var(--mint); color:#183520; border-color:var(--mint); }
+    table { width:100%; border-collapse:collapse; table-layout:fixed; font-size:13.5px; }
+    th { text-align:left; color:white; background:#172018; font-size:13.5px; }
+    th,td { border:1px solid var(--line); padding:8px 9px; vertical-align:middle; line-height:1.35; }
 
     .cover { padding:0!important; display:grid!important; grid-template-columns:58% 42%; }
-    .cover-copy { padding:60px 64px 50px; display:flex; flex-direction:column; justify-content:space-between; }
-    .cover-kicker { display:flex; justify-content:space-between; color:var(--mint); font-size:15px; font-weight:800; letter-spacing:.1em; }
-    .cover h1 { font-size:58px; max-width:680px; }
+    .cover-copy { padding:58px 60px 48px; display:flex; flex-direction:column; justify-content:space-between; }
+    .cover-kicker { display:flex; justify-content:space-between; color:var(--mint); font-size:14px; font-weight:800; letter-spacing:.1em; }
+    .cover h1 { font-size:57px; max-width:690px; }
     .cover .accent { color:var(--mint); }
     .cover-lead { color:#cad8cd; font-size:20px; max-width:650px; margin-top:22px; }
-    .cover-meta { display:flex; justify-content:space-between; padding-top:18px; border-top:1px solid #435d49; color:#b5c3b7; font-size:14px; }
+    .cover-meta { display:flex; justify-content:space-between; padding-top:17px; border-top:1px solid #435d49; color:#b5c3b7; font-size:13.5px; }
     .cover-visual { position:relative; overflow:hidden; background:#526553; }
     .cover-visual img { width:100%; height:100%; object-fit:cover; }
-    .cover-visual::after { content:""; position:absolute; inset:0; background:linear-gradient(90deg,rgba(31,51,37,.34),transparent 38%),linear-gradient(0deg,rgba(31,51,37,.32),transparent 45%); }
+    .cover-visual::after { content:""; position:absolute; inset:0; background:linear-gradient(90deg,rgba(31,51,37,.34),transparent 38%),linear-gradient(0deg,rgba(31,51,37,.3),transparent 45%); }
 
-    .offer-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; flex:1; }
-    .offer-card { display:flex; flex-direction:column; border-top:5px solid #4e7b59; }
-    .offer-card strong { font-size:34px; color:#355d40; margin:12px 0; }
-    .offer-card p { font-size:16px; color:var(--muted); }
-    .offer-card .bottom { margin-top:auto; border-top:1px solid var(--line); padding-top:14px; font-size:14px; }
-    .decision-bar { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; margin-top:15px; background:#bdc8bf; }
-    .decision-bar div { background:var(--green); color:white; padding:13px 15px; font-size:14px; text-align:center; }
+    .summary-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; flex:1; }
+    .summary-card { display:flex; flex-direction:column; border-top:5px solid #4e7b59; }
+    .summary-card strong { font-size:31px; color:#355d40; margin:12px 0; }
+    .summary-card p { color:var(--muted); }
+    .summary-card .bottom { margin-top:auto; border-top:1px solid var(--line); padding-top:13px; font-size:13.5px; }
+    .summary-band { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; margin-top:14px; background:#b9c6bc; }
+    .summary-band div { background:var(--green); color:white; padding:13px; text-align:center; font-size:14px; }
 
     .proof-layout { display:grid; grid-template-columns:1.02fr .98fr; gap:20px; flex:1; }
     .metrics { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
     .metric { background:var(--green); color:white; padding:19px; display:flex; flex-direction:column; justify-content:space-between; min-height:128px; }
     .metric b { font-size:38px; color:var(--mint); }
-    .metric span { font-size:15px; color:#c9d7cc; }
+    .metric span { font-size:14.5px; color:#c9d7cc; }
     .proof-card { display:flex; flex-direction:column; justify-content:space-between; }
-    .proof-row { padding:13px 0; border-top:1px solid var(--line); display:grid; grid-template-columns:132px 1fr; gap:16px; font-size:15px; }
+    .proof-row { padding:12px 0; border-top:1px solid var(--line); display:grid; grid-template-columns:126px 1fr; gap:15px; font-size:14.5px; }
     .proof-row span:first-child { color:var(--muted); }
+
+    .review-layout { display:grid; grid-template-columns:.72fr 1.28fr; gap:18px; flex:1; }
+    .review-total { background:var(--green); color:white; padding:25px; display:flex; flex-direction:column; justify-content:space-between; }
+    .review-total .big { font-size:66px; color:var(--mint); font-weight:800; letter-spacing:-.045em; }
+    .review-total .split { border-top:1px solid #4a6650; padding-top:15px; display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .review-total .split b { display:block; font-size:22px; }
+    .review-total .split span { color:#b9c9bc; font-size:13.5px; }
+    .review-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+    .review-card { background:white; border:1px solid var(--line); padding:15px; display:flex; flex-direction:column; justify-content:space-between; }
+    .review-card b { font-size:26px; color:#3d6b48; }
+    .review-card span { font-size:15px; font-weight:800; }
 
     .products { display:grid; grid-template-columns:1fr 1fr; gap:13px 16px; flex:1; }
     .product { display:grid; grid-template-columns:116px 1fr; gap:16px; align-items:center; background:#fff; border:1px solid var(--line); padding:12px 15px; min-height:196px; }
     .product img { width:112px; height:154px; object-fit:contain; }
     .product h3 { font-size:24px; margin:7px 0 8px; }
     .product p { font-size:15px; color:var(--muted); }
-    .product .spec { margin-top:10px; font-size:15px; font-weight:800; color:#31543a; }
+    .product .spec { margin-top:10px; font-size:14.5px; font-weight:800; color:#31543a; }
 
-    .scenario-grid { display:grid; grid-template-columns:1fr 1fr; gap:17px; flex:1; }
-    .scenario { background:#fff; border:1px solid var(--line); padding:22px; display:flex; flex-direction:column; }
-    .scenario h3 { font-size:27px; margin:10px 0 13px; }
-    .scenario .big { font-size:34px; color:#345e40; font-weight:800; }
-    .scenario .rows { margin-top:13px; }
-    .scenario .rows div { display:flex; justify-content:space-between; border-top:1px solid var(--line); padding:9px 0; font-size:15px; }
-    .scenario .scenario-bottom { margin-top:auto; padding-top:12px; border-top:1px solid var(--line); font-size:14px; }
+    .placement-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; flex:1; }
+    .placement { background:white; border:1px solid var(--line); padding:19px; border-top:4px solid #4e7b59; display:flex; flex-direction:column; }
+    .placement b { color:#4e7b59; font-size:22px; margin-bottom:9px; }
+    .placement p { color:var(--muted); font-size:14.5px; }
+    .placement small { margin-top:auto; padding-top:12px; color:#6d7a71; font-size:13.5px; }
 
-    .sku-table th:nth-child(1){width:18%}.sku-table th:nth-child(2){width:12%}.sku-table th:nth-child(3){width:12%}.sku-table th:nth-child(4){width:18%}.sku-table th:nth-child(5){width:21%}.sku-table th:nth-child(6){width:19%}
-    .sku-table th,.sku-table td { padding:7px 9px; }
+    .model-band { background:#171817; color:white; padding:19px 24px; display:grid; grid-template-columns:1.25fr .75fr; gap:24px; align-items:center; }
+    .model-band h3 { font-size:25px; color:#f1f4f1; margin-bottom:5px; }
+    .model-band p { color:#c8d1c9; font-size:14.5px; }
+    .model-flow { display:grid; grid-template-columns:1fr auto 1fr auto 1fr; align-items:center; gap:8px; text-align:center; font-size:13.5px; }
+    .model-flow b { display:block; color:var(--amber); margin-bottom:4px; }
+    .role-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:14px; }
+    .role-card { min-height:139px; border-top:4px solid #6c966f; }
+    .role-card h3 { margin-bottom:9px; }
+    .role-card ul { margin:0; padding-left:18px; color:var(--muted); font-size:13.5px; line-height:1.55; }
+    .benefit-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:9px; margin-top:14px; }
+    .benefit { border:1px solid var(--line); background:white; padding:12px; min-height:83px; }
+    .benefit b { display:block; color:#4e7b59; font-size:13.5px; margin-bottom:6px; }
+    .benefit span { font-size:13.5px; font-weight:800; line-height:1.35; }
 
-    .economics { display:grid; grid-template-columns:1.05fr .95fr; gap:19px; flex:1; }
-    .formula { background:var(--green); color:white; padding:23px; }
-    .formula h3 { color:var(--mint); font-size:27px; margin:9px 0 16px; }
-    .formula-row { border-top:1px solid #45614c; padding:11px 0; }
-    .formula-row b { display:block; color:#d6e4d9; font-size:15px; }
-    .formula-row span { display:block; margin-top:4px; color:#afc0b3; font-size:14px; }
-    .gates { display:grid; gap:10px; }
-    .gate { padding:15px 17px; border:1px solid var(--line); background:#fff; }
-    .gate b { display:block; color:#3d6b48; font-size:17px; margin-bottom:5px; }
-    .gate span { color:var(--muted); font-size:14px; line-height:1.45; }
+    .flow-table th:nth-child(1){width:19%}.flow-table th:nth-child(2){width:20%}.flow-table th:nth-child(3){width:25%}.flow-table th:nth-child(4){width:14%}.flow-table th:nth-child(5){width:22%}
+    .flow-table th,.flow-table td { padding:7px 8px; }
+    .privacy-band { margin-top:12px; display:grid; grid-template-columns:1.2fr .8fr; gap:12px; }
+    .privacy-band div { border:1px solid var(--line); background:white; padding:12px 14px; font-size:13.5px; }
 
-    .flow { display:grid; grid-template-columns:repeat(5,1fr); gap:9px; margin-bottom:14px; }
-    .step { background:#294a34; color:white; padding:15px; min-height:103px; }
-    .step b { color:var(--mint); font-size:21px; display:block; margin-bottom:7px; }
-    .step p { font-size:14px; color:#cad6cc; }
-    .rr th:nth-child(1){width:18%}.rr th:nth-child(2){width:31%}.rr th:nth-child(3){width:31%}.rr th:nth-child(4){width:20%}
-    .rr th,.rr td { padding:7px 9px; }
+    .rules-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; flex:1; }
+    .rule { background:white; border:1px solid var(--line); padding:18px; display:flex; flex-direction:column; }
+    .rule b { color:#4e7b59; font-size:21px; margin:8px 0; }
+    .rule p { color:var(--muted); font-size:14px; }
+    .rule .status { margin-top:auto; align-self:flex-start; }
 
-    .pilot-top { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
-    .pilot-step { background:white; border:1px solid var(--line); padding:16px; min-height:116px; }
-    .pilot-step b { color:#4f7c59; font-size:23px; display:block; margin-bottom:7px; }
-    .pilot-step span { font-size:14px; color:var(--muted); line-height:1.45; }
-    .kpi-table { margin-top:14px; }
-    .kpi-table th:nth-child(1){width:19%}.kpi-table th:nth-child(2){width:43%}.kpi-table th:nth-child(3){width:19%}.kpi-table th:nth-child(4){width:19%}
-    .kpi-table th,.kpi-table td { padding:7px 9px; }
+    .report-layout { display:grid; grid-template-columns:1.12fr .88fr; gap:18px; flex:1; }
+    .metric-grid { display:grid; grid-template-columns:1fr 1fr; gap:11px; }
+    .metric-card { background:white; border:1px solid var(--line); padding:16px; }
+    .metric-card b { display:block; color:#3d6b48; font-size:21px; margin-bottom:5px; }
+    .metric-card span { color:var(--muted); font-size:13.5px; line-height:1.4; }
+    .report-card { background:var(--green); color:white; padding:22px; display:flex; flex-direction:column; }
+    .report-card h3 { color:var(--mint); font-size:26px; margin:9px 0 14px; }
+    .report-card .row { border-top:1px solid #48644e; padding:11px 0; font-size:14px; color:#cfdbd1; }
+    .report-card .status { margin-top:auto; align-self:flex-start; }
 
-    .evidence-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; flex:1; }
-    .evidence-card { display:flex; flex-direction:column; }
-    .evidence-card h3 { margin:8px 0; }
-    .evidence-card p { color:var(--muted); font-size:15px; }
-    .evidence-card .links { display:flex; gap:8px; flex-wrap:wrap; margin-top:auto; padding-top:12px; }
+    .commission-layout { display:grid; grid-template-columns:1.05fr .95fr; gap:17px; flex:1; }
+    .commission-hero { background:#171817; color:white; padding:28px; display:flex; flex-direction:column; justify-content:space-between; }
+    .commission-hero h3 { color:var(--amber); font-size:21px; }
+    .commission-hero .formula { font-size:42px; line-height:1.18; letter-spacing:-.035em; }
+    .commission-hero .formula b { color:var(--mint); }
+    .commission-hero p { color:#c7d1c8; }
+    .terms { display:grid; grid-template-columns:1fr 1fr; gap:11px; }
+    .term { background:white; border:1px solid var(--line); padding:16px; }
+    .term b { display:block; color:#4e7b59; margin-bottom:6px; }
+    .term span { font-size:13.5px; color:var(--muted); line-height:1.4; }
+
+    .campaign-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; flex:1; }
+    .campaign { background:white; border:1px solid var(--line); padding:19px; display:flex; flex-direction:column; }
+    .campaign b { color:#4e7b59; font-size:21px; margin-bottom:8px; }
+    .campaign p { color:var(--muted); font-size:14.5px; }
+    .campaign .tag { margin-top:auto; padding-top:12px; font-size:13.5px; color:#3f6f4a; font-weight:800; }
+
+    .launch-flow { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:14px; }
+    .launch-step { background:var(--green2); color:white; padding:17px; min-height:108px; }
+    .launch-step b { color:var(--mint); display:block; font-size:22px; margin-bottom:7px; }
+    .launch-step span { color:#ccd8ce; font-size:13.5px; line-height:1.45; }
+    .launch-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px 14px; }
+    .launch-item { border:1px solid var(--line); background:white; padding:12px 14px; display:flex; justify-content:space-between; align-items:center; font-size:14px; }
+
+    .settlement-flow { display:grid; grid-template-columns:repeat(7,1fr); gap:8px; margin-bottom:17px; }
+    .settle-step { background:white; border:1px solid var(--line); padding:13px; min-height:108px; }
+    .settle-step b { display:block; color:#4e7b59; font-size:18px; margin-bottom:8px; }
+    .settle-step span { color:var(--muted); font-size:13.5px; line-height:1.35; }
+    .settlement-grid { display:grid; grid-template-columns:1fr 1fr; gap:9px 14px; }
+    .settlement-item { border:1px solid var(--line); background:white; padding:11px 13px; display:flex; justify-content:space-between; gap:12px; font-size:13.5px; }
+    .settlement-item em { font-style:normal; color:#7a5713; font-weight:800; }
+
+    .rr-table th:nth-child(1){width:16%}.rr-table th:nth-child(2){width:27%}.rr-table th:nth-child(3){width:35%}.rr-table th:nth-child(4){width:22%}
+    .rr-table th,.rr-table td { padding:6.5px 8px; font-size:13.5px; }
 
     .cta-layout { display:grid; grid-template-columns:1.03fr .97fr; gap:20px; flex:1; }
     .agenda { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
     .agenda div { border-top:1px solid #47624d; padding:13px 4px 8px 0; }
-    .agenda b { display:block; color:var(--mint); font-size:15px; margin-bottom:5px; }
-    .agenda span { color:#d0dcd2; font-size:15px; }
+    .agenda b { display:block; color:var(--mint); font-size:14.5px; margin-bottom:5px; }
+    .agenda span { color:#d0dcd2; font-size:14px; }
     .contact { background:#294632; border:1px solid #46624c; padding:22px; display:flex; flex-direction:column; }
     .contact h3 { color:var(--mint); font-size:27px; margin:8px 0 13px; }
-    .contact-row { display:grid; grid-template-columns:112px 1fr; gap:12px; padding:10px 0; border-top:1px solid #4a6650; font-size:15px; }
+    .contact-row { display:grid; grid-template-columns:105px 1fr; gap:12px; padding:10px 0; border-top:1px solid #4a6650; font-size:14.5px; }
     .contact-row span:first-child { color:#a8b9ac; }
     .contact .buttons { margin-top:auto; display:flex; gap:9px; flex-wrap:wrap; }
   </style>
@@ -139,76 +180,111 @@
 <body>
 <main id="proposal">
   <section class="slide cover dark" data-label="01 표지">
-    <div class="cover-copy"><div class="cover-kicker"><span>ZERO LABS × DISTRIBUTION PARTNER</span><span>유통 파트너사 귀중</span></div><div><div class="eyebrow">B2B PARTNERSHIP PROPOSAL</div><h1 style="margin-top:18px">검토에서 첫 발주까지,<br><span class="accent">함께 만드는<br>유통 파트너십.</span></h1><p class="cover-lead">8개 제품군과 B2B 공급 기준가, 4주 파일럿 운영안을 제안드립니다.</p></div><div class="cover-meta"><span>주식회사 반려동행 · 2026.08.28</span><span>ZERO LABS B2B PARTNERSHIP</span></div></div>
-    <div class="cover-visual"><img src="../../zerolabs_homepage_assets/hero-dog-treats.webp" alt="ZERO LABS 제품과 반려견"></div>
+    <div class="cover-copy"><div class="cover-kicker"><span>ZERO LABS × CPS PARTNER</span><span>제휴 파트너사 귀중</span></div><div><div class="eyebrow">CPS PARTNERSHIP PROPOSAL</div><h1 style="margin-top:18px">노출에서 구매까지,<br><span class="accent">성과로 연결되는<br>CPS 파트너십.</span></h1><p class="cover-lead">파트너의 지면에 제로랩스 제품을 소개하고, 성과 인정 판매에 따라 수수료를 지급하는 제휴를 제안드립니다.</p></div><div class="cover-meta"><span>주식회사 반려동행 · 2026.08.28</span><span>ZERO LABS CPS PARTNERSHIP</span></div></div>
+    <div class="cover-visual"><img src="../../zerolabs_homepage_assets/hero-dog-treats.webp" alt="ZERO LABS 반려견 간식 제품"></div>
   </section>
 
   <section class="slide cream" data-label="02 제안 요약">
-    <div class="head"><div><span class="eyebrow">EXECUTIVE OFFER</span><h2 style="margin-top:8px">어떤 제품으로 시작하고, 어떻게 운영할지<br>첫 미팅에서 함께 정합니다.</h2><p>펫샵·온라인 셀러·지역 유통사에 맞춘 제품 구성과 운영안을 제안드립니다.</p></div><span class="section-no">02 / 12</span></div>
-    <div class="offer-grid"><div class="card offer-card"><span class="label">WHAT</span><strong>8개 제품군</strong><p>져키·덴탈·베이크드·식물성·시리얼 중 판매 채널과 고객층에 맞는 구성을 선택합니다.</p><div class="bottom"><span class="status ok">제품 선택</span> 공급 가능 제품은 견적서에서 안내</div></div><div class="card offer-card"><span class="label">START</span><strong>4박스부터 비교</strong><p>중간용량 100개와 대용량 48개 구성으로 첫 발주 규모를 비교합니다.</p><div class="bottom"><span class="status ref">현재 판매가</span> VAT·배송 조건은 견적 시 안내</div></div><div class="card offer-card"><span class="label">DECIDE</span><strong>4주 파일럿</strong><p>판매·재고·반품·수익성을 함께 확인해 다음 발주 방향을 정합니다.</p><div class="bottom"><span class="status quote">운영안 협의</span> 기간·목표·담당자를 함께 확정</div></div></div>
-    <div class="decision-bar"><div>01 · 제품·구성 선택</div><div>02 · 견적·운영조건 확정</div><div>03 · 파일럿 후 확대 판단</div></div><div class="footer"><span>ZERO LABS · 제안 요약</span><span>02</span></div>
+    <div class="head"><div><span class="eyebrow">PROPOSAL AT A GLANCE</span><h2 style="margin-top:8px">지면은 파트너사가,<br>판매 운영은 제로랩스가 맡습니다.</h2><p>파트너는 고객 접점에 제품을 소개하고, 제로랩스는 공식몰의 주문·배송·CS와 실적 집계를 운영합니다.</p></div><span class="section-no">02 / 17</span></div>
+    <div class="summary-grid"><div class="card summary-card"><span class="label">PARTNER</span><strong>지면과 고객 접점</strong><p>혜택 페이지·기획전·배너·콘텐츠 등 파트너가 보유한 지면에 제로랩스 제품과 전용 링크를 노출합니다.</p><div class="bottom"><span class="status ok">파트너사</span> 지면·일정·커뮤니케이션 운영</div></div><div class="card summary-card"><span class="label">ZERO LABS</span><strong>판매 운영 전담</strong><p>제품 정보와 소재를 제공하고 공식몰에서 주문·결제·배송·취소·반품·환불·제품 CS를 처리합니다.</p><div class="bottom"><span class="status ref">제로랩스</span> 판매·물류·고객응대 운영</div></div><div class="card summary-card"><span class="label">TOGETHER</span><strong>성과형 수익</strong><p>전용 링크 또는 코드로 유입된 주문 가운데 취소·반품·환불을 반영한 성과 인정 판매를 정산합니다.</p><div class="bottom"><span class="status tbd">협의 후 확정</span> 요율·귀속·정산 기준</div></div></div>
+    <div class="summary-band"><div>노출·클릭 비용 없음</div><div>판매·배송 운영 업무 없음</div><div>성과 인정 판매에만 수수료</div></div><div class="footer"><span>ZERO LABS · 제안 요약</span><span>02</span></div>
   </section>
 
-  <section class="slide" data-label="03 사업 근거">
-    <div class="head"><div><span class="eyebrow">WHY ZERO LABS</span><h2 style="margin-top:8px">제품과 채널, 리뷰로<br>제로랩스의 현재를 소개합니다.</h2><p>2021년 출시 후 이어온 반려견 간식 브랜드입니다.</p></div><span class="section-no">03 / 12</span></div>
-    <div class="proof-layout"><div class="metrics"><div class="metric"><b>8개</b><span>반려견 간식 제품군</span></div><div class="metric"><b>4채널</b><span>공식몰 · 쿠팡 · 스마트스토어 · B2B몰</span></div><div class="metric"><b>2021</b><span>브랜드 출시 연도</span></div><div class="metric"><b>32,757건</b><span>판매채널 누적 리뷰*</span></div></div><div class="card proof-card"><div><span class="label">COMPANY PROFILE</span><h3 style="font-size:28px;margin:10px 0 17px">주식회사 반려동행</h3></div><div><div class="proof-row"><span>대표이사</span><strong>장성환</strong></div><div class="proof-row"><span>사업자등록번호</span><strong>266-88-03624</strong></div><div class="proof-row"><span>브랜드 승계</span><strong>2025년 10월 인수 후 운영</strong></div><div class="proof-row"><span>리뷰 채널</span><strong>쿠팡 31,169건 · 기타 1,588건</strong></div></div><p class="note">* 2026.08.27 기준, 8개 제품군의 판매채널 리뷰 합계입니다.</p></div></div>
-    <div class="footer"><span>ZERO LABS · 사업 근거</span><span>03</span></div>
+  <section class="slide" data-label="03 브랜드 근거">
+    <div class="head"><div><span class="eyebrow">WHY ZERO LABS</span><h2 style="margin-top:8px">제품과 소비자 반응이 있는 브랜드를<br>새로운 고객 접점에 연결합니다.</h2><p>2021년 출시 후 이어온 반려견 간식 브랜드로, 파트너 지면에 맞춘 제품 큐레이션을 제공합니다.</p></div><span class="section-no">03 / 17</span></div>
+    <div class="proof-layout"><div class="metrics"><div class="metric"><b>8개</b><span>반려견 간식 제품군</span></div><div class="metric"><b>3채널</b><span>공식몰 · 쿠팡 · 스마트스토어</span></div><div class="metric"><b>2021</b><span>브랜드 출시 연도</span></div><div class="metric"><b>32,757건</b><span>판매채널 누적 리뷰</span></div></div><div class="card proof-card"><div><span class="label">COMPANY PROFILE</span><h3 style="font-size:28px;margin:10px 0 17px">주식회사 반려동행</h3></div><div><div class="proof-row"><span>대표이사</span><strong>장성환</strong></div><div class="proof-row"><span>사업자등록번호</span><strong>266-88-03624</strong></div><div class="proof-row"><span>브랜드 운영</span><strong>2025년 10월 인수 후 운영</strong></div><div class="proof-row"><span>제휴 판매처</span><strong>ZERO LABS 공식몰</strong></div></div><p class="note">제품 랜딩과 주문 처리는 공식몰을 기준으로 제안하며, 실제 연동 방식은 협의 후 확정합니다.</p></div></div>
+    <div class="footer"><span>ZERO LABS · 브랜드 근거</span><span>03</span></div>
   </section>
 
-  <section class="slide cream" data-label="04 주력 제품">
-    <div class="head"><div><span class="eyebrow">CORE ASSORTMENT</span><h2 style="margin-top:8px">리뷰가 쌓인 대표 제품과 용량별 구성으로<br>첫 매대를 꾸립니다.</h2><p>1kg 대용량과 200~400g 중간용량을 함께 운영할 수 있습니다.</p></div><span class="section-no">04 / 12</span></div>
-    <div class="products"><div class="product"><img src="../../zerolabs_homepage_assets/products/gogi.webp" alt="고기가득 져키"><div><span class="label">JERKY · 11,659 REVIEWS</span><h3>고기가득</h3><p>고기 함량 80%의 대표 져키</p><div class="spec">4종 · 1kg / 350g</div></div></div><div class="product"><img src="../../zerolabs_homepage_assets/products/yeongyang.webp" alt="영양가득 져키"><div><span class="label">JERKY · 6,473 REVIEWS</span><h3>영양가득</h3><p>채소·연어 라인의 컬러 져키</p><div class="spec">3종 · 1kg / 350g</div></div></div><div class="product"><img src="../../zerolabs_homepage_assets/products/berry.webp" alt="베리가득 져키"><div><span class="label">JERKY · 10,906 REVIEWS</span><h3>베리가득</h3><p>과일·요거트 라인의 산뜻한 져키</p><div class="spec">3종 · 1kg / 400g</div></div></div><div class="product"><img src="../../zerolabs_homepage_assets/products/gupbbang.webp" alt="굽빵"><div><span class="label">BAKED · 54 REVIEWS</span><h3>굽빵</h3><p>빵 모양으로 구운 베이크드 간식</p><div class="spec">1종 · 1kg / 200g</div></div></div></div>
-    <div class="footer"><span>ZERO LABS · 주력 제품</span><span>04</span></div>
+  <section class="slide cream" data-label="04 리뷰 성과">
+    <div class="head"><div><span class="eyebrow">MARKET RESPONSE</span><h2 style="margin-top:8px">8개 제품군에 쌓인 리뷰가<br>콘텐츠 기획의 출발점이 됩니다.</h2><p>제품군별 반응을 바탕으로 파트너 고객층에 맞는 주제와 제품 조합을 제안합니다.</p></div><span class="section-no">04 / 17</span></div>
+    <div class="review-layout"><div class="review-total"><div><span class="label">누적 리뷰</span><div class="big">32,757건</div><p>2026.08.27 기준, 8개 제품군의 판매채널 공개 리뷰 게시물 합계입니다.</p></div><div class="split"><div><b>31,169건</b><span>쿠팡</span></div><div><b>1,588건</b><span>기타 판매채널</span></div></div></div><div class="review-grid"><div class="review-card"><span>고기가득</span><b>11,659</b></div><div class="review-card"><span>베리가득</span><b>10,906</b></div><div class="review-card"><span>영양가득</span><b>6,473</b></div><div class="review-card"><span>치카하개</span><b>1,886</b></div><div class="review-card"><span>프레쉬링</span><b>869</b></div><div class="review-card"><span>멍스</span><b>477</b></div><div class="review-card"><span>미트리스</span><b>433</b></div><div class="review-card"><span>굽빵</span><b>54</b></div></div></div>
+    <div class="footer"><span>ZERO LABS · 리뷰 성과</span><span>04</span></div>
   </section>
 
-  <section class="slide" data-label="05 확장 제품">
-    <div class="head"><div><span class="eyebrow">CATEGORY EXTENSION</span><h2 style="margin-top:8px">져키와 함께 구성하기 좋은<br>4개 확장 제품군</h2><p>판매 채널과 고객층에 맞춰 필요한 제품을 추가할 수 있습니다.</p></div><span class="section-no">05 / 12</span></div>
-    <div class="products"><div class="product"><img src="../../zerolabs_homepage_assets/products/chika.webp" alt="치카하개"><div><span class="label">DENTAL</span><h3>치카하개</h3><p>오래 씹는 덴탈 간식 3종</p><div class="spec">3종 · 30P / 240g</div></div></div><div class="product"><img src="../../zerolabs_homepage_assets/products/meatless.webp" alt="미트리스"><div><span class="label">PLANT-BASED</span><h3>미트리스</h3><p>식물성 원료의 부드러운 져키</p><div class="spec">혼합 구성·1종 · 1kg · 15입</div></div></div><div class="product"><img src="../../zerolabs_homepage_assets/products/mungs.webp" alt="멍스"><div><span class="label">CEREAL</span><h3>멍스</h3><p>캐롭을 더한 시리얼 간식</p><div class="spec">1종 · 100g</div></div></div><div class="product"><img src="../../zerolabs_homepage_assets/products/fresh.webp" alt="프레쉬링"><div><span class="label">CEREAL</span><h3>프레쉬링</h3><p>링 모양 시리얼 간식</p><div class="spec">1종 · 100g</div></div></div></div>
-    <div class="footer"><span>ZERO LABS · 확장 제품</span><span>05</span></div>
+  <section class="slide" data-label="05 대표 제품">
+    <div class="head"><div><span class="eyebrow">CORE LINEUP</span><h2 style="margin-top:8px">리뷰가 쌓인 대표 제품으로<br>첫 콘텐츠를 구성합니다.</h2><p>파트너 고객층과 시즌 주제에 맞춰 대표 져키와 베이크드 간식을 큐레이션합니다.</p></div><span class="section-no">05 / 17</span></div>
+    <div class="products"><div class="product"><img src="../../zerolabs_homepage_assets/products/gogi.webp" alt="고기가득 져키"><div><span class="label">JERKY · 11,659 REVIEWS</span><h3>고기가득</h3><p>고기를 풍부하게 담은 대표 져키</p><div class="spec">4종 · 1kg / 350g</div></div></div><div class="product"><img src="../../zerolabs_homepage_assets/products/yeongyang.webp" alt="영양가득 져키"><div><span class="label">JERKY · 6,473 REVIEWS</span><h3>영양가득</h3><p>채소·연어 라인의 컬러 져키</p><div class="spec">3종 · 1kg / 350g</div></div></div><div class="product"><img src="../../zerolabs_homepage_assets/products/berry.webp" alt="베리가득 져키"><div><span class="label">JERKY · 10,906 REVIEWS</span><h3>베리가득</h3><p>과일·요거트 라인의 산뜻한 져키</p><div class="spec">3종 · 1kg / 400g</div></div></div><div class="product"><img src="../../zerolabs_homepage_assets/products/gupbbang.webp" alt="굽빵"><div><span class="label">BAKED · 54 REVIEWS</span><h3>굽빵</h3><p>빵 모양으로 구운 베이크드 간식</p><div class="spec">1종 · 1kg / 200g</div></div></div></div>
+    <div class="footer"><span>ZERO LABS · 대표 제품</span><span>05</span></div>
   </section>
 
-  <section class="slide cream" data-label="06 도입 시나리오">
-    <div class="head"><div><span class="eyebrow">STARTER ASSORTMENT</span><h2 style="margin-top:8px">채널의 객단가와 진열 공간에 맞춘<br>두 가지 첫 발주 구성</h2><p>현재 B2B몰 판매가를 기준으로 첫 발주 규모를 비교했습니다.</p></div><span class="section-no">06 / 12</span></div>
-    <div class="scenario-grid"><div class="scenario"><span class="label">OPTION A · MID SIZE</span><h3>중간용량 4박스</h3><div class="big">100개 · 840,000원</div><div class="rows"><div><span>고기가득 350g</span><b>25개</b></div><div><span>영양가득 350g</span><b>25개</b></div><div><span>베리가득 400g</span><b>25개</b></div><div><span>굽빵 200g</span><b>25개</b></div></div><div class="scenario-bottom"><span class="status ref">현재 판매가</span> 다양한 제품을 넓게 진열하는 구성</div></div><div class="scenario"><span class="label">OPTION B · LARGE SIZE</span><h3>대용량 4박스</h3><div class="big">48개 · 993,600원</div><div class="rows"><div><span>고기가득 1kg</span><b>12개</b></div><div><span>영양가득 1kg</span><b>12개</b></div><div><span>베리가득 1kg</span><b>12개</b></div><div><span>굽빵 1kg</span><b>12개</b></div></div><div class="scenario-bottom"><span class="status ref">현재 판매가</span> 대용량 고객을 중심으로 운영하는 구성</div></div></div>
-    <div class="card" style="margin-top:13px;display:flex;justify-content:space-between;align-items:center;padding:14px 17px"><div><strong>확장 선택</strong> · 미트리스 1kg 15입을 더하면</div><div><b style="font-size:21px;color:#355d40">63개 · 1,397,100원</b> <span class="status quote">견적 시 확정</span></div></div><div class="footer"><span>ZERO LABS · 도입 시나리오</span><span>06</span></div>
+  <section class="slide cream" data-label="06 확장 제품">
+    <div class="head"><div><span class="eyebrow">LINEUP EXTENSION</span><h2 style="margin-top:8px">덴탈·식물성·시리얼까지<br>콘텐츠 주제를 넓힙니다.</h2><p>제품별 특징을 활용해 연령·취향·간식 형태에 따른 기획 소재를 구성할 수 있습니다.</p></div><span class="section-no">06 / 17</span></div>
+    <div class="products"><div class="product"><img src="../../zerolabs_homepage_assets/products/chika.webp" alt="치카하개"><div><span class="label">DENTAL · 1,886 REVIEWS</span><h3>치카하개</h3><p>오래 씹는 덴탈 간식 3종</p><div class="spec">3종 · 30P / 240g</div></div></div><div class="product"><img src="../../zerolabs_homepage_assets/products/meatless.webp" alt="미트리스"><div><span class="label">PLANT-BASED · 433 REVIEWS</span><h3>미트리스</h3><p>식물성 원료의 부드러운 져키</p><div class="spec">혼합 구성·1종 · 1kg</div></div></div><div class="product"><img src="../../zerolabs_homepage_assets/products/mungs.webp" alt="멍스"><div><span class="label">CEREAL · 477 REVIEWS</span><h3>멍스</h3><p>캐롭을 더한 시리얼 간식</p><div class="spec">1종 · 100g</div></div></div><div class="product"><img src="../../zerolabs_homepage_assets/products/fresh.webp" alt="프레쉬링"><div><span class="label">CEREAL · 869 REVIEWS</span><h3>프레쉬링</h3><p>링 모양 시리얼 간식</p><div class="spec">1종 · 100g</div></div></div></div>
+    <div class="footer"><span>ZERO LABS · 확장 제품</span><span>06</span></div>
   </section>
 
-  <section class="slide" data-label="07 가격과 박스 구성">
-    <div class="head"><div><span class="eyebrow">B2B PRICE REFERENCE</span><h2 style="margin-top:8px">제품별 박스 입수와<br>현재 판매가를 정리했습니다.</h2><p>2026.08.28 B2B몰 표시가 기준 · 개당 가격은 박스 판매가를 입수량으로 나눈 값입니다.</p></div><span class="section-no">07 / 12</span></div>
-    <table class="sku-table"><thead><tr><th>제품</th><th>중량</th><th>구성</th><th>박스 입수</th><th>박스 판매가</th><th>개당 환산가</th></tr></thead><tbody><tr><td><strong>고기가득</strong></td><td>350g</td><td>4종</td><td>25개</td><td>222,500원</td><td>8,900원</td></tr><tr><td><strong>영양가득</strong></td><td>350g</td><td>3종</td><td>25개</td><td>197,500원</td><td>7,900원</td></tr><tr><td><strong>베리가득</strong></td><td>400g</td><td>3종</td><td>25개</td><td>247,500원</td><td>9,900원</td></tr><tr><td><strong>굽빵</strong></td><td>200g</td><td>1종</td><td>25개</td><td>172,500원</td><td>6,900원</td></tr><tr><td><strong>고기가득</strong></td><td>1kg</td><td>4종</td><td>12개</td><td>262,800원</td><td>21,900원</td></tr><tr><td><strong>영양가득</strong></td><td>1kg</td><td>3종</td><td>12개</td><td>214,800원</td><td>17,900원</td></tr><tr><td><strong>베리가득</strong></td><td>1kg</td><td>3종</td><td>12개</td><td>264,000원</td><td>22,000원</td></tr><tr><td><strong>굽빵</strong></td><td>1kg</td><td>1종</td><td>12개</td><td>252,000원</td><td>21,000원</td></tr><tr><td><strong>미트리스</strong></td><td>1kg</td><td>혼합 구성·1종</td><td>15개</td><td>403,500원</td><td>26,900원</td></tr></tbody></table>
-    <p class="note" style="margin-top:9px">가격과 재고는 주문 시점에 달라질 수 있습니다. VAT·배송·결제 조건은 견적서에서 안내드립니다.</p><div class="footer"><span>ZERO LABS · 가격과 박스 구성</span><span>07</span></div>
+  <section class="slide" data-label="07 노출 시나리오">
+    <div class="head"><div><span class="eyebrow">PLACEMENT SCENARIOS</span><h2 style="margin-top:8px">파트너가 가진 여러 고객 접점에<br>제로랩스 콘텐츠를 연결합니다.</h2><p>지면의 성격과 고객 행동에 맞춰 제품 조합·카피·랜딩을 함께 설계합니다.</p></div><span class="section-no">07 / 17</span></div>
+    <div class="placement-grid"><div class="placement"><b>혜택 페이지</b><p>회원 혜택 영역에 반려견 간식 큐레이션과 공식몰 링크를 배치합니다.</p><small>회원 전용 혜택 · 상시관</small></div><div class="placement"><b>테마 기획전</b><p>시즌·연령·간식 형태를 주제로 여러 제품을 묶어 소개합니다.</p><small>신학기 · 휴가 · 연말</small></div><div class="placement"><b>배너 모듈</b><p>메인·카테고리·콘텐츠 하단의 배너에서 전용 랜딩으로 연결합니다.</p><small>웹 · 앱 · 모바일</small></div><div class="placement"><b>콘텐츠형 소개</b><p>선택 가이드와 제품 특징을 읽을거리 형태로 제공하고 구매로 이어갑니다.</p><small>아티클 · 큐레이션</small></div><div class="placement"><b>메시지 발송</b><p>뉴스레터·알림 등 파트너가 보유한 커뮤니케이션 채널을 활용합니다.</p><small>수신 동의 범위 내 운영</small></div><div class="placement"><b>이벤트 연계</b><p>전용 쿠폰·리워드·선물 구성은 비용과 부담 주체를 정한 뒤 운영합니다.</p><small>협의 후 확정</small></div></div>
+    <div class="footer"><span>ZERO LABS · 노출 시나리오</span><span>07</span></div>
   </section>
 
-  <section class="slide cream" data-label="08 수익성 기준">
-    <div class="head"><div><span class="eyebrow">PARTNER ECONOMICS</span><h2 style="margin-top:8px">채널 수수료와 배송·반품비까지 반영해<br>실제 남는 금액을 계산합니다.</h2><p>실제 판매가와 견적서 공급가를 넣으면 파트너 수익성을 확인할 수 있습니다.</p></div><span class="section-no">08 / 12</span></div>
-    <div class="economics"><div class="formula"><span class="label">CALCULATION</span><h3>파트너 수익성 계산</h3><div class="formula-row"><b>VAT 제외 순매출</b><span>실판매수량 × (VAT 포함 실제 판매가 ÷ 1.1)</span></div><div class="formula-row"><b>개당 매입 공급가액</b><span>견적서의 VAT 별도 박스 공급가액 ÷ 박스 입수량</span></div><div class="formula-row"><b>기여이익</b><span>VAT 제외 순매출 − 매입 공급가액 − 채널수수료 − 프로모션 − 배송·반품비</span></div><div class="formula-row"><b>기여이익률</b><span>기여이익 ÷ VAT 제외 순매출 × 100</span></div></div><div class="gates"><div class="gate"><b>확대</b><span>목표 수익성과 재고 회전을 모두 충족했을 때</span></div><div class="gate"><b>조정</b><span>수익은 남지만 판매 속도·반품·프로모션 비용을 손볼 때</span></div><div class="gate"><b>중단</b><span>손실이 발생하거나 품질 문제가 해결되지 않을 때</span></div><div class="gate"><b>견적서 항목</b><span>가격 유효기간 · VAT · 배송 · 재고 · 결제 · 반품 · 채널 정책</span></div></div></div>
-    <div class="footer"><span>ZERO LABS · 수익성 기준</span><span>08</span></div>
+  <section class="slide cream" data-label="08 CPS 구조">
+    <div class="head"><div><span class="eyebrow">CPS PARTNERSHIP</span><h2 style="margin-top:8px">CPS 파트너십 구조와<br>파트너 효과</h2><p>CPS는 실제 판매가 일어난 건에만 수수료가 생기는 성과형 제휴입니다.</p></div><span class="section-no">08 / 17</span></div>
+    <div class="model-band"><div><h3>노출과 클릭에는 비용이 발생하지 않습니다.</h3><p>결제가 완료되고 취소·반품·환불을 반영해 성과가 인정된 판매에만 수수료를 산정합니다.</p></div><div class="model-flow"><div><b>노출·클릭</b>비용 없음</div><span>›</span><div><b>구매 발생</b>예상 실적</div><span>›</span><div><b>구매 확정</b>수수료 발생</div></div></div>
+    <div class="role-grid"><div class="card role-card"><h3>파트너사</h3><ul><li>지면·노출 일정 운영</li><li>회원 커뮤니케이션</li><li>전용 링크·코드 적용</li><li>리워드 정책 협의</li></ul></div><div class="card role-card"><h3>ZERO LABS</h3><ul><li>제품·콘텐츠·랜딩 제공</li><li>주문·결제·배송 운영</li><li>취소·반품·환불·제품 CS</li><li>실적 집계·정산서 제공</li></ul></div><div class="card role-card"><h3>고객</h3><ul><li>파트너 지면에서 제품 인지</li><li>전용 링크로 공식몰 이동</li><li>공식몰에서 직접 구매</li><li>별도 제휴사 가입 없음</li></ul></div></div>
+    <div class="benefit-grid"><div class="benefit"><b>01</b><span>반려동물 카테고리 확장</span></div><div class="benefit"><b>02</b><span>상품 운영 부담 없음</span></div><div class="benefit"><b>03</b><span>실제 구매 기반 수익</span></div><div class="benefit"><b>04</b><span>낮은 초기 도입 부담</span></div><div class="benefit"><b>05</b><span>시즌·기획전 활용</span></div><div class="benefit"><b>06</b><span>배송·CS 운영 절감</span></div></div>
+    <div class="footer"><span>ZERO LABS · CPS 구조</span><span>08</span></div>
   </section>
 
-  <section class="slide" data-label="09 운영과 이슈 대응">
-    <div class="head"><div><span class="eyebrow">OPERATIONS &amp; R&amp;R</span><h2 style="margin-top:8px">발주부터 품질 대응까지<br>역할과 연락 순서를 정합니다.</h2><p>세부 역할과 반품 기준은 공급계약에서 확정합니다.</p></div><span class="section-no">09 / 12</span></div>
-    <div class="flow"><div class="step"><b>01</b><strong>SKU·견적</strong><p>제품·가격·유효기간 확정</p></div><div class="step"><b>02</b><strong>발주·재고</strong><p>수량·결제·출고일 확정</p></div><div class="step"><b>03</b><strong>출고·검수</strong><p>수량·파손·기한 확인</p></div><div class="step"><b>04</b><strong>판매·CS</strong><p>승인 정보·1차 고객응대</p></div><div class="step"><b>05</b><strong>품질·개선</strong><p>추적·공지·재발방지</p></div></div>
-    <table class="rr"><thead><tr><th>업무</th><th>ZERO LABS 기본 역할</th><th>파트너 기본 역할</th><th>관련 문서</th></tr></thead><tbody><tr><td>제품·표시정보</td><td>승인본 제공·변경 사전 고지</td><td>승인된 상품정보를 채널에 반영</td><td>상품정보서</td></tr><tr><td>재고·발주</td><td>공급 가능 수량·출고 예정일 안내</td><td>수요예측·발주서·결제</td><td>견적·발주서</td></tr><tr><td>출고·검수</td><td>출고명세·로트 추적 정보 제공</td><td>수량·파손·유통기한 검수</td><td>배송·검수 기준</td></tr><tr><td>CS·반품</td><td>제품 판단·교환/정산 기준 적용</td><td>1차 접수·사진/로트 증빙 수집</td><td>반품정책</td></tr><tr><td>품질·리콜</td><td>판매중지 판단·원인분석·공식 공지</td><td>즉시 판매중지·판매이력 제공·회수 협조</td><td>이슈 대응안</td></tr></tbody></table>
-    <div class="footer"><span>ZERO LABS · 운영과 이슈 대응</span><span>09</span></div>
+  <section class="slide" data-label="09 고객과 데이터 흐름">
+    <div class="head"><div><span class="eyebrow">CUSTOMER &amp; DATA FLOW</span><h2 style="margin-top:8px">CPS 고객 및 데이터 흐름</h2><p>파트너 지면에서 링크가 노출된 순간부터 수수료가 정산될 때까지, 무엇이 기록되고 누가 확인하는지 정리했습니다.</p></div><span class="section-no">09 / 17</span></div>
+    <table class="flow-table"><thead><tr><th>단계</th><th>고객 화면</th><th>기록 정보</th><th>확인 주체</th><th>역할</th></tr></thead><tbody><tr><td>01 · 파트너 지면 노출</td><td>혜택·기획전·콘텐츠</td><td>노출 정보는 제공 가능 범위 확인</td><td>파트너사</td><td>지면 편성·소재 노출</td></tr><tr><td>02 · 전용 링크 클릭</td><td>배너·텍스트 링크</td><td>파트너 코드·클릭 시각·식별값</td><td>양사</td><td>링크 적용·인식 확인</td></tr><tr><td>03 · 공식몰 랜딩</td><td>ZERO LABS 기획 페이지</td><td>유입 경로·랜딩 주소</td><td>ZERO LABS</td><td>리디렉션·콘텐츠 제공</td></tr><tr><td>04 · 상품 탐색·구매</td><td>상세·장바구니·결제</td><td>주문번호·결제금액·제품</td><td>ZERO LABS</td><td>주문·결제·배송 처리</td></tr><tr><td>05 · 주문 실적 집계</td><td>주문 완료</td><td>주문번호와 파트너 코드 연결</td><td>ZERO LABS</td><td>예상 실적 집계·리포트</td></tr><tr><td>06 · 취소·반품·환불 반영</td><td>취소·반품·환불 접수</td><td>취소 유형·부분취소·최종 금액</td><td>양사</td><td>차감·성과 인정액 대사</td></tr><tr><td>07 · 수수료 정산</td><td>별도 고객 화면 없음</td><td>정산서·세금계산서·지급 내역</td><td>양사</td><td>정산 확인·수수료 지급</td></tr></tbody></table>
+    <div class="privacy-band"><div><strong>파트너 제공 데이터</strong> · 마스킹 주문 식별자, 주문 일시, 성과 인정액, 주문 상태, 수수료</div><div><strong>제공하지 않는 데이터</strong> · 고객 성명, 연락처, 주소, 결제정보</div></div><p class="note" style="margin-top:9px">링크 식별 방식, 코드·파라미터와 귀속 기간은 파트너 환경에 맞춰 협의 후 확정합니다.</p>
+    <div class="footer"><span>ZERO LABS · 고객과 데이터 흐름</span><span>09</span></div>
   </section>
 
-  <section class="slide cream" data-label="10 파일럿 KPI">
-    <div class="head"><div><span class="eyebrow">4-WEEK PILOT</span><h2 style="margin-top:8px">4주 동안 판매와 재고를 함께 보고<br>다음 발주를 결정합니다.</h2><p>기간과 목표, 담당자는 파일럿 시작 전에 함께 정합니다.</p></div><span class="section-no">10 / 12</span></div>
-    <div class="pilot-top"><div class="pilot-step"><b>W0</b><strong>시작 준비</strong><br><span>SKU·판매가·초기재고·비용·담당자 확정</span></div><div class="pilot-step"><b>W1</b><strong>오픈</strong><br><span>진열·상품정보·초기 CS 점검</span></div><div class="pilot-step"><b>W2–3</b><strong>주간 리뷰</strong><br><span>판매·재고·반품·비용을 매주 공유</span></div><div class="pilot-step"><b>W4</b><strong>다음 결정</strong><br><span>확대·조정·중단과 다음 발주 결정</span></div></div>
-    <table class="kpi-table"><thead><tr><th>KPI</th><th>계산 방법</th><th>데이터 담당</th><th>검토 주기</th></tr></thead><tbody><tr><td>판매소진율</td><td>실판매수량 ÷ 입고수량</td><td>파트너</td><td>주 1회</td></tr><tr><td>재고주수</td><td>기말재고 ÷ 최근 주평균 판매수량</td><td>파트너</td><td>주 1회</td></tr><tr><td>반품·불량률</td><td>승인 반품·불량수량 ÷ 출고수량</td><td>공동</td><td>주 1회</td></tr><tr><td>기여이익률</td><td>기여이익 ÷ VAT 제외 순매출</td><td>파트너</td><td>W2·W4</td></tr><tr><td>재주문</td><td>추가 발주 여부·수량·SKU 변화</td><td>공동</td><td>W4</td></tr></tbody></table>
-    <div class="footer"><span>ZERO LABS · 파일럿 KPI</span><span>10</span></div>
+  <section class="slide cream" data-label="10 귀속 기준">
+    <div class="head"><div><span class="eyebrow">ATTRIBUTION RULES</span><h2 style="margin-top:8px">어떤 주문을 파트너 성과로 볼지<br>오픈 전에 맞춥니다.</h2><p>추적 방식과 예외 기준이 선명해야 실적 리포트와 정산이 흔들리지 않습니다.</p></div><span class="section-no">10 / 17</span></div>
+    <div class="rules-grid"><div class="rule"><span class="label">TRACKING</span><b>전용 링크·코드</b><p>링크, 코드, 파라미터 중 파트너 환경에 맞는 식별 방식을 선택합니다.</p><span class="status tbd">협의 후 확정</span></div><div class="rule"><span class="label">WINDOW</span><b>귀속 인정 기간</b><p>클릭 또는 코드 사용 이후 주문을 인정하는 기간을 정합니다.</p><span class="status tbd">협의 후 확정</span></div><div class="rule"><span class="label">OVERLAP</span><b>중복 유입 우선순위</b><p>다른 채널과 유입이 겹칠 때 적용할 귀속 원칙을 정합니다.</p><span class="status tbd">협의 후 확정</span></div><div class="rule"><span class="label">EXCLUSIONS</span><b>제외 주문</b><p>취소·반품·환불, 자가구매, 부정 트래픽, 미추적 주문의 처리 기준을 정합니다.</p><span class="status tbd">협의 후 확정</span></div><div class="rule"><span class="label">DATA</span><b>개인정보 범위</b><p>성과 대사에는 필요한 주문 상태만 사용하고 고객 식별정보는 공유하지 않습니다.</p><span class="status tbd">협의 후 확정</span></div><div class="rule"><span class="label">INCIDENT</span><b>추적 장애 대응</b><p>링크 오류나 코드 누락 시 확인 자료, 복구 방식, 연락 순서를 정합니다.</p><span class="status tbd">협의 후 확정</span></div></div>
+    <div class="footer"><span>ZERO LABS · 귀속 기준</span><span>10</span></div>
   </section>
 
-  <section class="slide" data-label="11 거래 준비">
-    <div class="head"><div><span class="eyebrow">READY TO ORDER</span><h2 style="margin-top:8px">첫 발주 전에<br>네 가지를 함께 맞춥니다.</h2><p>제품과 가격, 배송과 운영 조건을 정하면 바로 시작할 수 있습니다.</p></div><span class="section-no">11 / 12</span></div>
-    <div class="evidence-grid"><div class="card evidence-card"><span class="label">PRODUCT</span><h3>제품 선택</h3><p>판매 채널과 고객층에 맞는 제품·용량·수량을 정합니다.</p><div class="links"><a class="button" href="https://companimal.kr/">회사 홈페이지</a><a class="button" href="https://제로랩스.com/category/강아지간식/55/">B2B몰</a><a class="button" href="https://zerolabs.co.kr/">B2C몰</a></div></div><div class="card evidence-card"><span class="label">PRICE &amp; STOCK</span><h3>가격과 재고</h3><p>박스 입수, 공급가, 재고, 가격 유효기간을 견적서로 안내드립니다.</p><div class="links"><span class="status quote">견적 시 확정</span></div></div><div class="card evidence-card"><span class="label">DELIVERY</span><h3>배송과 검수</h3><p>배송비, 출고일, 유통기한과 제품 검수 방법을 함께 정합니다.</p><div class="links"><span class="status quote">발주 전 협의</span></div></div><div class="card evidence-card"><span class="label">POLICY</span><h3>결제와 반품</h3><p>결제 조건, 반품 기준, 고객 응대와 품질 연락처를 계약서에 반영합니다.</p><div class="links"><span class="status quote">계약서 반영</span></div></div></div>
-    <div class="footer"><span>ZERO LABS · 거래 준비</span><span>11</span></div>
+  <section class="slide" data-label="11 성과 리포트">
+    <div class="head"><div><span class="eyebrow">PERFORMANCE REVIEW</span><h2 style="margin-top:8px">클릭부터 성과 인정 매출까지<br>같은 지표로 확인합니다.</h2><p>제공 가능한 데이터와 리포트 주기는 시스템·지면 환경을 확인한 뒤 확정합니다.</p></div><span class="section-no">11 / 17</span></div>
+    <div class="report-layout"><div class="metric-grid"><div class="metric-card"><b>노출</b><span>파트너가 제공 가능한 지면별 노출 수</span></div><div class="metric-card"><b>클릭</b><span>전용 링크 또는 코드가 인식된 유입 수</span></div><div class="metric-card"><b>주문</b><span>파트너 코드와 연결된 결제 완료 주문</span></div><div class="metric-card"><b>취소·반품·환불</b><span>전체·부분 취소와 환불 반영 내역</span></div><div class="metric-card"><b>성과 인정 매출</b><span>제외 기준을 반영한 수수료 산정 대상 금액</span></div><div class="metric-card"><b>수수료</b><span>성과 인정 매출에 합의된 요율을 적용한 금액</span></div></div><div class="report-card"><span class="label">REPORT CONTENTS</span><h3>파트너 리포트 기본안</h3><div class="row">기간별·지면별 유입과 주문</div><div class="row">주문 상태와 취소·반품·환불 반영</div><div class="row">성과 인정 매출과 수수료</div><div class="row">제품별 성과와 다음 캠페인 제안</div><span class="status tbd">항목·주기·형식 협의 후 확정</span></div></div>
+    <div class="footer"><span>ZERO LABS · 성과 리포트</span><span>11</span></div>
   </section>
 
-  <section class="slide dark" data-label="12 다음 단계와 문의">
-    <div class="head"><div><span class="eyebrow">NEXT STEP</span><h2 style="margin-top:8px">다음 미팅에서 첫 발주 구성을 정하고<br>파일럿 시작 여부를 결정합니다.</h2><p>채널과 예상 수량을 알려주시면 맞춤 견적서와 운영 확인표를 준비하겠습니다.</p></div><span class="section-no">12 / 12</span></div>
-    <div class="cta-layout"><div><div class="agenda"><div><b>01 · 채널</b><span>오프라인·온라인·권역</span></div><div><b>02 · 시작안</b><span>중간용량·대용량·혼합</span></div><div><b>03 · 수량</b><span>첫 발주와 월 예상수량</span></div><div><b>04 · 조건</b><span>가격·VAT·배송·반품</span></div><div><b>05 · 일정</b><span>견적 유효기간·오픈일</span></div><div><b>06 · KPI</b><span>목표·담당자·주간 리뷰</span></div></div><div class="card" style="margin-top:14px;background:#294632;border-color:#46624c"><span class="label">REQUEST</span><p style="margin-top:7px;color:#d3ded5">관심 제품과 예상 첫 발주 수량을 알려주시면 재고를 확인해 견적서를 보내드립니다.</p></div></div><div class="contact"><span class="label">CONTACT</span><h3>거래 문의</h3><div class="contact-row"><span>이메일</span><strong><a href="mailto:ceo@companimal.kr">ceo@companimal.kr</a></strong></div><div class="contact-row"><span>전화</span><strong><a href="tel:+821065407787">010-6540-7787</a></strong></div><div class="contact-row"><span>홈페이지</span><strong><a href="https://companimal.kr/">companimal.kr</a></strong></div><div class="contact-row"><span>B2B몰</span><strong><a href="https://제로랩스.com/">제로랩스.com</a></strong></div><div class="buttons"><a class="button" href="https://제로랩스.com/">B2B몰 열기</a><a class="button" href="https://pf.kakao.com/_xnyDcs">카카오톡 문의</a><a class="button" href="https://companimal.kr/">회사 홈페이지</a></div></div></div>
-    <p class="note" style="margin-top:12px">가격과 거래 조건은 최종 견적서와 공급계약서를 기준으로 합니다.</p><div class="footer"><span>ZERO LABS · 주식회사 반려동행</span><span>12</span></div>
+  <section class="slide cream" data-label="12 수수료 구조">
+    <div class="head"><div><span class="eyebrow">COMMISSION</span><h2 style="margin-top:8px">수수료는 성과가 인정된 매출에만<br>발생합니다.</h2><p>노출과 클릭에는 비용이 없으며, 취소·반품·환불을 반영한 금액을 기준으로 계산합니다.</p></div><span class="section-no">12 / 17</span></div>
+    <div class="commission-layout"><div class="commission-hero"><h3>파트너 CPS 수수료</h3><div class="formula"><b>성과 인정 매출액</b><br>× 합의된 수수료율<br>= 수수료</div><p>구매 확정 시점과 성과 인정 매출액의 범위는 양사가 합의한 기준을 따릅니다.</p></div><div class="terms"><div class="term"><b>수수료율</b><span>기본 요율과 성과 구간별 조정 여부</span></div><div class="term"><b>기준 금액</b><span>VAT 포함·제외와 배송비 포함 여부</span></div><div class="term"><b>할인 반영</b><span>쿠폰·포인트·프로모션 차감 기준</span></div><div class="term"><b>제품군 차등</b><span>제품 또는 캠페인별 요율 적용 여부</span></div><div class="term"><b>리워드 재원</b><span>파트너 회원 혜택의 부담 주체</span></div><div class="term"><b>성과 제외</b><span>취소·반품·환불·부정 트래픽·중복 귀속 기준</span></div></div></div>
+    <div class="card" style="margin-top:13px;display:flex;justify-content:space-between;align-items:center;padding:13px 16px"><strong>수수료와 산정 기준은 제휴 조건을 확인한 뒤 정합니다.</strong><span class="status tbd">협의 후 확정</span></div>
+    <div class="footer"><span>ZERO LABS · 수수료 구조</span><span>12</span></div>
+  </section>
+
+  <section class="slide" data-label="13 캠페인 운영">
+    <div class="head"><div><span class="eyebrow">CAMPAIGN COLLABORATION</span><h2 style="margin-top:8px">지면과 시즌에 맞는 주제로<br>구매 이유를 만듭니다.</h2><p>제품을 단순 노출하는 데서 끝나지 않도록 소재·카피·랜딩을 함께 구성합니다.</p></div><span class="section-no">13 / 17</span></div>
+    <div class="campaign-grid"><div class="campaign"><b>제품 선택 가이드</b><p>간식 형태·크기·취향에 따라 제품을 비교하고 공식몰 상세 페이지로 연결합니다.</p><div class="tag">상시 콘텐츠</div></div><div class="campaign"><b>시즌 큐레이션</b><p>휴가·명절·연말 등 고객 관심이 높아지는 시기에 맞춘 기획전을 운영합니다.</p><div class="tag">시즌 캠페인</div></div><div class="campaign"><b>회원 혜택</b><p>전용 쿠폰이나 리워드는 비용과 운영 주체를 합의한 뒤 제공할 수 있습니다.</p><div class="tag">협의 후 확정</div></div><div class="campaign"><b>신제품 소개</b><p>새 제품 출시 시 파트너 지면에 맞춘 소개 소재와 랜딩 구성을 제안합니다.</p><div class="tag">런칭 연계</div></div><div class="campaign"><b>리뷰 활용 콘텐츠</b><p>제품군별 리뷰 반응을 바탕으로 고객이 궁금해하는 포인트를 콘텐츠로 풀어냅니다.</p><div class="tag">콘텐츠형 전환</div></div><div class="campaign"><b>성과 기반 개선</b><p>지면별 클릭·주문·취소 데이터를 함께 보고 제품과 메시지를 조정합니다.</p><div class="tag">리포트 연계</div></div></div>
+    <div class="footer"><span>ZERO LABS · 캠페인 운영</span><span>13</span></div>
+  </section>
+
+  <section class="slide cream" data-label="14 오픈 준비">
+    <div class="head"><div><span class="eyebrow">LAUNCH READINESS</span><h2 style="margin-top:8px">지면과 링크, 소재와 운영 기준을 맞추면<br>CPS 제휴를 시작할 수 있습니다.</h2><p>테스트 주문과 경제적 이해관계 표시까지 확인한 뒤 실제 노출을 시작합니다.</p></div><span class="section-no">14 / 17</span></div>
+    <div class="launch-flow"><div class="launch-step"><b>01</b><strong>지면 공유</strong><br><span>노출 위치·고객층·예상 일정 확인</span></div><div class="launch-step"><b>02</b><strong>제품·소재 선택</strong><br><span>제품 조합·카피·랜딩 구성</span></div><div class="launch-step"><b>03</b><strong>링크·코드 테스트</strong><br><span>식별값·리디렉션·테스트 주문 확인</span></div><div class="launch-step"><b>04</b><strong>오픈·모니터링</strong><br><span>노출 상태·주문 연결·문의 채널 점검</span></div></div>
+    <div class="launch-grid"><div class="launch-item"><span>지면 범위·노출 기간</span><b>협의 후 확정</b></div><div class="launch-item"><span>상표·제품 이미지 사용 범위</span><b>승인본 사용</b></div><div class="launch-item"><span>경제적 이해관계 표시</span><b>노출 전 확인</b></div><div class="launch-item"><span>전용 링크·코드·파라미터</span><b>협의 후 확정</b></div><div class="launch-item"><span>상품정보·가격 변경 고지</span><b>제로랩스 안내</b></div><div class="launch-item"><span>효능·건강 관련 임의 표현</span><b>사용하지 않음</b></div><div class="launch-item"><span>쿠키 스터핑·자가구매·부정 트래픽</span><b>성과 제외</b></div><div class="launch-item"><span>CS·장애·긴급 연락망</span><b>오픈 전 공유</b></div></div>
+    <div class="footer"><span>ZERO LABS · 오픈 준비</span><span>14</span></div>
+  </section>
+
+  <section class="slide" data-label="15 정산 프로세스">
+    <div class="head"><div><span class="eyebrow">SETTLEMENT</span><h2 style="margin-top:8px">주문 발생부터 수수료 지급까지의<br>정산 프로세스</h2><p>취소·반품·환불을 반영해 성과를 확정하고, 정산서와 증빙을 확인한 뒤 수수료를 지급합니다.</p></div><span class="section-no">15 / 17</span></div>
+    <div class="settlement-flow"><div class="settle-step"><b>01</b><strong>주문 발생</strong><br><span>공식몰 결제</span></div><div class="settle-step"><b>02</b><strong>예상 실적 집계</strong><br><span>파트너 코드 연결</span></div><div class="settle-step"><b>03</b><strong>취소·반품·환불 반영</strong><br><span>전체·부분 차감</span></div><div class="settle-step"><b>04</b><strong>성과 확정</strong><br><span>인정 금액 결정</span></div><div class="settle-step"><b>05</b><strong>정산서 확인</strong><br><span>양사 대사</span></div><div class="settle-step"><b>06</b><strong>세금계산서</strong><br><span>발행·증빙</span></div><div class="settle-step"><b>07</b><strong>수수료 지급</strong><br><span>지정 계좌</span></div></div>
+    <h3 style="margin-bottom:11px">정산 관련 협의사항</h3><div class="settlement-grid"><div class="settlement-item"><span>마감일·성과 확정 시점</span><em>협의 후 확정</em></div><div class="settlement-item"><span>정산 주기·지급일</span><em>협의 후 확정</em></div><div class="settlement-item"><span>기준 금액·VAT 처리</span><em>협의 후 확정</em></div><div class="settlement-item"><span>세금계산서·증빙 주체</span><em>협의 후 확정</em></div><div class="settlement-item"><span>최소 지급 기준·이월</span><em>협의 후 확정</em></div><div class="settlement-item"><span>확정 후 취소분 상계</span><em>협의 후 확정</em></div><div class="settlement-item"><span>정산 담당자·연락 창구</span><em>오픈 전 공유</em></div><div class="settlement-item"><span>정산 이의제기 기간</span><em>협의 후 확정</em></div></div>
+    <div class="footer"><span>ZERO LABS · 정산 프로세스</span><span>15</span></div>
+  </section>
+
+  <section class="slide cream" data-label="16 역할 분담">
+    <div class="head"><div><span class="eyebrow">ROLES &amp; RESPONSIBILITIES</span><h2 style="margin-top:8px">역할 분담 및 운영체계</h2><p>파트너사는 지면과 링크 적용을, 제로랩스는 판매 운영과 실적 집계를 맡는 기본안입니다.</p></div><span class="section-no">16 / 17</span></div>
+    <table class="rr-table"><thead><tr><th>업무</th><th>파트너사</th><th>ZERO LABS</th><th>상태</th></tr></thead><tbody><tr><td>지면·콘텐츠</td><td>지면 선정·소재 배치·일정 운영</td><td>제품 정보·이미지·기획 랜딩 제공</td><td>기본안</td></tr><tr><td>제품·재고·판매가</td><td>—</td><td>제품 구성·재고·소비자 판매가 운영</td><td>ZERO LABS</td></tr><tr><td>주문·배송</td><td>—</td><td>주문·결제·출고·배송 안내</td><td>ZERO LABS</td></tr><tr><td>취소·반품·환불</td><td>필요 시 문의 전달</td><td>회수·환불·주문 상태 처리</td><td>협의 후 확정</td></tr><tr><td>CS·제품 문의</td><td>지면 관련 문의 안내</td><td>제품·주문 문의 응대</td><td>협의 후 확정</td></tr><tr><td>트래킹·리포트</td><td>링크·코드 적용 확인</td><td>코드 인식·실적 집계·리포트</td><td>협의 후 확정</td></tr><tr><td>정산·세무</td><td>정산서 확인·증빙 발행</td><td>정산서 제공·수수료 지급</td><td>협의 후 확정</td></tr><tr><td>개인정보</td><td>회원 안내 범위 관리</td><td>공식몰 주문정보 처리</td><td>협의 후 확정</td></tr><tr><td>이슈 대응</td><td>노출 중단·소재 수정</td><td>판매 중단 판단·원인 확인·안내</td><td>연락 순서 합의</td></tr></tbody></table>
+    <div class="card" style="margin-top:13px;padding:13px 16px"><strong>최종 역할, 책임, 계약기간, 갱신·해지와 잔여 정산 기준은 제휴계약서에 반영합니다.</strong></div>
+    <div class="footer"><span>ZERO LABS · 역할 분담</span><span>16</span></div>
+  </section>
+
+  <section class="slide dark" data-label="17 다음 단계와 문의">
+    <div class="head"><div><span class="eyebrow">NEXT STEP</span><h2 style="margin-top:8px">파트너 지면과 고객층을 알려주시면<br>CPS 운영안을 함께 준비하겠습니다.</h2><p>지면·제품·링크·성과 인정·수수료·정산 기준을 한 번에 맞추는 미팅을 제안드립니다.</p></div><span class="section-no">17 / 17</span></div>
+    <div class="cta-layout"><div><div class="agenda"><div><b>01 · 지면</b><span>위치·형태·노출 기간</span></div><div><b>02 · 고객</b><span>회원 특성·관심 주제</span></div><div><b>03 · 제품</b><span>첫 콘텐츠 제품군</span></div><div><b>04 · 추적</b><span>전용 링크·코드·귀속</span></div><div><b>05 · 수수료</b><span>성과 인정액·요율</span></div><div><b>06 · 정산</b><span>마감·증빙·지급</span></div></div><div class="card" style="margin-top:14px;background:#294632;border-color:#46624c"><span class="label">REQUEST</span><p style="margin-top:7px;color:#d3ded5">검토 가능한 지면과 희망 일정을 알려주시면 제품·소재·운영 조건을 정리해 회신드리겠습니다.</p></div></div><div class="contact"><span class="label">CONTACT</span><h3>CPS 제휴 문의</h3><div class="contact-row"><span>이메일</span><strong><a href="mailto:ceo@companimal.kr">ceo@companimal.kr</a></strong></div><div class="contact-row"><span>전화</span><strong><a href="tel:+821065407787">010-6540-7787</a></strong></div><div class="contact-row"><span>회사</span><strong><a href="https://companimal.kr/">companimal.kr</a></strong></div><div class="contact-row"><span>공식몰</span><strong><a href="https://zerolabs.co.kr/">zerolabs.co.kr</a></strong></div><div class="buttons"><a class="button" href="https://zerolabs.co.kr/">공식몰 보기</a><a class="button" href="https://pf.kakao.com/_xnyDcs">카카오톡 문의</a><a class="button" href="https://companimal.kr/">회사 홈페이지</a></div></div></div>
+    <p class="note" style="margin-top:12px">수수료·귀속·정산·개인정보·운영 책임은 협의 후 확정하고 제휴계약서에 반영합니다.</p><div class="footer"><span>ZERO LABS · 주식회사 반려동행</span><span>17</span></div>
   </section>
 </main>
 </body>

@@ -1,36 +1,79 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "as_of": "2026-08-28",
-  "purpose": "ZERO LABS 유통 파트너 제안서의 공개 SKU·가격 검증 기준",
+  "purpose": "ZERO LABS CPS 파트너십 제안서의 브랜드 사실·운영 모델·미확정 조건 검증 기준",
   "source_urls": {
     "company": "https://companimal.kr/",
-    "b2b_store": "https://제로랩스.com/category/강아지간식/55/",
-    "b2c_store": "https://zerolabs.co.kr/",
+    "official_store": "https://zerolabs.co.kr/",
     "kakao": "https://pf.kakao.com/_xnyDcs"
   },
   "contacts": {
-    "inquiries": {"email": "ceo@companimal.kr", "phone": "010-6540-7787"}
+    "inquiries": {
+      "email": "ceo@companimal.kr",
+      "phone": "010-6540-7787"
+    }
   },
-  "public_b2b_skus": [
-    {"id":"gogi-350","product":"고기가득","pack":"350g","case_quantity":25,"configuration":"4종","box_price_krw":222500,"unit_reference_krw":8900},
-    {"id":"nutrition-350","product":"영양가득","pack":"350g","case_quantity":25,"configuration":"3종","box_price_krw":197500,"unit_reference_krw":7900},
-    {"id":"berry-400","product":"베리가득","pack":"400g","case_quantity":25,"configuration":"3종","box_price_krw":247500,"unit_reference_krw":9900},
-    {"id":"baked-200","product":"굽빵","pack":"200g","case_quantity":25,"configuration":"1종","box_price_krw":172500,"unit_reference_krw":6900},
-    {"id":"gogi-1000","product":"고기가득","pack":"1kg","case_quantity":12,"configuration":"4종","box_price_krw":262800,"unit_reference_krw":21900},
-    {"id":"nutrition-1000","product":"영양가득","pack":"1kg","case_quantity":12,"configuration":"3종","box_price_krw":214800,"unit_reference_krw":17900},
-    {"id":"berry-1000","product":"베리가득","pack":"1kg","case_quantity":12,"configuration":"3종","box_price_krw":264000,"unit_reference_krw":22000},
-    {"id":"baked-1000","product":"굽빵","pack":"1kg","case_quantity":12,"configuration":"1종","box_price_krw":252000,"unit_reference_krw":21000},
-    {"id":"meatless-1000","product":"미트리스","pack":"1kg","case_quantity":15,"configuration":"혼합 구성·1종","box_price_krw":403500,"unit_reference_krw":26900}
-  ],
-  "starter_scenarios": [
-    {"id":"mid-size-4box","name":"중간용량 4박스","sku_ids":["gogi-350","nutrition-350","berry-400","baked-200"],"units":100,"public_display_total_krw":840000},
-    {"id":"large-4box","name":"대용량 4박스","sku_ids":["gogi-1000","nutrition-1000","berry-1000","baked-1000"],"units":48,"public_display_total_krw":993600},
-    {"id":"large-plus-meatless","name":"대용량 4박스 + 미트리스","sku_ids":["gogi-1000","nutrition-1000","berry-1000","baked-1000","meatless-1000"],"units":63,"public_display_total_krw":1397100}
-  ],
-  "commercial_guardrails": [
-    "가격은 2026-08-28 공식 B2B몰 공개 표시가의 단순 합산이며 확정 견적이 아니다.",
-    "VAT 표시 방식, 배송비, 재고, 프로모션, 결제조건은 주문 전 견적서에서 확인한다.",
-    "파트너 수익성은 실제 판매가와 플랫폼·결제·프로모션·배송·반품 비용을 반영해 재계산한다.",
-    "최종 견적서와 계약서가 본 참고표보다 우선한다."
+  "company": {
+    "legal_name": "주식회사 반려동행",
+    "representative": "장성환",
+    "business_registration_number": "266-88-03624",
+    "brand_launch_year": 2021,
+    "brand_operated_since": "2025-10"
+  },
+  "review_snapshot": {
+    "as_of": "2026-08-27",
+    "total": 32757,
+    "coupang": 31169,
+    "other_channels": 1588,
+    "definition": "8개 제품군의 판매채널 공개 리뷰 게시물 합계",
+    "products": [
+      {"product": "고기가득", "reviews": 11659},
+      {"product": "베리가득", "reviews": 10906},
+      {"product": "영양가득", "reviews": 6473},
+      {"product": "치카하개", "reviews": 1886},
+      {"product": "프레쉬링", "reviews": 869},
+      {"product": "멍스", "reviews": 477},
+      {"product": "미트리스", "reviews": 433},
+      {"product": "굽빵", "reviews": 54}
+    ]
+  },
+  "cps_model": {
+    "type": "CPS",
+    "partner_inventory_purchase": false,
+    "exposure_click_fee": false,
+    "commission_trigger": "성과 인정 판매",
+    "customer_checkout": "ZERO LABS 공식몰",
+    "formula": "성과 인정 매출액 × 합의된 수수료율 = 수수료",
+    "flow": [
+      "파트너 지면 노출",
+      "전용 링크 클릭",
+      "공식몰 랜딩",
+      "상품 탐색·구매",
+      "주문 실적 집계",
+      "취소·반품·환불 반영",
+      "수수료 정산"
+    ]
+  },
+  "unresolved_terms": [
+    {"id": "commission_rate", "label": "수수료율", "status": "tbd"},
+    {"id": "commission_base", "label": "수수료 기준 금액", "status": "tbd"},
+    {"id": "discount_handling", "label": "배송비·쿠폰·포인트 처리", "status": "tbd"},
+    {"id": "attribution_method", "label": "링크·코드·파라미터 방식", "status": "tbd"},
+    {"id": "attribution_window", "label": "귀속 인정 기간", "status": "tbd"},
+    {"id": "overlap_priority", "label": "중복 유입 우선순위", "status": "tbd"},
+    {"id": "confirmation_point", "label": "성과 확정 시점", "status": "tbd"},
+    {"id": "cancellation_refund", "label": "취소·반품·환불·부분취소 처리", "status": "tbd"},
+    {"id": "settlement_schedule", "label": "정산 주기·지급일", "status": "tbd"},
+    {"id": "vat", "label": "VAT 포함·별도", "status": "tbd"},
+    {"id": "tax_evidence", "label": "세금계산서·증빙 방식", "status": "tbd"},
+    {"id": "minimum_payout", "label": "최소 지급 기준·이월", "status": "tbd"},
+    {"id": "reward_funding", "label": "리워드 재원·부담 주체", "status": "tbd"},
+    {"id": "personal_data", "label": "개인정보 처리 범위", "status": "tbd"},
+    {"id": "reporting", "label": "리포트 항목·주기·형식", "status": "tbd"},
+    {"id": "placement", "label": "지면 범위·노출 기간", "status": "tbd"},
+    {"id": "asset_usage", "label": "상표·제품 이미지 사용 범위", "status": "tbd"},
+    {"id": "cs_scope", "label": "CS 1차 접수 범위", "status": "tbd"},
+    {"id": "incident_response", "label": "장애·이슈 대응", "status": "tbd"},
+    {"id": "contract", "label": "계약기간·갱신·해지·잔여 정산", "status": "tbd"}
   ]
 }

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-/** Export the 12-page ZERO LABS B2B partnership proposal as a 16:9 PDF. */
+/** Export the 17-page ZERO LABS CPS partnership proposal as a 16:9 PDF. */
 
 import { spawn } from "node:child_process";
 import { existsSync, mkdtempSync, readFileSync, renameSync, rmSync, statSync, writeFileSync } from "node:fs";
@@ -14,8 +14,9 @@ const sourcePath = path.join(root, "output/proposal/zerolabs-b2b-partnership-pro
 const outputPath = path.join(root, "output/pdf/zerolabs-b2b-partnership-proposal-ko-2026.pdf");
 const stagedOutput = `${outputPath}.new`;
 const expectedLabels = [
-  "01 표지", "02 제안 요약", "03 사업 근거", "04 주력 제품", "05 확장 제품", "06 도입 시나리오",
-  "07 가격과 박스 구성", "08 수익성 기준", "09 운영과 이슈 대응", "10 파일럿 KPI", "11 거래 준비", "12 다음 단계와 문의",
+  "01 표지", "02 제안 요약", "03 브랜드 근거", "04 리뷰 성과", "05 대표 제품", "06 확장 제품",
+  "07 노출 시나리오", "08 CPS 구조", "09 고객과 데이터 흐름", "10 귀속 기준", "11 성과 리포트",
+  "12 수수료 구조", "13 캠페인 운영", "14 오픈 준비", "15 정산 프로세스", "16 역할 분담", "17 다음 단계와 문의",
 ];
 const chrome = [
   process.env.CHROME_PATH,
@@ -167,16 +168,16 @@ try {
     returnByValue:true,
   });
   const metrics = audit.result.value;
-  assert(metrics.count === expectedLabels.length, `Expected 12 pages, found ${metrics.count}`);
+  assert(metrics.count === expectedLabels.length, `Expected ${expectedLabels.length} pages, found ${metrics.count}`);
   assert(JSON.stringify(metrics.labels) === JSON.stringify(expectedLabels), `Page labels differ: ${JSON.stringify(metrics.labels)}`);
   assert(metrics.overflow.length === 0, `Page overflow detected: ${JSON.stringify(metrics.overflow)}`);
   assert(metrics.brokenImages.length === 0, `Broken images: ${JSON.stringify(metrics.brokenImages)}`);
   assert(metrics.minFontPx >= 13.3, `Visible text is smaller than 10pt print size: ${metrics.minFontPx}px`);
-  for (const target of ["mailto:ceo@companimal.kr", "tel:+821065407787", "https://companimal.kr/", "https://pf.kakao.com/_xnyDcs"]) {
+  for (const target of ["mailto:ceo@companimal.kr", "tel:+821065407787", "https://companimal.kr/", "https://zerolabs.co.kr/", "https://pf.kakao.com/_xnyDcs"]) {
     assert(metrics.links.includes(target), `Required clickable link is missing: ${target}`);
   }
   assert(metrics.lang === "ko-KR", `Unexpected language: ${metrics.lang}`);
-  assert(metrics.title === "ZERO LABS B2B 파트너십 제안서 2026", `Unexpected title: ${metrics.title}`);
+  assert(metrics.title === "ZERO LABS CPS 파트너십 제안서 2026", `Unexpected title: ${metrics.title}`);
   const printed = await cdp.call("Page.printToPDF", {
     landscape:true, displayHeaderFooter:false, printBackground:true, preferCSSPageSize:true,
     marginTop:0, marginBottom:0, marginLeft:0, marginRight:0,
