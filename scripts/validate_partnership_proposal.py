@@ -155,8 +155,9 @@ REQUIRED_BRAND_CSS = (
     "--green2:#2f5c3c",
     "--sage:#e6efe7",
     "--accent:#a7d8b4",
-    "--cream:#fff",
-    "--paper:#fff",
+    "--workspace:#efe8db",
+    "--cream:#f4f0e7",
+    "--paper:#f4f0e7",
     ".status.ref { background:var(--sage); color:var(--green2); }",
     ".status.tbd { background:var(--accent); color:var(--green); }",
     "th { text-align:left; color:var(--paper); background:#33513b;",
@@ -165,7 +166,6 @@ REQUIRED_BRAND_CSS = (
 )
 FORBIDDEN_BACKGROUND_TOKENS = (
     "#dcded9",
-    "#f4f0e7",
     "#fbfaf6",
     "#f3d991",
     "#b9c6bc",
@@ -174,8 +174,7 @@ FORBIDDEN_BACKGROUND_TOKENS = (
     "transparent",
 )
 ALLOWED_BACKGROUND_VALUES = {
-    "#fff",
-    "white",
+    "var(--workspace)",
     "var(--paper)",
     "var(--green)",
     "var(--cream)",
@@ -234,14 +233,14 @@ def main() -> None:
     for contract in REQUIRED_BRAND_CSS:
         assert_true(contract in proposal_html, f"Required brand CSS contract is missing: {contract}")
     for token in FORBIDDEN_BACKGROUND_TOKENS:
-        assert_true(token not in lowered_html, f"Forbidden non-white/non-green background token remains: {token}")
+        assert_true(token not in lowered_html, f"Forbidden off-palette background token remains: {token}")
     background_values = re.findall(r"background(?:-color)?\s*:\s*([^;}\"]+)", lowered_html)
     for background_value in background_values:
         normalized = re.sub(r"\s*!important\s*$", "", background_value.strip())
         if normalized.startswith("linear-gradient("):
             assert_true("rgba(31,51,37," in normalized and "transparent" not in normalized, f"Background gradient is not green-only: {normalized}")
             continue
-        assert_true(normalized in ALLOWED_BACKGROUND_VALUES, f"Background is not white or green: {normalized}")
+        assert_true(normalized in ALLOWED_BACKGROUND_VALUES, f"Background is not beige or green: {normalized}")
 
     review_cards = re.findall(
         r'<div class="review-product [^"]+" data-product="([^"]+)" data-reviews="([\d,]+)">.*?<img src="[^"]*/([^"/]+)\.webp"',
