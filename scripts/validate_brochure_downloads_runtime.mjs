@@ -139,7 +139,7 @@ const pages = [
   { path: "/en/", code: "en" },
   { path: "/zh/", code: "zh-hans" },
   { path: "/zh-hant/", code: "zh-hant" },
-].map((entry) => ({ ...entry, product: manifest[entry.code].product, locale: manifest[entry.code].locale }));
+].map((entry) => ({ ...entry, company: manifest[entry.code].company, product: manifest[entry.code].product, locale: manifest[entry.code].locale }));
 const companyFile = manifest.ko.company;
 const companyName = path.basename(companyFile.path);
 const productSelections = Object.entries(manifest).map(([code, entry]) => ({
@@ -165,7 +165,7 @@ async function waitForEnhancedPage(expectedPath) {
         const enhancedMeta = Array.from(document.querySelectorAll('[data-file-size]'))
           .every(element => element.textContent.includes('MB'));
         return location.pathname === ${JSON.stringify(expectedPath)}
-          && companyOptions.length === 1
+          && companyOptions.length === 7
           && companyOptions[0] === 'ko'
           && productOptions.length === 7
           && enhancedMeta
@@ -235,10 +235,10 @@ try {
     await cdp.call("Page.navigate", { url: `http://127.0.0.1:${address.port}${entry.path}#downloads` });
     const { links } = await waitForEnhancedPage(entry.path);
     assert(
-      links[0].href === `/${companyFile.path}`
-        && links[0].download === companyName
+      links[0].href === `/${entry.company.path}`
+        && links[0].download === path.basename(entry.company.path)
         && links[0].type === "application/pdf"
-        && links[0].hreflang === "ko-KR",
+        && links[0].hreflang === entry.locale,
       `Company download regressed on ${entry.path}`,
     );
     assert(
@@ -253,13 +253,16 @@ try {
 
   await cdp.call("Page.navigate", { url: `http://127.0.0.1:${address.port}/#downloads` });
   await waitForEnhancedPage("/");
-  for (const selection of productSelections) {
+  for (const kind of ['company', 'product']) {
+  const selectorIndex = kind === 'company' ? 0 : 1;
+  for (const [code, entry] of Object.entries(manifest)) {
+    const selection = {code, locale: entry.locale, file: entry[kind]};
     const result = await cdp.call("Runtime.evaluate", {
       expression: `(() => {
-        const select = document.querySelectorAll('.download-select')[1];
+        const select = document.querySelectorAll('.download-select')[${selectorIndex}];
         select.value = ${JSON.stringify(selection.code)};
         select.dispatchEvent(new Event('change'));
-        const link = document.querySelectorAll('a[data-download-link]')[1];
+        const link = document.querySelectorAll('a[data-download-link]')[${selectorIndex}];
         return {
           href: link.getAttribute('href'),
           download: link.getAttribute('download'),
@@ -277,11 +280,16 @@ try {
         && link.type === "application/pdf"
         && link.hreflang === selection.locale
         && link.label.includes("PDF"),
-      `Product selector regressed for ${selection.code}`,
+      `${kind} selector regressed for ${selection.code}`,
     );
+    await download(selectorIndex, path.basename(selection.file.path), selection.file.path);
+  }
   }
   await cdp.call("Runtime.evaluate", {
     expression: `(() => {
+      const companySelect = document.querySelectorAll('.download-select')[0];
+      companySelect.value = 'ko';
+      companySelect.dispatchEvent(new Event('change'));
       const select = document.querySelectorAll('.download-select')[1];
       select.value = 'ko';
       select.dispatchEvent(new Event('change'));
@@ -289,8 +297,7 @@ try {
     returnByValue: true,
   });
   await waitForEnhancedPage("/");
-  await download(0, companyName, companyFile.path);
-  await download(1, path.basename(manifest.ko.product.path), manifest.ko.product.path);
+
   const locationResult = await cdp.call("Runtime.evaluate", { expression: "location.pathname", returnByValue: true });
   assert(locationResult.result.value === "/", `Download click navigated to ${locationResult.result.value}`);
 
@@ -298,12 +305,13 @@ try {
     status: "ok",
     pages: pages.length,
     productLanguages: productSelections.length,
-    downloads: [companyName, path.basename(manifest.ko.product.path)],
+    companyLanguages: Object.keys(manifest).length,
+    downloads: Object.values(manifest).flatMap(entry => [entry.company.path, entry.product.path]),
   })}\n`);
 } finally {
   if (cdp) cdp.close();
   await stopBrowser(browser);
   await new Promise((resolve) => server.close(resolve));
-  rmSync(profile, { recursive: true, force: true });
+  rmSync(profile, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
   rmSync(downloadDirectory, { recursive: true, force: true });
 }

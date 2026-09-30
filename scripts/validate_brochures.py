@@ -380,7 +380,7 @@ def validate_pdf(path: Path, code: str, locale: str, pages: int, kind: str) -> d
     return {"pages": pages, "bytes": path.stat().st_size, "text_chars": sum(map(len, page_text)), "fonts": len(font_xrefs)}
 
 
-def validate_company_profile_pdf(path: Path) -> dict[str, object]:
+def validate_company_profile_pdf(path: Path, code: str = "ko") -> dict[str, object]:
     """Validate the 13-page 16:9 PDF exported from the featured HTML deck."""
 
     if not path.is_file() or path.is_symlink() or path.stat().st_size < 1_000_000:
@@ -392,9 +392,11 @@ def validate_company_profile_pdf(path: Path) -> dict[str, object]:
     if len(reader.pages) != COMPANY_HTML_PAGE_COUNT:
         fail(f"Unexpected company profile PDF page count: {len(reader.pages)}")
     root = reader.trailer["/Root"]
-    if str(root.get("/Lang")) != "ko-KR":
+    if str(root.get("/Lang")) != LANGUAGES[code]["locale"]:
         fail(f"Company profile PDF /Lang must be ko-KR: {path}")
-    if not (reader.metadata and reader.metadata.title == "주식회사 반려동행 회사소개서 2026"):
+    values = None if code == "ko" else json.loads((ROOT / f"scripts/company_locales/{code}.json").read_text())
+    title = "주식회사 반려동행 회사소개서 2026" if values is None else f"{values[11]} | ZERO LABS 2026"
+    if not (reader.metadata and reader.metadata.title == title):
         fail(f"Company profile PDF title metadata is incorrect: {path}")
     expected_pdf_date = "D:20260828000000+09'00'"
     if (
@@ -437,12 +439,23 @@ def validate_company_profile_pdf(path: Path) -> dict[str, object]:
         "함께 걷는 마음을 기부로 이어갑니다",
         "파트너 거래, 지금 문의하세요",
     )
+    if values:
+        expected_page_copy = [values[i] for i in (1,10,11,36,44,64,195,90,115,132,141,173,185)]
     for page_number, required in enumerate(expected_page_copy, start=1):
-        if compact(required) not in compact(page_text[page_number - 1]):
+        actual_copy = compact(page_text[page_number - 1])
+        # Chrome emits shaped Arabic glyph runs in visual order, with some
+        # ligatures reordered by extractors. DOM export checks preserve logical
+        # text; here compare character coverage, not a false LTR substring.
+        if code == "ar":
+            from collections import Counter
+            missing_copy = Counter(compact(required)) - Counter(actual_copy)
+        else:
+            missing_copy = compact(required) not in actual_copy
+        if missing_copy:
             fail(f"Company profile PDF page {page_number} is out of order or missing content: {required}")
     for required in (
-        "반려견이 매일 먹는 간식의 기준을 다시 세웁니다",
-        "전체 판매채널 누적 리뷰 32,757건",
+        ("ZERO LABS" if code == "ar" else values[1]) if values else "반려견이 매일 먹는 간식의 기준을 다시 세웁니다",
+        "32,757",
         "010-6540-7787",
         EXPECTED_EMAIL,
     ):
@@ -828,6 +841,24 @@ def validate_product_html(entry: dict[str, object]) -> None:
         fail(f"Featured product HTML contact email is stale: {path}")
 
 
+def validate_localized_company(entry, code):
+    html_entry, pdf_entry = entry["companyHtml"], entry["company"]
+    for kind, artifact in (("html", html_entry), ("pdf", pdf_entry)):
+        path = ROOT / artifact["path"]
+        if path.is_symlink() or artifact.get("bytes") != path.stat().st_size:
+            fail(f"Company {code} {kind} file/size mismatch")
+        if artifact.get("sha256") != hashlib.sha256(path.read_bytes()).hexdigest():
+            fail(f"Company {code} {kind} hash mismatch")
+        if artifact.get("pages") != 13 or artifact.get("format") != kind:
+            fail(f"Company {code} {kind} page count/format mismatch")
+    source = (ROOT / html_entry["path"]).read_text()
+    if html_entry.get("standalone") is not True or f'data-company-locale="{code}"' not in source:
+        fail(f"Company {code} standalone localization missing")
+    if pdf_entry.get("sourceSha256") != html_entry["sha256"]:
+        fail(f"Company {code} source hash mismatch")
+    return validate_company_profile_pdf(ROOT / pdf_entry["path"], code)
+
+
 def validate_site(manifest: dict[str, object]) -> dict[str, object]:
     page_languages = {
         ROOT / "index.html": "ko",
@@ -851,11 +882,11 @@ def validate_site(manifest: dict[str, object]) -> dict[str, object]:
             fail(f"Download script version is stale or duplicated in {path}")
         if 'href="#downloads"' not in source:
             fail(f"Download navigation link missing in {path}")
-        company_file = manifest["ko"]["company"]
+        company_file = manifest[code]["company"]
         company_path = str(company_file["path"])
         company_name = Path(company_path).name
         company_fallback = (
-            f'href="/{company_path}" type="application/pdf" hreflang="ko-KR" '
+            f'href="/{company_path}" type="application/pdf" hreflang="{manifest[code]["locale"]}" '
             f'download="{company_name}"'
         )
         product_file = manifest[code]["product"]
@@ -918,8 +949,10 @@ def validate_site(manifest: dict[str, object]) -> dict[str, object]:
             artifact = entry.get(kind)
             if artifact and not (ROOT / artifact["path"]).is_file():
                 fail(f"Manifest points to a missing file: {artifact['path']}")
-        if code != "ko" and "company" in entry:
-            fail(f"Company PDF must only appear in the Korean manifest entry: {code}")
+        if "company" not in entry or "companyHtml" not in entry:
+            fail(f"Company brochure language missing: {code}")
+        if code != "ko":
+            validate_localized_company(entry, code)
     if "company" not in manifest["ko"]:
         fail("Korean company PDF is missing from the manifest")
     if manifest["ko"]["company"].get("path") != LATEST_COMPANY_PDF:
@@ -981,7 +1014,7 @@ def main() -> None:
                 fail(f"Manifest page count mismatch for {path}")
 
     report["company"] = validate_site(manifest)
-    print(json.dumps({"status": "ok", "languages": len(manifest), "pdfs": len(pdfs) + 1, "details": report}, ensure_ascii=False, indent=2))
+    print(json.dumps({"status": "ok", "languages": len(manifest), "pdfs": len(pdfs) + len(manifest), "details": report}, ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":

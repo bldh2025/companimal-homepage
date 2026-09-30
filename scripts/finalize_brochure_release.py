@@ -10,11 +10,13 @@ from pathlib import Path
 import subprocess
 
 from brochure_content import LANGUAGES
+from localize_company_profiles import build as build_localized_company
 from build_brochures import COMPANY_HTML_PAGE_COUNT, PRODUCT_PAGE_COUNT
 from embed_company_profile_factory_images import update_company_profile_bundle
 from embed_company_profile_runtime_assets import update_company_profile_runtime_assets
 from validate_brochures import (
     validate_company_profile_pdf,
+    validate_localized_company,
     validate_featured_html,
     validate_pdf,
     validate_product_html,
@@ -70,6 +72,23 @@ def main() -> None:
         "sha256": hashlib.sha256(company.read_bytes()).hexdigest(),
         "sourceSha256": results["ko"]["companyHtml"]["sha256"],
     }
+    for code in LANGUAGES:
+        if code == "ko":
+            continue
+        localized_html = build_localized_company(code)
+        subprocess.run(["node", str(ROOT / "scripts/build_company_profile_pdf.mjs"), code], cwd=ROOT, check=True)
+        localized_pdf = OUTPUT / f"zerolabs-company-profile-{code}-2026.pdf"
+        source_hash = hashlib.sha256(localized_html.read_bytes()).hexdigest()
+        results[code]["companyHtml"] = {
+            "path": str(localized_html.relative_to(ROOT)), "bytes": localized_html.stat().st_size,
+            "pages": 13, "format": "html", "standalone": True, "sha256": source_hash,
+        }
+        results[code]["company"] = {
+            "path": str(localized_pdf.relative_to(ROOT)), "bytes": localized_pdf.stat().st_size,
+            "pages": 13, "format": "pdf", "sha256": hashlib.sha256(localized_pdf.read_bytes()).hexdigest(),
+            "sourceSha256": source_hash,
+        }
+        validate_localized_company(results[code], code)
     product_featured = ROOT / "output" / "brochure" / "zerolabs-product-profile-ko-2026-v2.html"
     if not product_featured.is_file() or product_featured.is_symlink():
         raise RuntimeError(f"Missing featured product HTML brochure: {product_featured}")
@@ -85,7 +104,7 @@ def main() -> None:
     staged = OUTPUT / "brochure-files.json.new"
     staged.write_text(json.dumps(results, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     os.replace(staged, MANIFEST)
-    print(json.dumps({"status": "ok", "languages": len(results), "pdfs": len(results) + 1}, ensure_ascii=False))
+    print(json.dumps({"status": "ok", "languages": len(results), "pdfs": len(results) * 2}, ensure_ascii=False))
 
 
 if __name__ == "__main__":

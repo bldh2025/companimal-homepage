@@ -41,6 +41,22 @@
       "path": "output/pdf/product-brochure-en-2026-v3.pdf",
       "bytes": 1497528,
       "pages": 15
+    },
+    "companyHtml": {
+      "path": "output/brochure/zerolabs-company-profile-en-2026.html",
+      "bytes": 12396562,
+      "pages": 13,
+      "format": "html",
+      "standalone": true,
+      "sha256": "80a8fc40e763f9175bc2972e99abcb2dfd934c234d8d16556dca8599a8bf6923"
+    },
+    "company": {
+      "path": "output/pdf/zerolabs-company-profile-en-2026.pdf",
+      "bytes": 3222189,
+      "pages": 13,
+      "format": "pdf",
+      "sha256": "dde2d9b15cfcdc321578cc76f62909c25c3faa01b79304a57f861494666ff5aa",
+      "sourceSha256": "80a8fc40e763f9175bc2972e99abcb2dfd934c234d8d16556dca8599a8bf6923"
     }
   },
   "zh-hans": {
@@ -51,6 +67,22 @@
       "path": "output/pdf/product-brochure-zh-hans-2026-v3.pdf",
       "bytes": 2292845,
       "pages": 15
+    },
+    "companyHtml": {
+      "path": "output/brochure/zerolabs-company-profile-zh-hans-2026.html",
+      "bytes": 12577475,
+      "pages": 13,
+      "format": "html",
+      "standalone": true,
+      "sha256": "c4c0fad54b18164475a371c1a01fc61c3846fa35be3afb1821ed3db94b902330"
+    },
+    "company": {
+      "path": "output/pdf/zerolabs-company-profile-zh-hans-2026.pdf",
+      "bytes": 4249434,
+      "pages": 13,
+      "format": "pdf",
+      "sha256": "d2acad3ae7eb17ef964ff90ef94e6a07792a8c46d6d163c0fc8a15734525f70d",
+      "sourceSha256": "c4c0fad54b18164475a371c1a01fc61c3846fa35be3afb1821ed3db94b902330"
     }
   },
   "zh-hant": {
@@ -61,6 +93,22 @@
       "path": "output/pdf/product-brochure-zh-hant-2026-v3.pdf",
       "bytes": 2292911,
       "pages": 15
+    },
+    "companyHtml": {
+      "path": "output/brochure/zerolabs-company-profile-zh-hant-2026.html",
+      "bytes": 12608703,
+      "pages": 13,
+      "format": "html",
+      "standalone": true,
+      "sha256": "f7409ac6f26afb5af14712c2d0d2c2e65ab207ec0a595bb475e1cb7ef972b6ac"
+    },
+    "company": {
+      "path": "output/pdf/zerolabs-company-profile-zh-hant-2026.pdf",
+      "bytes": 4422633,
+      "pages": 13,
+      "format": "pdf",
+      "sha256": "03e15b24f86dee62234dd913710f19c80dbe50877a25e623b1ded1b98e16d257",
+      "sourceSha256": "f7409ac6f26afb5af14712c2d0d2c2e65ab207ec0a595bb475e1cb7ef972b6ac"
     }
   },
   "ja": {
@@ -71,6 +119,22 @@
       "path": "output/pdf/product-brochure-ja-2026-v3.pdf",
       "bytes": 2293723,
       "pages": 15
+    },
+    "companyHtml": {
+      "path": "output/brochure/zerolabs-company-profile-ja-2026.html",
+      "bytes": 12545385,
+      "pages": 13,
+      "format": "html",
+      "standalone": true,
+      "sha256": "b229e8a75db50cc33431fa5ecb239bdfb3f2d64fbc0cc4728f9c9b7583c4731c"
+    },
+    "company": {
+      "path": "output/pdf/zerolabs-company-profile-ja-2026.pdf",
+      "bytes": 4095985,
+      "pages": 13,
+      "format": "pdf",
+      "sha256": "9236999c6c9eee37fa017dae558b2eda49efc1ae90533ef477fe18d4737acf3f",
+      "sourceSha256": "b229e8a75db50cc33431fa5ecb239bdfb3f2d64fbc0cc4728f9c9b7583c4731c"
     }
   },
   "th": {
@@ -81,6 +145,22 @@
       "path": "output/pdf/product-brochure-th-2026-v3.pdf",
       "bytes": 1507125,
       "pages": 15
+    },
+    "companyHtml": {
+      "path": "output/brochure/zerolabs-company-profile-th-2026.html",
+      "bytes": 12386300,
+      "pages": 13,
+      "format": "html",
+      "standalone": true,
+      "sha256": "bb908001ee7bedcfea96912c37ae59d043c594e138911ed44529dae3efc2994e"
+    },
+    "company": {
+      "path": "output/pdf/zerolabs-company-profile-th-2026.pdf",
+      "bytes": 3330536,
+      "pages": 13,
+      "format": "pdf",
+      "sha256": "88841e727f0ce35ea6b6f749fe5a9825c3d5aa1930ead89ced3f0cb2ecee5787",
+      "sourceSha256": "bb908001ee7bedcfea96912c37ae59d043c594e138911ed44529dae3efc2994e"
     }
   },
   "ar": {
@@ -91,6 +171,22 @@
       "path": "output/pdf/product-brochure-ar-2026-v3.pdf",
       "bytes": 1529995,
       "pages": 15
+    },
+    "companyHtml": {
+      "path": "output/brochure/zerolabs-company-profile-ar-2026.html",
+      "bytes": 12380535,
+      "pages": 13,
+      "format": "html",
+      "standalone": true,
+      "sha256": "c50dacd1a559d40352fecce377658f4dca70dbf3dec8926f353801964a2a0d33"
+    },
+    "company": {
+      "path": "output/pdf/zerolabs-company-profile-ar-2026.pdf",
+      "bytes": 3453098,
+      "pages": 13,
+      "format": "pdf",
+      "sha256": "0e6dd15379fd71e917ebdfcbc3e1eb33acd40586e42cd37fd081eba1aec2a520",
+      "sourceSha256": "c50dacd1a559d40352fecce377658f4dca70dbf3dec8926f353801964a2a0d33"
     }
   }
 }

@@ -15,13 +15,18 @@ import {
 import { createServer } from "node:http";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const sourcePath = path.join(root, "output/brochure/zerolabs-company-profile-ko-2026.html");
-const outputPath = path.join(root, "output/pdf/zerolabs-company-profile-ko-2026.pdf");
+const language = process.argv[2] || 'ko';
+const locales = {ko:'ko-KR', en:'en-US', 'zh-hans':'zh-CN', 'zh-hant':'zh-TW', ja:'ja-JP', th:'th-TH', ar:'ar'};
+assert(Object.hasOwn(locales, language), `Unsupported language: ${language}`);
+const translations = language === 'ko' ? null : JSON.parse(readFileSync(path.join(root, `scripts/company_locales/${language}.json`), 'utf8'));
+const title = translations ? `${translations[11]} | ZERO LABS 2026` : '주식회사 반려동행 회사소개서 2026';
+const sourcePath = path.join(root, `output/brochure/zerolabs-company-profile-${language}-2026.html`);
+const outputPath = path.join(root, `output/pdf/zerolabs-company-profile-${language}-2026.pdf`);
 const stagedOutput = `${outputPath}.new`;
-const expectedSlideLabels = [
+const expectedSlideLabels = translations ? [0,10,11,12,13,14,195,15,16,17,18,19,20].map((key, i) => `${String(i+1).padStart(2,"0")} ${translations[key]}`) : [
   "01 표지",
   "02 목차",
   "03 회사 개요",
@@ -171,8 +176,14 @@ try {
   cdp = await connect(page.webSocketDebuggerUrl);
   await cdp.call("Page.enable");
   await cdp.call("Runtime.enable");
+  if (language !== 'ko') {
+    await cdp.call('Network.enable');
+    await cdp.call('Network.setBlockedURLs', {urls: ['http://*', 'https://*']});
+  }
   await cdp.call("Page.navigate", {
-    url: `http://127.0.0.1:${address.port}/output/brochure/zerolabs-company-profile-ko-2026.html#1`,
+    url: language === 'ko'
+      ? `http://127.0.0.1:${address.port}/output/brochure/zerolabs-company-profile-${language}-2026.html#1`
+      : pathToFileURL(sourcePath).href + '#1',
   });
   await waitFor(async () => {
     const result = await cdp.call("Runtime.evaluate", {
@@ -205,12 +216,13 @@ try {
     });
     return result.result.value;
   }, 15_000, "stable labeled 13-page company profile");
+  await delay(1500);
   const prepared = await cdp.call("Runtime.evaluate", {
     expression: `(() => {
       const sections = Array.from(document.querySelectorAll('section'));
       if (sections.length !== 13) return { pages: sections.length };
-      document.documentElement.lang = 'ko-KR';
-      document.title = '주식회사 반려동행 회사소개서 2026';
+      document.documentElement.lang = ${JSON.stringify(locales[language])};
+      document.title = ${JSON.stringify(title)};
       const exportRoot = document.createElement('main');
       exportRoot.id = 'pdf-export-root';
       sections.forEach((section) => {
@@ -243,7 +255,7 @@ try {
         @page { size: 13.333333in 7.5in; margin: 0; }
         html, body { margin: 0 !important; padding: 0 !important; width: 1280px !important; background: #fff !important; }
         body { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-        #pdf-export-root { width: 1280px !important; margin: 0 !important; padding: 0 !important; }
+        #pdf-export-root { direction: ltr !important; width: 1280px !important; margin: 0 !important; padding: 0 !important; }
         .pdf-export-page { position: relative !important; width: 1280px !important; height: 720px !important; margin: 0 !important; padding: 0 !important; overflow: hidden !important; break-after: page !important; page-break-after: always !important; }
         .pdf-export-page:last-child { break-after: auto !important; page-break-after: auto !important; }
         .pdf-export-canvas { width: 1920px !important; height: 1080px !important; transform: scale(0.6666666667) !important; transform-origin: 0 0 !important; }
@@ -273,6 +285,35 @@ try {
     awaitPromise: true,
     returnByValue: true,
   });
+  if (language !== 'ko') {
+    const quality = await cdp.call('Runtime.evaluate', {
+      expression: `(() => {
+        const clipped = [];
+        for (const [index, section] of Array.from(document.querySelectorAll('#pdf-export-root section')).entries()) {
+          const bounds = section.getBoundingClientRect();
+          const walker = document.createTreeWalker(section, NodeFilter.SHOW_TEXT);
+          let node;
+          while ((node = walker.nextNode())) {
+            if (!node.nodeValue.trim()) continue;
+            const range = document.createRange(); range.selectNodeContents(node);
+            for (const rect of range.getClientRects()) {
+              if (rect.width && (rect.left < bounds.left - 1 || rect.right > bounds.right + 1 || rect.top < bounds.top - 1 || rect.bottom > bounds.bottom + 1)) {
+                clipped.push({page:index + 1, text:node.nodeValue.trim().slice(0,80)}); break;
+              }
+            }
+          }
+        }
+        return {lang:document.documentElement.lang, direction:document.querySelector('section').dir,
+          brokenImages:Array.from(document.images).filter(img => !img.complete || !img.naturalWidth).length, clipped};
+      })()`, returnByValue:true,
+    });
+    assert(!quality.exceptionDetails, 'Company layout inspection failed');
+    const result = quality.result.value;
+    assert(result.lang === locales[language], 'Wrong localized document language');
+    assert(result.direction === (language === 'ar' ? 'rtl' : 'ltr'), 'Wrong localized text direction');
+    assert(result.brokenImages === 0, 'Broken images in company profile');
+    assert(result.clipped.length === 0, `Clipped company text: ${JSON.stringify(result.clipped)}`);
+  }
   const printed = await cdp.call("Page.printToPDF", {
     landscape: true,
     displayHeaderFooter: false,
@@ -307,5 +348,5 @@ try {
   if (cdp) cdp.close();
   await stopBrowser(browser);
   await new Promise((resolve) => server.close(resolve));
-  rmSync(profile, { recursive: true, force: true });
+  rmSync(profile, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
 }
