@@ -39,7 +39,8 @@ from build_brochures import (
     REVIEW_UI,
     WHOLESALE_URL,
 )
-from history_content import BRAND_HISTORY, EXPECTED_HISTORY_ITEM_COUNTS, EXPECTED_HISTORY_YEARS
+from history_content import (BRAND_HISTORY, EXPECTED_HISTORY_ITEM_COUNTS, EXPECTED_HISTORY_YEARS,
+                             HOMEPAGE_HISTORY, HOMEPAGE_HISTORY_INTROS)
 from embed_company_profile_factory_images import (
     CONTACT_PHONE,
     FACTORY_IMAGE_SPECS,
@@ -383,7 +384,9 @@ def validate_pdf(path: Path, code: str, locale: str, pages: int, kind: str) -> d
 def validate_company_profile_pdf(path: Path, code: str = "ko") -> dict[str, object]:
     """Validate the 13-page 16:9 PDF exported from the featured HTML deck."""
 
-    if not path.is_file() or path.is_symlink() or path.stat().st_size < 1_000_000:
+    # Optimized image streams can bring a complete deck below 1 MB.
+    # Page, text, image, and embedded-font checks below verify its contents.
+    if not path.is_file() or path.is_symlink() or path.stat().st_size < 500_000:
         fail(f"Company profile PDF is missing or unexpectedly small: {path}")
 
     reader = PdfReader(str(path))
@@ -524,10 +527,10 @@ def validate_history_source() -> None:
         "zh-hant": ROOT / "zh-hant" / "index.html",
     }
     for code, path in homepage_sources.items():
-        if extract_homepage_history(path) != BRAND_HISTORY[code]:
-            fail(f"Brochure history differs from homepage history in {path}")
-        if extract_homepage_history_intro(path) != COMPANY_CONTENT[code]["history_subtitle"]:
-            fail(f"Brochure history introduction differs from homepage in {path}")
+        if extract_homepage_history(path) != HOMEPAGE_HISTORY[code]:
+            fail(f"Homepage history differs from its editorial source in {path}")
+        if extract_homepage_history_intro(path) != HOMEPAGE_HISTORY_INTROS[code]:
+            fail(f"Homepage history introduction differs from its editorial source in {path}")
     for code, history in BRAND_HISTORY.items():
         if [year for year, _ in history] != EXPECTED_HISTORY_YEARS:
             fail(f"Unexpected company history years for {code}")
