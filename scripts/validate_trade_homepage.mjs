@@ -125,6 +125,7 @@ try {
     await cdp.call('Page.navigate', {url:base+route});
     await waitFor(async () => await evaluate(`location.pathname === ${JSON.stringify(route)} && document.readyState === 'complete' && !!document.querySelector('[data-inquiry-email]')`), 45000, 'page load');
     await evaluate(`document.fonts.ready`);
+    await waitFor(async () => await evaluate(`document.querySelectorAll('[data-brochure-kind] select').length === 2 && [...document.querySelectorAll('[data-brochure-kind] select')].every(e=>e.options.length === 7)`), 30000, 'brochure manifest language choices');
     const structure = await evaluate(`(() => {
       const ids=[...document.querySelectorAll('[id]')].map(e=>e.id);
       return {order:[...document.querySelectorAll('main>section')].map(e=>e.id||'hero'),
