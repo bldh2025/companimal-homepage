@@ -489,9 +489,48 @@ HOMEPAGE_HISTORY_KO_WORDING = {'“제로랩스” 브랜드 런칭': '“제로
  '유기견 임보처 사단법인 1년간 64,762,460원 기부': '유기견 임보처 사단법인에 1년간 64,762,460원을 기부했습니다.',
  '제로랩스 브랜드, 주식회사 반려동행 법인으로 인수': '2025년 10월, 주식회사 반려동행이 제로랩스 브랜드 인수'}
 
+# Current website milestones; published brochure snapshots remain unchanged.
+HOMEPAGE_HISTORY_2026 = {'ko': ['영양가득, 쿠팡 간식 판매량 TOP3 진입',
+        '신제품 베리가득 · 굽빵 출시',
+        '중간용량 제품 (350g · 400g · 200g) 및 샘플팩 (30g) 출시',
+        '제로랩스 필리핀 수출',
+        '전국 대리점 재계약',
+        'B2B 사이트 개설',
+        '자사 홈페이지 개설',
+        '농협 하나로마트 입점',
+        '펫마트 입점'],
+ 'en': ['Nutrition Jerky reaches Top 3 in Coupang treat sales',
+        'New Berry Jerky & Baked Treat released',
+        'Mid-size packs (350g · 400g · 200g) and sample packs (30g) released',
+        'Exports to the Philippines',
+        'Nationwide distributor contracts renewed',
+        'B2B site opened',
+        'Official homepage opened',
+        'Listed in Nonghyup Hanaro Mart',
+        'Listed in Pet Mart'],
+ 'zh-hans': ['营养肉干进入 Coupang 零食销量 TOP3',
+             '推出新品莓果肉干与烘焙零食',
+             '推出中等容量包装（350g · 400g · 200g）及体验装（30g）',
+             'ZERO LABS 出口菲律宾',
+             '韩国全国经销商完成续约',
+             '开设 B2B 网站',
+             '开设官方网站',
+             '入驻农协 Hanaro Mart 超市',
+             '入驻 Pet Mart'],
+ 'zh-hant': ['營養肉乾進入 Coupang 零食銷量 TOP3',
+             '推出新品莓果肉乾與烘焙零食',
+             '推出中容量包裝（350g · 400g · 200g）及體驗包（30g）',
+             'ZERO LABS 出口菲律賓',
+             '韓國全國經銷商完成續約',
+             '開設 B2B 網站',
+             '開設官方網站',
+             '進駐農協 Hanaro Mart 超市',
+             '進駐 Pet Mart']}
+
 HOMEPAGE_HISTORY = {
     code: [(year, [HOMEPAGE_HISTORY_KO_WORDING.get(item, item) if code == "ko" else item
-                   for item in items]) for year, items in history]
+                   for item in (HOMEPAGE_HISTORY_2026.get(code, items) if year == "2026" else items)])
+           for year, items in history]
     for code, history in BRAND_HISTORY.items()
 }
 
