@@ -923,8 +923,8 @@ def validate_site(manifest: dict[str, object]) -> dict[str, object]:
         if path in company_fallback_meta and company_fallback_meta[path] not in source:
             fail(f"Latest company PDF fallback metadata is missing in {path}")
     korean_source = (ROOT / "index.html").read_text(encoding="utf-8")
-    if "자료실" in korean_source or korean_source.count('href="#downloads">소개서</a>') != 2:
-        fail("Korean main navigation and footer must label the download area 소개서")
+    if "자료실" in korean_source or 'href="#downloads">제품소개서 받기</a>' not in korean_source or 'href="#downloads">소개서 다운로드</a>' not in korean_source:
+        fail("Korean homepage must provide brochure actions in its business inquiry flow")
 
     script = (ROOT / "brochure-downloads.js").read_text(encoding="utf-8")
     for code in LANGUAGES:
